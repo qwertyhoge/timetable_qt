@@ -13,22 +13,142 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="tablearea">
-   <layout class="QVBoxLayout" name="verticalLayout">
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+	background-color: #f8f5f9;
+}</string>
+  </property>
+  <widget class="QWidget" name="apparea">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
+    <item>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="verticalSpacing">
+       <number>6</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="formNameLabel">
+        <property name="text">
+         <string>Plan Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="formNameLine"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="formDayLabel">
+        <property name="text">
+         <string>Day</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="formDayCombo">
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Sunday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Monday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tuesday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Wednesday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Thirsday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Friday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Saturday</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="formStartLabel">
+        <property name="text">
+         <string>Start Time</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QTimeEdit" name="formStartTime">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="correctionMode">
+         <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+        </property>
+        <property name="currentSection">
+         <enum>QDateTimeEdit::HourSection</enum>
+        </property>
+        <property name="calendarPopup">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="formEndLabel">
+        <property name="text">
+         <string>End Time</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QTimeEdit" name="formEndTime"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="addPlanButton">
+      <property name="text">
+       <string>Add Plan</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
     <item>
      <layout class="QHBoxLayout" name="timeTable">
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="sundayColumn">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="sundayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Sunday</string>
@@ -37,31 +157,37 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>3</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QFrame" name="frame">
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="mondayColumn">
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="mondayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Monday</string>
@@ -70,24 +196,34 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>3</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_2" native="true"/>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QVBoxLayout" name="tuesdayColumn">
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="tuesdayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Tuesday</string>
@@ -96,24 +232,34 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>3</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_3" native="true"/>
+         <widget class="QFrame" name="frame_3">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <layout class="QVBoxLayout" name="wednesdayColumn">
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="wednesdayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Wednesday</string>
@@ -122,24 +268,34 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>3</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_4" native="true"/>
+         <widget class="QFrame" name="frame_4">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_8">
+       <layout class="QVBoxLayout" name="thirsdayColumn">
         <item>
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="thirsdayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Thirsday</string>
@@ -148,24 +304,34 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>2</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_5" native="true"/>
+         <widget class="QFrame" name="frame_5">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="fridayColumn">
         <item>
-         <widget class="QLabel" name="label_6">
+         <widget class="QLabel" name="fridayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Friday</string>
@@ -174,24 +340,34 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>2</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_6" native="true"/>
+         <widget class="QFrame" name="frame_6">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <layout class="QVBoxLayout" name="saturdayColumn">
         <item>
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="saturdayLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string>Saturday</string>
@@ -200,12 +376,19 @@
            <set>Qt::AlignCenter</set>
           </property>
           <property name="margin">
-           <number>2</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_7" native="true"/>
+         <widget class="QFrame" name="frame_7">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

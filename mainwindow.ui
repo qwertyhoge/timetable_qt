@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,10 +15,13 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-	background-color: #f8f5f9;
+	background-color: #fcfbfe;
 }</string>
   </property>
   <widget class="QWidget" name="apparea">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
     <item>
      <layout class="QFormLayout" name="formLayout">
@@ -134,6 +137,9 @@
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
       <property name="topMargin">
        <number>10</number>
       </property>
@@ -147,8 +153,17 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
           </property>
           <property name="text">
            <string>Sunday</string>
@@ -162,15 +177,34 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="sundayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="baseSize">
            <size>
             <width>0</width>
             <height>0</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">Plan {
+	border-color: #ff0000;
+	border-style: solid;
+	border-width: 2px;
+}</string>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Panel</enum>
           </property>
          </widget>
         </item>
@@ -189,6 +223,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Monday</string>
           </property>
@@ -201,13 +241,97 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_2">
+         <widget class="QFrame" name="mondayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
           </property>
+          <widget class="QWidget" name="widget" native="true">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>20</y>
+             <width>68</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: #f7eff2;</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>PlanName</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="lineWidth">
+               <number>2</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>10:10-20:10</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -225,6 +349,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Tuesday</string>
           </property>
@@ -237,12 +367,27 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_3">
+         <widget class="QFrame" name="tuesdayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -261,6 +406,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Wednesday</string>
           </property>
@@ -273,12 +424,27 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_4">
+         <widget class="QFrame" name="wednesdayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -297,6 +463,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Thirsday</string>
           </property>
@@ -309,12 +481,27 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_5">
+         <widget class="QFrame" name="thirsdayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -333,6 +520,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Friday</string>
           </property>
@@ -345,12 +538,27 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_6">
+         <widget class="QFrame" name="fridayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -369,6 +577,12 @@
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
           <property name="text">
            <string>Saturday</string>
           </property>
@@ -381,12 +595,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_7">
+         <widget class="QFrame" name="saturdayFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>360</height>
+           </size>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
           </property>
          </widget>
         </item>

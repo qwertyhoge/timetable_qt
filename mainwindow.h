@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  ~MainWindow() override;
 
   static const int SUNDAY = 0;
   static const int MONDAY = 1;
@@ -31,5 +31,11 @@ private:
 
   QWidget* columnFrames[7];
   QVector<Plan*> timetable[7];
+
+protected:
+  bool eventFilter(QObject *obj, QEvent *event) override;
+
+private slots:
+  void on_sundayFrame_customContextMenuRequested(const QPoint &pos);
 };
 #endif // MAINWINDOW_H

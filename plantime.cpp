@@ -22,6 +22,11 @@ int PlanTime::operator-(PlanTime time)
   return (hour * 60 + minute) - (time.hour * 60 + time.minute);
 }
 
+int PlanTime::asMinutes()
+{
+  return hour * 60 + minute;
+}
+
 QString PlanTime::toString()
 {
   QString hourStr = "";

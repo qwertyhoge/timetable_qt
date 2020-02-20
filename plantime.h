@@ -15,6 +15,7 @@ public:
   int operator+(PlanTime time);
   int operator-(PlanTime time);
 
+  int asMinutes();
   QString toString();
 };
 

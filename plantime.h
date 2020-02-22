@@ -6,17 +6,19 @@
 class PlanTime
 {
 public:
-  PlanTime();
-  PlanTime(int h, int m = 0);
+  PlanTime ();
+  PlanTime (int h, int m = 0);
 
   int hour;
   int minute;
 
-  int operator+(PlanTime time);
-  int operator-(PlanTime time);
+  PlanTime *operator+(PlanTime *time);
+  PlanTime *operator-(PlanTime *time);
 
   int asMinutes();
   QString toString();
+
+  static PlanTime *parseTime(QString timeString, char delimiter);
 };
 
 #endif // TIME_H

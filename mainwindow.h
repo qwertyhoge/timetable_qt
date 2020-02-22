@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +27,9 @@ public:
   static const int FRIDAY = 5;
   static const int SATURDAY = 6;
 
+  QMap<QString, int> dayMap;
+
+  void setNewPlan();
 private:
   Ui::MainWindow *ui;
 
@@ -36,6 +40,7 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
+  void addPlan();
   void on_sundayFrame_customContextMenuRequested(const QPoint &pos);
 };
 #endif // MAINWINDOW_H

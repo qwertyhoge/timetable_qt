@@ -12,7 +12,7 @@ class Plan : public QFrame
   Q_OBJECT
 public:
   explicit Plan(QWidget *parent = nullptr);
-  Plan(QWidget *parent, QString name, PlanTime start, PlanTime end);
+  Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end);
 
   void updatePlanGeometry();
 signals:
@@ -25,8 +25,8 @@ private:
 
   QString planName;
 
-  PlanTime startTime;
-  PlanTime endTime;
+  PlanTime *startTime;
+  PlanTime *endTime;
 
   QLabel *nameLabel;
   QLabel *timeLabel;

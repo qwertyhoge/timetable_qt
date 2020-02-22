@@ -7,13 +7,20 @@
 #include <QFrame>
 #include <QDebug>
 
-Plan::Plan(QWidget *parent) : QFrame(parent), planName(""), startTime(0), endTime(0)
+Plan::Plan(QWidget *parent) : QFrame(parent), planName("")
 {
+  startTime = new PlanTime(0);
+  endTime = new PlanTime(0);
 }
 
-Plan::Plan(QWidget *parent, QString name, PlanTime start, PlanTime end)
+Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   : QFrame(parent), planName(name), startTime(start), endTime(end)
 {
+  qDebug() << "parent: " << parent;
+  qDebug() << "name: " << name;
+  qDebug() << "start: " << start->hour << ":" << start->minute;
+  qDebug() << "end: " << end->hour << ":" << end->minute;
+
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   setFrameStyle(QFrame::Plain | QFrame::Box);
   setLineWidth(1);
@@ -46,17 +53,22 @@ Plan::Plan(QWidget *parent, QString name, PlanTime start, PlanTime end)
 
   layout->addStretch(1);
 
-  timeLabel = new QLabel(start.toString() + " - " + end.toString());
+  timeLabel = new QLabel(start->toString() + " - " + end->toString());
   layout->addWidget(timeLabel);
   timeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   timeLabel->setAlignment(Qt::AlignRight | Qt::AlignBottom);
+
+  QRect geometry = calculateGeometry(parent->geometry());
+  setGeometry(geometry);
+
+  show();
 }
 
 QRect Plan::calculateGeometry(QRect parentGeometry)
 {
   QRect geometry;
-  int startMinutes = startTime.asMinutes();
-  int endMinutes = endTime.asMinutes();
+  int startMinutes = startTime->asMinutes();
+  int endMinutes = endTime->asMinutes();
 
   geometry.setX(0);
   geometry.setY(startMinutes * parentGeometry.height() / 24 / 60);

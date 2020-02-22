@@ -12,14 +12,22 @@ PlanTime::PlanTime(int h, int m)
 {
 }
 
-int PlanTime::operator+(PlanTime time)
+PlanTime *PlanTime::operator+(PlanTime *time)
 {
-  return time.hour * 60 + time.minute + hour * 60 + time.minute;
+  int sumAsMinutes = time->hour * 60 + time->minute + hour * 60 + time->minute;
+  sumAsMinutes = (sumAsMinutes % (24 * 60));
+
+  PlanTime *sumPlanTime = new PlanTime(sumAsMinutes / 60, sumAsMinutes % 60);
+  return sumPlanTime;
 }
 
-int PlanTime::operator-(PlanTime time)
+PlanTime *PlanTime::operator-(PlanTime *time)
 {
-  return (hour * 60 + minute) - (time.hour * 60 + time.minute);
+  int subAsMinutes = (hour * 60 + minute) - (time->hour * 60 + time->minute);
+  subAsMinutes = (24 * 60 + subAsMinutes) % (24 * 60);
+
+  PlanTime *subPlanTime = new PlanTime(subAsMinutes / 60, subAsMinutes % 60);
+  return subPlanTime;
 }
 
 int PlanTime::asMinutes()
@@ -43,4 +51,33 @@ QString PlanTime::toString()
   minuteStr += QString::number(minute);
 
   return hourStr + ":" + minuteStr;
+}
+
+PlanTime *PlanTime::parseTime(QString timeString, char delimiter)
+{
+  int i = 0;
+  int parsedHour = 0;
+  while(timeString[i] != delimiter && i < 2){
+    parsedHour *= 10;
+    parsedHour += timeString[i].unicode() - '0';
+
+    i++;
+  }
+
+  if(timeString[i] != delimiter){
+    // abort someway
+  }
+
+  int parsedMinute = 0;
+  i += 1;
+  while(!timeString[i].isNull() && i < 5){
+    parsedMinute *= 10;
+    parsedMinute += timeString[i].unicode() - '0';
+
+    i++;
+  }
+
+  PlanTime *planTime = new PlanTime(parsedHour, parsedMinute);
+
+  return planTime;
 }

@@ -13,6 +13,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  dayMap = {
+    {"Sunday", 0},
+    {"Monday", 1},
+    {"Tuesday", 2},
+    {"Wednesday", 3},
+    {"Thirsday", 4},
+    {"Friday", 5},
+    {"Saturday", 6},
+  };
+
   columnFrames[SUNDAY] = ui->sundayFrame;
   columnFrames[MONDAY] = ui->mondayFrame;
   columnFrames[TUESDAY] = ui->tuesdayFrame;
@@ -25,7 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
     columnFrames[i]->installEventFilter(this);
   }
 
-  Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", PlanTime(0), PlanTime(10));
+  connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
+
+  Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   timetable[SUNDAY].push_back(testPlan);
 }
 
@@ -47,6 +59,32 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
   return false;
 }
+
+void MainWindow::addPlan()
+{
+  QString name = ui->formNameLine->text();
+  QString startTimeText = ui->formStartTime->text();
+  QString endTimeText = ui->formEndTime->text();
+  QString day = ui->formDayCombo->currentText();
+
+  qDebug() << "adding plan";
+
+  if(day == ""){
+    // error
+    return;
+  }
+
+  PlanTime *startTime = PlanTime::parseTime(startTimeText, ':');
+  PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
+  int dayNum = dayMap[day];
+
+  QWidget *column = columnFrames[dayNum];
+  qDebug() << "dayNum : " << dayNum;
+
+  Plan *newPlan = new Plan(column, name, startTime, endTime);
+  timetable[dayNum].push_back(newPlan);
+}
+
 
 void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)
 {

@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
 
   Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
-  timetable[SUNDAY].push_back(testPlan);
+  setPlan(testPlan, SUNDAY);
 }
 
 MainWindow::~MainWindow()
@@ -67,8 +67,6 @@ void MainWindow::addPlan()
   QString endTimeText = ui->formEndTime->text();
   QString day = ui->formDayCombo->currentText();
 
-  qDebug() << "adding plan";
-
   if(day == ""){
     // error
     return;
@@ -79,12 +77,29 @@ void MainWindow::addPlan()
   int dayNum = dayMap[day];
 
   QWidget *column = columnFrames[dayNum];
-  qDebug() << "dayNum : " << dayNum;
 
   Plan *newPlan = new Plan(column, name, startTime, endTime);
-  timetable[dayNum].push_back(newPlan);
+  setPlan(newPlan, dayNum);
 }
 
+void MainWindow::setPlan(Plan *newPlan, int dayNum)
+{
+  newPlan->day = dayNum;
+  timetable[dayNum].push_back(newPlan);
+
+  connect(newPlan, SIGNAL(deleteButtonClicked(Plan*)), this, SLOT(deletePlan(Plan*)));
+}
+
+void MainWindow::deletePlan(Plan *plan)
+{
+  qDebug() << "remove";
+
+  if(!timetable[plan->day].removeOne(plan)){
+    qCritical() << "failed to delete from vector";
+  }
+  plan->setParent(nullptr);
+  plan->deleteLater();
+}
 
 void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)
 {

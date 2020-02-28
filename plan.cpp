@@ -36,24 +36,24 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   setLayout(layout);
 
   nameLabel = new QLabel(planName);
-  nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+  nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   nameLabel->setAlignment(Qt::AlignCenter);
   QFont font;
   font.setPointSize(13);
   nameLabel->setFont(font);
+  nameLabel->raise();
   layout->addWidget(nameLabel);
 
   QFrame *horLine = new QFrame();
   horLine->setFrameShape(QFrame::HLine);
   horLine->setFrameShadow(QFrame::Sunken);
   horLine->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-  horLine->setFixedHeight(2);
   horLine->setLineWidth(2);
   layout->addWidget(horLine);
 
   startTimeLabel = new QLabel(start->toString());
   layout->addWidget(startTimeLabel);
-  startTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+  startTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
   startTimeLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
   layout->addStretch(1);
@@ -63,7 +63,7 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
 
   endTimeLabel = new QLabel(end->toString());
   bottomLayout->addWidget(endTimeLabel);
-  endTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+  endTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
   endTimeLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
   bottomLayout->addStretch(1);

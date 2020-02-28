@@ -3,8 +3,10 @@
 
 #include "plan.h"
 #include "plantime.h"
+#include "timenotifier.h"
 
 #include <QFrame>
+#include <QTimer>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -36,6 +38,10 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
+
+  TimeNotifier *timeNotifier = new TimeNotifier();
+  qDebug() << typeid(ui->apparea->layout()).name();
+  ui->apparea->layout()->addWidget(timeNotifier);
 
   Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   setPlan(testPlan, SUNDAY);

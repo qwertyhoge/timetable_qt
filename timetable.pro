@@ -19,12 +19,14 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     plan.cpp \
-    plantime.cpp
+    plantime.cpp \
+    timenotifier.cpp
 
 HEADERS += \
     mainwindow.h \
     plan.h \
-    plantime.h
+    plantime.h \
+    timenotifier.h
 
 FORMS += \
     mainwindow.ui

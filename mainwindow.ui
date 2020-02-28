@@ -203,9 +203,9 @@
            <property name="geometry">
             <rect>
              <x>20</x>
-             <y>210</y>
+             <y>271</y>
              <width>68</width>
-             <height>81</height>
+             <height>20</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -213,6 +213,12 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
            </property>
            <property name="palette">
             <palette>
@@ -379,6 +385,12 @@
             </item>
             <item>
              <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>10:10-20:10</string>
               </property>
@@ -743,7 +755,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

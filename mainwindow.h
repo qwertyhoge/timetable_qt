@@ -37,13 +37,13 @@ private:
   QVector<Plan*> timetable[7];
 
   void setPlan(Plan *newPlan, int dayNum);
-
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
   void addPlan();
   void deletePlan(Plan *plan);
+
   void on_sundayFrame_customContextMenuRequested(const QPoint &pos);
 };
 #endif // MAINWINDOW_H

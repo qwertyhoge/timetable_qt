@@ -15,6 +15,36 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  initData();
+
+  for(int i = 0; i < 7; i++){
+    columnFrames[i]->installEventFilter(this);
+
+    columnLabels[i]->setAutoFillBackground(true);
+  }
+
+  highlightCurrentDay(QDate::currentDate().day() - 1);
+  // sun1~satur7?
+  qDebug() << "currentDay: " << QDate::currentDate().day();
+
+  connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
+
+  TimeNotifier *timeNotifier = new TimeNotifier();
+  ui->apparea->layout()->addWidget(timeNotifier);
+
+  connect(timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
+
+  Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
+  setPlan(testPlan, SUNDAY);
+}
+
+MainWindow::~MainWindow()
+{
+  delete ui;
+}
+
+void MainWindow::initData()
+{
   dayMap = {
     {"Sunday", 0},
     {"Monday", 1},
@@ -33,23 +63,19 @@ MainWindow::MainWindow(QWidget *parent)
   columnFrames[FRIDAY] = ui->fridayFrame;
   columnFrames[SATURDAY] = ui->saturdayFrame;
 
-  for(int i = 0; i < 7; i++){
-    columnFrames[i]->installEventFilter(this);
+  columnLabels[SUNDAY] = ui->sundayLabel;
+  columnLabels[MONDAY] = ui->mondayLabel;
+  columnLabels[TUESDAY] = ui->tuesdayLabel;
+  columnLabels[WEDNESDAY] = ui->wednesdayLabel;
+  columnLabels[THIRSDAY] = ui->thirsdayLabel;
+  columnLabels[FRIDAY] = ui->fridayLabel;
+  columnLabels[SATURDAY] = ui->saturdayLabel;
+
+  for(int i = 0; i < 24; i++){
+    for(int j = 0; j < 60; j++){
+      timeToAlerm[i][j] = NONE_BELL;
+    }
   }
-
-  connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
-
-  TimeNotifier *timeNotifier = new TimeNotifier();
-  qDebug() << typeid(ui->apparea->layout()).name();
-  ui->apparea->layout()->addWidget(timeNotifier);
-
-  Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
-  setPlan(testPlan, SUNDAY);
-}
-
-MainWindow::~MainWindow()
-{
-  delete ui;
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
@@ -105,6 +131,20 @@ void MainWindow::deletePlan(Plan *plan)
   }
   plan->setParent(nullptr);
   plan->deleteLater();
+}
+
+void MainWindow::highlightCurrentDay(int dayNum)
+{
+  for(int i = 0; i < 7; i++){
+    QPalette plt = palette();
+
+    plt.setColor(QPalette::Background, QColor(248, 251, 254));
+    if(i == dayNum){
+      plt.setColor(QPalette::Background, QColor(253, 217, 192));
+    }
+
+    columnLabels[i]->setPalette(plt);
+  }
 }
 
 void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)

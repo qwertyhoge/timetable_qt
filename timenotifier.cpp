@@ -2,6 +2,7 @@
 
 #include <QLabel>
 #include <QTimer>
+#include <QDebug>
 
 TimeNotifier::TimeNotifier(QWidget *parent) : QLabel(parent)
 {
@@ -29,6 +30,7 @@ void TimeNotifier::updateTime()
     emit dayChanged(currentDay);
   }
   if(formerMinute != currentMinute){
+    qDebug() << "emitting minuteChanged";
     emit minuteChanged(currentDateTime.time());
   }
 

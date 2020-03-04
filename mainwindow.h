@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QMap>
 #include <QLabel>
+#include <QTime>
+#include <QMediaPlayer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,7 +38,7 @@ public:
 private:
   Ui::MainWindow *ui;
 
-  enum AlermType{
+  enum BellType{
     NONE_BELL,
     START_BELL,
     END_BELL,
@@ -46,10 +48,13 @@ private:
   QWidget *columnFrames[7];
   QLabel *columnLabels[7];
   QVector<Plan*> timetable[7];
-  AlermType timeToAlerm[24][60];
+  BellType timeToAlerm[24][60];
 
   void initData();
   void setPlan(Plan *newPlan, int dayNum);
+  void playBell(QUrl bellPath);
+
+  QMediaPlayer *bellPlayer = new QMediaPlayer();
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -57,6 +62,7 @@ private slots:
   void addPlan();
   void deletePlan(Plan *plan);
   void highlightCurrentDay(int day);
+  void bellProperBell(QTime currentTime);
 
   void on_sundayFrame_customContextMenuRequested(const QPoint &pos);
 };

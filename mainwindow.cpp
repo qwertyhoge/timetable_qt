@@ -8,6 +8,8 @@
 #include <QFrame>
 #include <QTimer>
 #include <QDebug>
+#include <QTime>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -33,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->apparea->layout()->addWidget(timeNotifier);
 
   connect(timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
+  connect(timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
 
   Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   setPlan(testPlan, SUNDAY);
@@ -112,6 +115,15 @@ void MainWindow::addPlan()
 
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
+
+  timeToAlerm[startTime->hour][startTime->minute] = START_BELL;
+  if(timeToAlerm[endTime->hour][startTime->minute] != START_BELL){
+    timeToAlerm[endTime->hour][startTime->minute] = END_BELL;
+  }
+  PlanTime *prelimTime = *startTime - new PlanTime(0, 5);
+  if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
+    timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+  }
 }
 
 void MainWindow::setPlan(Plan *newPlan, int dayNum)
@@ -120,6 +132,13 @@ void MainWindow::setPlan(Plan *newPlan, int dayNum)
   timetable[dayNum].push_back(newPlan);
 
   connect(newPlan, SIGNAL(deleteButtonClicked(Plan*)), this, SLOT(deletePlan(Plan*)));
+}
+
+void MainWindow::playBell(QUrl bellPath)
+{
+  bellPlayer->setMedia(bellPath);
+  bellPlayer->setVolume(40);
+  bellPlayer->play();
 }
 
 void MainWindow::deletePlan(Plan *plan)
@@ -144,6 +163,23 @@ void MainWindow::highlightCurrentDay(int dayNum)
     }
 
     columnLabels[i]->setPalette(plt);
+  }
+}
+
+void MainWindow::bellProperBell(QTime currentTime)
+{
+  switch(timeToAlerm[currentTime.hour()][currentTime.minute()]){
+    case NONE_BELL:
+      break;
+    case START_BELL:
+      playBell(QUrl("qrc:/sounds/period_bell.mp3"));
+      break;
+    case END_BELL:
+      playBell(QUrl("qrc:/sounds/period_bell.mp3"));
+      break;
+    case PRELIM_BELL:
+      playBell(QUrl("qrc:/sounds/first_bell.mp3"));
+      break;
   }
 }
 

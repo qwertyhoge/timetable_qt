@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sounds/first_bell.mp3</file>
+        <file>sounds/period_bell.mp3</file>
+    </qresource>
+</RCC>

@@ -12,7 +12,7 @@ TimeNotifier::TimeNotifier(QWidget *parent) : QLabel(parent)
 
   QDateTime initialDateTime = QDateTime::currentDateTime();
 
-  formerDay = initialDateTime.date().day() - 1;
+  formerDay = initialDateTime.date().dayOfWeek() % 7;
   formerMinute = initialDateTime.time().minute();
 
   setText(initialDateTime.time().toString());
@@ -21,7 +21,7 @@ TimeNotifier::TimeNotifier(QWidget *parent) : QLabel(parent)
 void TimeNotifier::updateTime()
 {
   QDateTime currentDateTime = QDateTime::currentDateTime();
-  int currentDay = currentDateTime.date().day() - 1;
+  int currentDay = currentDateTime.date().dayOfWeek() % 7;
   int currentMinute = currentDateTime.time().minute();
 
   setText(currentDateTime.time().toString());

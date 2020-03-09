@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     columnLabels[i]->setAutoFillBackground(true);
   }
 
-  highlightCurrentDay(QDate::currentDate().day() - 1);
+  highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
   // sun1~satur7?
-  qDebug() << "currentDay: " << QDate::currentDate().day();
+  qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
 

@@ -51,6 +51,7 @@ private:
   BellType timeToAlerm[24][60];
 
   void initData();
+  void setMenu();
   void setPlan(Plan *newPlan, int dayNum);
   void playBell(QUrl bellPath);
 
@@ -59,6 +60,8 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
+  void importTimetable();
+  void exportTimetable();
   void addPlan();
   void deletePlan(Plan *plan);
   void highlightCurrentDay(int day);

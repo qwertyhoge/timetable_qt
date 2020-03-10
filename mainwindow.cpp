@@ -5,6 +5,7 @@
 #include "plantime.h"
 #include "timenotifier.h"
 
+#include <QtWidgets>
 #include <QFrame>
 #include <QTimer>
 #include <QDebug>
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   initData();
+  setMenu();
 
   for(int i = 0; i < 7; i++){
     columnFrames[i]->installEventFilter(this);
@@ -26,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
-  // sun1~satur7?
+  // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
@@ -81,6 +83,23 @@ void MainWindow::initData()
   }
 }
 
+void MainWindow::setMenu()
+{
+  QAction *importAction = new QAction(tr("I&mport"), this);
+  QAction *exportAction = new QAction(tr("&Export"), this);
+  QAction *exitAction = new QAction(tr("E&xit"), this);
+
+  connect(importAction, SIGNAL(triggered()), this, SLOT(importTimetable()));
+  connect(exportAction, SIGNAL(triggered()), this, SLOT(exportTimetable()));
+  connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+  QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+  fileMenu->addAction(importAction);
+  fileMenu->addAction(exportAction);
+  fileMenu->addSeparator();
+  fileMenu->addAction(exitAction);
+}
+
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
   for(int i = 0; i < 7; i++){
@@ -93,6 +112,50 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
   }
 
   return false;
+}
+
+void MainWindow::importTimetable()
+{
+
+}
+
+void MainWindow::exportTimetable()
+{
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Export File"), "", "JSON Files (*.json)");
+
+  if(!fileName.isEmpty()){
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly)){
+      QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
+      return;
+    }
+    QJsonArray jsonTimetable;
+    QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday"};
+    for(int i = 0; i < 7; i++){
+      QJsonObject dayObj;
+      dayObj.insert("day", dayNames[i]);
+
+      QJsonArray dayPlans;
+      for(int j = 0; j < timetable[i].size(); j++){
+        QJsonObject planInfo;
+        qDebug() << "capsling " << timetable[i][j]->planName;
+
+        planInfo.insert("planName", timetable[i][j]->planName);
+        planInfo.insert("startTime", timetable[i][j]->startTime->toString());
+        planInfo.insert("endTime", timetable[i][j]->endTime->toString());
+
+        dayPlans.push_back(planInfo);
+      }
+      dayObj.insert("plans", dayPlans);
+
+      jsonTimetable.push_back(dayObj);
+    }
+
+    QJsonDocument document(jsonTimetable);
+    QTextStream outStream(&file);
+    outStream << document.toJson(QJsonDocument::Indented);
+    file.close();
+  }
 }
 
 void MainWindow::addPlan()
@@ -123,6 +186,12 @@ void MainWindow::addPlan()
   PlanTime *prelimTime = *startTime - new PlanTime(0, 5);
   if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
     timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+  }
+
+  for(int i = 0; i < 7; i++){
+    for(int j = 0; j < timetable[i].size(); j++){
+      qDebug() << timetable[i][j]->planName;
+    }
   }
 }
 

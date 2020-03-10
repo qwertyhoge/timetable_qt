@@ -116,7 +116,52 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 void MainWindow::importTimetable()
 {
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), "", "JSON Files (*.json)");
 
+  if(!fileName.isEmpty()){
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)){
+      QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+      return;
+    }
+    QTextStream inStream(&file);
+    QString fileText;
+    while(!inStream.atEnd()){
+      fileText += inStream.readLine() + '\n';
+    }
+
+    file.close();
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(fileText.toUtf8());
+
+    if(!jsonDoc.isNull()){
+      for(int day = 0; day < 7; day++){
+        for(auto plan : timetable[day]){
+          deletePlan(plan);
+        }
+      }
+      for(int h = 0; h < 24; h++){
+        for(int m = 0; m < 60; m++){
+          timeToAlerm[h][m] = BellType::NONE_BELL;
+        }
+      }
+      timetable->clear();
+      for(int day = 0; day < 7; day++){
+        QJsonValue dayInfo = jsonDoc[day];
+        QJsonArray dayPlans = dayInfo["plans"].toArray();
+        for(auto plan = dayPlans.begin(); plan != dayPlans.end(); plan++){
+          QJsonObject planObj = (*plan).toObject();
+          QString planName = planObj["planName"].toString();
+          PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
+          PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
+          Plan *loadedPlan = new Plan(columnFrames[day], planName, startTime, endTime);
+
+          setPlan(loadedPlan, day);
+        }
+      }
+
+    }
+  }
 }
 
 void MainWindow::exportTimetable()
@@ -179,15 +224,6 @@ void MainWindow::addPlan()
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
 
-  timeToAlerm[startTime->hour][startTime->minute] = START_BELL;
-  if(timeToAlerm[endTime->hour][startTime->minute] != START_BELL){
-    timeToAlerm[endTime->hour][startTime->minute] = END_BELL;
-  }
-  PlanTime *prelimTime = *startTime - new PlanTime(0, 5);
-  if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
-    timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
-  }
-
   for(int i = 0; i < 7; i++){
     for(int j = 0; j < timetable[i].size(); j++){
       qDebug() << timetable[i][j]->planName;
@@ -201,6 +237,15 @@ void MainWindow::setPlan(Plan *newPlan, int dayNum)
   timetable[dayNum].push_back(newPlan);
 
   connect(newPlan, SIGNAL(deleteButtonClicked(Plan*)), this, SLOT(deletePlan(Plan*)));
+
+  timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
+  if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
+    timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] = END_BELL;
+  }
+  PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
+  if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
+    timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+  }
 }
 
 void MainWindow::playBell(QUrl bellPath)

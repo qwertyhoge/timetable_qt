@@ -22,9 +22,9 @@ MainWindow::MainWindow(QWidget *parent)
   setMenu();
 
   for(int i = 0; i < 7; i++){
-    columnFrames[i]->installEventFilter(this);
+    rowFrames[i]->installEventFilter(this);
 
-    columnLabels[i]->setAutoFillBackground(true);
+    rowLabels[i]->setAutoFillBackground(true);
   }
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
@@ -39,8 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
   connect(timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
   connect(timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
 
-  Plan *testPlan = new Plan(columnFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
+  Plan *testPlan = new Plan(rowFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   setPlan(testPlan, SUNDAY);
+
 }
 
 MainWindow::~MainWindow()
@@ -60,21 +61,21 @@ void MainWindow::initData()
     {"Saturday", 6},
   };
 
-  columnFrames[SUNDAY] = ui->sundayFrame;
-  columnFrames[MONDAY] = ui->mondayFrame;
-  columnFrames[TUESDAY] = ui->tuesdayFrame;
-  columnFrames[WEDNESDAY] = ui->wednesdayFrame;
-  columnFrames[THIRSDAY] = ui->thirsdayFrame;
-  columnFrames[FRIDAY] = ui->fridayFrame;
-  columnFrames[SATURDAY] = ui->saturdayFrame;
+  rowFrames[SUNDAY] = ui->sundayFrame;
+  rowFrames[MONDAY] = ui->mondayFrame;
+  rowFrames[TUESDAY] = ui->tuesdayFrame;
+  rowFrames[WEDNESDAY] = ui->wednesdayFrame;
+  rowFrames[THIRSDAY] = ui->thirsdayFrame;
+  rowFrames[FRIDAY] = ui->fridayFrame;
+  rowFrames[SATURDAY] = ui->saturdayFrame;
 
-  columnLabels[SUNDAY] = ui->sundayLabel;
-  columnLabels[MONDAY] = ui->mondayLabel;
-  columnLabels[TUESDAY] = ui->tuesdayLabel;
-  columnLabels[WEDNESDAY] = ui->wednesdayLabel;
-  columnLabels[THIRSDAY] = ui->thirsdayLabel;
-  columnLabels[FRIDAY] = ui->fridayLabel;
-  columnLabels[SATURDAY] = ui->saturdayLabel;
+  rowLabels[SUNDAY] = ui->sundayLabel;
+  rowLabels[MONDAY] = ui->mondayLabel;
+  rowLabels[TUESDAY] = ui->tuesdayLabel;
+  rowLabels[WEDNESDAY] = ui->wednesdayLabel;
+  rowLabels[THIRSDAY] = ui->thirsdayLabel;
+  rowLabels[FRIDAY] = ui->fridayLabel;
+  rowLabels[SATURDAY] = ui->saturdayLabel;
 
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
@@ -103,7 +104,7 @@ void MainWindow::setMenu()
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
   for(int i = 0; i < 7; i++){
-    if(obj == columnFrames[i] && event->type() == QEvent::Resize){
+    if(obj == rowFrames[i] && event->type() == QEvent::Resize){
       for(auto plan : timetable[i]){
         plan->updatePlanGeometry();
       }
@@ -154,7 +155,7 @@ void MainWindow::importTimetable()
           QString planName = planObj["planName"].toString();
           PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
           PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
-          Plan *loadedPlan = new Plan(columnFrames[day], planName, startTime, endTime);
+          Plan *loadedPlan = new Plan(rowFrames[day], planName, startTime, endTime);
 
           setPlan(loadedPlan, day);
         }
@@ -219,7 +220,7 @@ void MainWindow::addPlan()
   PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
   int dayNum = dayMap[day];
 
-  QWidget *column = columnFrames[dayNum];
+  QWidget *column = rowFrames[dayNum];
 
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
@@ -276,7 +277,7 @@ void MainWindow::highlightCurrentDay(int dayNum)
       plt.setColor(QPalette::Background, QColor(253, 217, 192));
     }
 
-    columnLabels[i]->setPalette(plt);
+    rowLabels[i]->setPalette(plt);
   }
 }
 

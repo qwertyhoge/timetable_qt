@@ -29,8 +29,8 @@ public slots:
   void emitDeleteSignal();
 
 private:
-  int xPos = 0;
-  int yPos;
+  int xPos;
+  int yPos = 0;
 
   QLabel *nameLabel;
   QLabel *startTimeLabel;

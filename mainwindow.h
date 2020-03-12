@@ -45,8 +45,8 @@ private:
     PRELIM_BELL
   };
 
-  QWidget *columnFrames[7];
-  QLabel *columnLabels[7];
+  QWidget *rowFrames[7];
+  QLabel *rowLabels[7];
   QVector<Plan*> timetable[7];
   BellType timeToAlerm[24][60];
 

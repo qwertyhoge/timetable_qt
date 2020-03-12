@@ -89,11 +89,14 @@ QRect Plan::calculateGeometry(QRect parentGeometry)
     endMinutes = 24 * 60;
   }
 
-  geometry.setX(0);
-  geometry.setY(startMinutes * parentGeometry.height() / 24 / 60);
+  xPos = startMinutes * parentGeometry.width() / 24 / 60;
+  yPos = 0;
 
-  geometry.setWidth(parentGeometry.width());
-  geometry.setHeight((endMinutes - startMinutes) * parentGeometry.height() / 24 / 60);
+  geometry.setX(xPos);
+  geometry.setY(yPos);
+
+  geometry.setWidth((endMinutes - startMinutes) * parentGeometry.width() / 24 / 60);
+  geometry.setHeight(parentGeometry.height());
 
   return geometry;
 }

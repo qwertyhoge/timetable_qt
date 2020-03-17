@@ -108,6 +108,10 @@ void Plan::updatePlanGeometry()
   setGeometry(newGeometry);
 }
 
+void Plan::mousePressEvent(QMouseEvent *event){
+  emit planClicked(this);
+}
+
 void Plan::emitDeleteSignal()
 {
   emit deleteButtonClicked(this);

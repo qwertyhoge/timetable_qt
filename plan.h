@@ -24,6 +24,7 @@ public:
   void updatePlanGeometry();
 signals:
   void deleteButtonClicked(Plan *plan);
+  void planClicked(Plan *plan);
 
 public slots:
   void emitDeleteSignal();
@@ -38,6 +39,9 @@ private:
   QPushButton *deleteButton;
 
   QRect calculateGeometry(QRect parentGeometry);
+
+protected:
+  void mousePressEvent(QMouseEvent *event) override;
 };
 
 #endif // PLAN_H

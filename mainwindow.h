@@ -49,6 +49,7 @@ private:
   QLabel *rowLabels[7];
   QVector<Plan*> timetable[7];
   BellType timeToAlerm[24][60];
+  Plan *selectedPlan = nullptr;
 
   void initData();
   void setMenu();
@@ -64,6 +65,7 @@ private slots:
   void exportTimetable();
   void addPlan();
   void deletePlan(Plan *plan);
+  void inspectPlan(Plan *plan);
   void highlightCurrentDay(int day);
   void bellProperBell(QTime currentTime);
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>601</height>
+    <height>811</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,115 +19,315 @@
 }</string>
   </property>
   <widget class="QWidget" name="apparea">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
     <item>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="verticalSpacing">
-       <number>6</number>
-      </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="formNameLabel">
-        <property name="text">
-         <string>Plan Name</string>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QFormLayout" name="addForm">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="formNameLabel">
+          <property name="text">
+           <string>Plan Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="formNameLine"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="formDayLabel">
+          <property name="text">
+           <string>Day</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="formDayCombo">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+          <property name="currentText">
+           <string/>
+          </property>
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>Sunday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Monday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tuesday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wednesday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Thirsday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Friday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Saturday</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="formStartLabel">
+          <property name="text">
+           <string>Start Time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QTimeEdit" name="formStartTime"/>
+        </item>
+        <item row="8" column="1">
+         <widget class="QPushButton" name="addPlanButton">
+          <property name="text">
+           <string>Add Plan</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="formEndLabel">
+          <property name="text">
+           <string>End Time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QTimeEdit" name="formEndTime"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="generateFormLabel">
+          <property name="styleSheet">
+           <string notr="true">font-size: 16px;</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="text">
+           <string>Generate a new plan</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
+          <property name="indent">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="formNameLine"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="formDayLabel">
-        <property name="text">
-         <string>Day</string>
+      <item>
+       <layout class="QFormLayout" name="inspectForm">
+        <property name="leftMargin">
+         <number>2</number>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="formDayCombo">
-        <property name="currentIndex">
-         <number>-1</number>
+        <property name="rightMargin">
+         <number>2</number>
         </property>
-        <item>
-         <property name="text">
-          <string>Sunday</string>
-         </property>
+        <item row="2" column="0">
+         <widget class="QLabel" name="inspectNameLabel">
+          <property name="text">
+           <string>Plan Name</string>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Monday</string>
-         </property>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="inspectNameLine">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Tuesday</string>
-         </property>
+        <item row="3" column="0">
+         <widget class="QLabel" name="inspectDayLabel">
+          <property name="text">
+           <string>Day</string>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Wednesday</string>
-         </property>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="inspectDayCombo">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>Sunday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Monday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tuesday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wednesday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Thirsday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Friday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Saturday</string>
+           </property>
+          </item>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Thirsday</string>
-         </property>
+        <item row="4" column="0">
+         <widget class="QLabel" name="inspectStartLabel">
+          <property name="text">
+           <string>Start Time</string>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Friday</string>
-         </property>
+        <item row="4" column="1">
+         <widget class="QTimeEdit" name="inspectStartTime">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Saturday</string>
-         </property>
+        <item row="5" column="0">
+         <widget class="QLabel" name="inspectEndLabel">
+          <property name="text">
+           <string>End Time</string>
+          </property>
+         </widget>
         </item>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="formStartLabel">
-        <property name="text">
-         <string>Start Time</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QTimeEdit" name="formStartTime">
-        <property name="mouseTracking">
-         <bool>false</bool>
-        </property>
-        <property name="correctionMode">
-         <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-        </property>
-        <property name="currentSection">
-         <enum>QDateTimeEdit::HourSection</enum>
-        </property>
-        <property name="calendarPopup">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="formEndLabel">
-        <property name="text">
-         <string>End Time</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QTimeEdit" name="formEndTime"/>
+        <item row="5" column="1">
+         <widget class="QTimeEdit" name="inspectEndTime">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="editButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Edit Plan</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="editCancelButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Cancel</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="inspectFormLabel">
+          <property name="styleSheet">
+           <string notr="true">font-size: 16px;</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="text">
+           <string>Inspect the information of a plan</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QPushButton" name="addPlanButton">
-      <property name="text">
-       <string>Add Plan</string>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
     </item>
     <item>
      <layout class="QVBoxLayout" name="timetable">

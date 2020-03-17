@@ -225,11 +225,6 @@ void MainWindow::addPlan()
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
 
-  for(int i = 0; i < 7; i++){
-    for(int j = 0; j < timetable[i].size(); j++){
-      qDebug() << timetable[i][j]->planName;
-    }
-  }
 }
 
 void MainWindow::setPlan(Plan *newPlan, int dayNum)
@@ -238,6 +233,7 @@ void MainWindow::setPlan(Plan *newPlan, int dayNum)
   timetable[dayNum].push_back(newPlan);
 
   connect(newPlan, SIGNAL(deleteButtonClicked(Plan*)), this, SLOT(deletePlan(Plan*)));
+  connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
 
   timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
   if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
@@ -265,6 +261,16 @@ void MainWindow::deletePlan(Plan *plan)
   }
   plan->setParent(nullptr);
   plan->deleteLater();
+}
+
+void MainWindow::inspectPlan(Plan *plan)
+{
+  selectedPlan = plan;
+
+  ui->inspectNameLine->setText(plan->planName);
+  ui->inspectDayCombo->setCurrentIndex(plan->day);
+  ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
+  ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
 }
 
 void MainWindow::highlightCurrentDay(int dayNum)

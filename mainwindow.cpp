@@ -17,6 +17,9 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+  if(!QDir("configs").exists()){
+    QDir().mkdir("configs");
+  }
 
   initData();
   setMenu();
@@ -39,9 +42,12 @@ MainWindow::MainWindow(QWidget *parent)
   connect(timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
   connect(timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
 
+  /*
   Plan *testPlan = new Plan(rowFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   setPlan(testPlan, SUNDAY);
+  */
 
+  loadDefaultTimetable();
 }
 
 MainWindow::~MainWindow()
@@ -84,19 +90,59 @@ void MainWindow::initData()
   }
 }
 
+bool MainWindow::loadDefaultTimetable()
+{
+  QFile config("./configs/defaulttimetable.cfg");
+
+  if(!config.exists()){
+    config.open(QIODevice::WriteOnly);
+    config.close();
+    return false;
+  }
+
+  if(!config.open(QIODevice::ReadOnly)){
+    QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
+    return false;
+  }
+  QString defaultFileName = config.readLine();
+  config.close();
+
+  QFile defaultFile(defaultFileName);
+
+  if(defaultFileName.isEmpty() || !defaultFile.exists()){
+    qDebug() << "the config is empty or such file does not exist";
+    return false;
+  }
+
+  if(!defaultFile.open(QIODevice::ReadOnly)){
+    QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
+    return false;
+  }
+  QByteArray contents = defaultFile.readAll();
+
+  loadFromJson(contents);
+
+  openingTimetablePath = defaultFileName;
+
+  return true;
+}
+
 void MainWindow::setMenu()
 {
   QAction *importAction = new QAction(tr("I&mport"), this);
   QAction *exportAction = new QAction(tr("&Export"), this);
+  QAction *setDefaultAction = new QAction(tr("Set as &Default timetable"), this);
   QAction *exitAction = new QAction(tr("E&xit"), this);
 
   connect(importAction, SIGNAL(triggered()), this, SLOT(importTimetable()));
   connect(exportAction, SIGNAL(triggered()), this, SLOT(exportTimetable()));
+  connect(setDefaultAction, SIGNAL(triggered()), this, SLOT(setDefaultTimetable()));
   connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
   QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(importAction);
   fileMenu->addAction(exportAction);
+  fileMenu->addAction(setDefaultAction);
   fileMenu->addSeparator();
   fileMenu->addAction(exitAction);
 }
@@ -133,35 +179,41 @@ void MainWindow::importTimetable()
 
     file.close();
 
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(fileText.toUtf8());
+    loadFromJson(fileText.toUtf8());
+    openingTimetablePath = fileName;
+  }
+}
 
-    if(!jsonDoc.isNull()){
-      for(int day = 0; day < 7; day++){
-        for(auto plan : timetable[day]){
-          deletePlan(plan);
-        }
-      }
-      for(int h = 0; h < 24; h++){
-        for(int m = 0; m < 60; m++){
-          timeToAlerm[h][m] = BellType::NONE_BELL;
-        }
-      }
-      timetable->clear();
-      for(int day = 0; day < 7; day++){
-        QJsonValue dayInfo = jsonDoc[day];
-        QJsonArray dayPlans = dayInfo["plans"].toArray();
-        for(auto plan = dayPlans.begin(); plan != dayPlans.end(); plan++){
-          QJsonObject planObj = (*plan).toObject();
-          QString planName = planObj["planName"].toString();
-          PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
-          PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
-          Plan *loadedPlan = new Plan(rowFrames[day], planName, startTime, endTime);
+void MainWindow::loadFromJson(QByteArray json)
+{
+  QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
 
-          setPlan(loadedPlan, day);
-        }
+  if(!jsonDoc.isNull()){
+    for(int day = 0; day < 7; day++){
+      for(auto plan : timetable[day]){
+        deletePlan(plan);
       }
-
     }
+    for(int h = 0; h < 24; h++){
+      for(int m = 0; m < 60; m++){
+        timeToAlerm[h][m] = BellType::NONE_BELL;
+      }
+    }
+    timetable->clear();
+    for(int day = 0; day < 7; day++){
+      QJsonValue dayInfo = jsonDoc[day];
+      QJsonArray dayPlans = dayInfo["plans"].toArray();
+      for(auto plan = dayPlans.begin(); plan != dayPlans.end(); plan++){
+        QJsonObject planObj = (*plan).toObject();
+        QString planName = planObj["planName"].toString();
+        PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
+        PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
+        Plan *loadedPlan = new Plan(rowFrames[day], planName, startTime, endTime);
+
+        setPlan(loadedPlan, day);
+      }
+    }
+
   }
 }
 
@@ -169,12 +221,18 @@ void MainWindow::exportTimetable()
 {
   QString fileName = QFileDialog::getSaveFileName(this, tr("Export File"), "", "JSON Files (*.json)");
 
+  exportTimetable(fileName);
+}
+
+void MainWindow::exportTimetable(QString fileName)
+{
   if(!fileName.isEmpty()){
     QFile file(fileName);
     if(!file.open(QIODevice::WriteOnly)){
       QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
       return;
     }
+
     QJsonArray jsonTimetable;
     QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday"};
     for(int i = 0; i < 7; i++){
@@ -201,7 +259,28 @@ void MainWindow::exportTimetable()
     QTextStream outStream(&file);
     outStream << document.toJson(QJsonDocument::Indented);
     file.close();
+
+    openingTimetablePath = fileName;
   }
+}
+
+void MainWindow::setDefaultTimetable()
+{
+  QFile file("./configs/defaulttimetable.cfg");
+
+  if(openingTimetablePath.isEmpty()){
+    QMessageBox::information(this, "Save timetable", tr("Export the timetable first to set it as default."));
+    exportTimetable();
+  }else{
+    exportTimetable(openingTimetablePath);
+  }
+
+  if(!file.open(QIODevice::WriteOnly)){
+    QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
+    return;
+  }
+  file.write(openingTimetablePath.toUtf8());
+  file.close();
 }
 
 void MainWindow::addPlan()

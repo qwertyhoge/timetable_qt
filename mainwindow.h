@@ -50,11 +50,14 @@ private:
   QVector<Plan*> timetable[7];
   BellType timeToAlerm[24][60];
   Plan *selectedPlan = nullptr;
+  QString openingTimetablePath = "";
 
   void initData();
+  bool loadDefaultTimetable();
   void setMenu();
   void setPlan(Plan *newPlan, int dayNum);
   void playBell(QUrl bellPath);
+  void loadFromJson(QByteArray json);
 
   QMediaPlayer *bellPlayer = new QMediaPlayer();
 protected:
@@ -63,6 +66,8 @@ protected:
 private slots:
   void importTimetable();
   void exportTimetable();
+  void exportTimetable(QString fileName);
+  void setDefaultTimetable();
   void addPlan();
   void deletePlan(Plan *plan);
   void inspectPlan(Plan *plan);

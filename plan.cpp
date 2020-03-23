@@ -72,6 +72,15 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   show();
 }
 
+void Plan::updateData()
+{
+  nameLabel->setText(planName);
+  startTimeLabel->setText(startTime->toString());
+  endTimeLabel->setText(endTime->toString());
+
+  updatePlanGeometry();
+}
+
 QRect Plan::calculateGeometry(QRect parentGeometry)
 {
   QRect geometry;

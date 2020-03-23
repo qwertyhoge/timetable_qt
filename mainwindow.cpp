@@ -35,7 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
+
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
+  connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
   TimeNotifier *timeNotifier = new TimeNotifier();
   ui->apparea->layout()->addWidget(timeNotifier);
@@ -360,13 +362,69 @@ void MainWindow::inspectPlan(Plan *plan)
 {
   selectedPlan = plan;
 
+  enterInspectMode();
+
   ui->inspectNameLine->setText(plan->planName);
   ui->inspectDayCombo->setCurrentIndex(plan->day);
   ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
+}
+
+void MainWindow::enterInspectMode()
+{
+  ui->inspectNameLine->setEnabled(false);
+  ui->inspectDayCombo->setEnabled(false);
+  ui->inspectStartTime->setEnabled(false);
+  ui->inspectEndTime->setEnabled(false);
 
   ui->editButton->setEnabled(true);
+  ui->editButton->setText("Edit plan");
+  disconnect(ui->editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
+  connect(ui->editButton, SIGNAL(clicked()), this, SLOT(enterEditMode()));
+
+  ui->editCancelButton->setEnabled(false);
+
   ui->deleteButton->setEnabled(true);
+}
+
+void MainWindow::enterEditMode()
+{
+  ui->inspectNameLine->setEnabled(true);
+  ui->inspectDayCombo->setEnabled(true);
+  ui->inspectStartTime->setEnabled(true);
+  ui->inspectEndTime->setEnabled(true);
+
+  ui->editButton->setEnabled(true);
+  ui->editButton->setText("Apply edit");
+  disconnect(ui->editButton, SIGNAL(clicked()), this, SLOT(enterEditMode()));
+  connect(ui->editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
+
+  ui->editCancelButton->setEnabled(true);
+
+  ui->deleteButton->setEnabled(false);
+}
+
+void MainWindow::cancelEdit()
+{
+  enterInspectMode();
+
+  ui->inspectNameLine->setText(selectedPlan->planName);
+  ui->inspectDayCombo->setCurrentIndex(selectedPlan->day);
+  ui->inspectStartTime->setTime(QTime(selectedPlan->startTime->hour, selectedPlan->startTime->minute));
+  ui->inspectEndTime->setTime(QTime(selectedPlan->endTime->hour, selectedPlan->endTime->minute));
+}
+
+void MainWindow::applyEdit()
+{
+  // sanitizing may be in need
+  selectedPlan->planName = ui->inspectNameLine->text();
+  selectedPlan->day = ui->inspectDayCombo->currentIndex();
+  selectedPlan->startTime = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
+  selectedPlan->endTime = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
+
+  selectedPlan->updateData();
+
+  enterInspectMode();
 }
 
 void MainWindow::highlightCurrentDay(int dayNum)

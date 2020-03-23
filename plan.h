@@ -22,6 +22,7 @@ public:
   Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end);
 
   void updatePlanGeometry();
+  void updateData();
 signals:
   void planClicked(Plan *plan);
 

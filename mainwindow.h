@@ -72,6 +72,10 @@ private slots:
   void deletePlan(Plan *plan);
   void deleteSelectedPlan();
   void inspectPlan(Plan *plan);
+  void enterInspectMode();
+  void enterEditMode();
+  void cancelEdit();
+  void applyEdit();
   void highlightCurrentDay(int day);
   void bellProperBell(QTime currentTime);
 

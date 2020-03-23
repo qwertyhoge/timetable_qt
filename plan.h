@@ -23,11 +23,7 @@ public:
 
   void updatePlanGeometry();
 signals:
-  void deleteButtonClicked(Plan *plan);
   void planClicked(Plan *plan);
-
-public slots:
-  void emitDeleteSignal();
 
 private:
   int xPos;
@@ -36,7 +32,6 @@ private:
   QLabel *nameLabel;
   QLabel *startTimeLabel;
   QLabel *endTimeLabel;
-  QPushButton *deleteButton;
 
   QRect calculateGeometry(QRect parentGeometry);
 

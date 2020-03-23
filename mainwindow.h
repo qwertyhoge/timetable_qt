@@ -70,6 +70,7 @@ private slots:
   void setDefaultTimetable();
   void addPlan();
   void deletePlan(Plan *plan);
+  void deleteSelectedPlan();
   void inspectPlan(Plan *plan);
   void highlightCurrentDay(int day);
   void bellProperBell(QTime currentTime);

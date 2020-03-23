@@ -66,13 +66,6 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   endTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
   endTimeLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
-  bottomLayout->addStretch(1);
-
-  deleteButton = new QPushButton(tr("Delete"));
-  bottomLayout->addWidget(deleteButton);
-  deleteButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-  connect(deleteButton, SIGNAL(clicked()), this, SLOT(emitDeleteSignal()));
-
   QRect geometry = calculateGeometry(parent->geometry());
   setGeometry(geometry);
 
@@ -110,9 +103,4 @@ void Plan::updatePlanGeometry()
 
 void Plan::mousePressEvent(QMouseEvent *event){
   emit planClicked(this);
-}
-
-void Plan::emitDeleteSignal()
-{
-  emit deleteButtonClicked(this);
 }

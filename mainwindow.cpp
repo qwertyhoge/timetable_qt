@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
+  connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
 
   TimeNotifier *timeNotifier = new TimeNotifier();
   ui->apparea->layout()->addWidget(timeNotifier);
@@ -311,7 +312,6 @@ void MainWindow::setPlan(Plan *newPlan, int dayNum)
   newPlan->day = dayNum;
   timetable[dayNum].push_back(newPlan);
 
-  connect(newPlan, SIGNAL(deleteButtonClicked(Plan*)), this, SLOT(deletePlan(Plan*)));
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
 
   timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
@@ -342,6 +342,20 @@ void MainWindow::deletePlan(Plan *plan)
   plan->deleteLater();
 }
 
+void MainWindow::deleteSelectedPlan()
+{
+  deletePlan(selectedPlan);
+  selectedPlan = nullptr;
+
+  ui->inspectNameLine->setText("");
+  ui->inspectDayCombo->setCurrentIndex(-1);
+  ui->inspectStartTime->setTime(QTime(0, 0));
+  ui->inspectEndTime->setTime(QTime(0, 0));
+
+  ui->editButton->setEnabled(false);
+  ui->deleteButton->setEnabled(false);
+}
+
 void MainWindow::inspectPlan(Plan *plan)
 {
   selectedPlan = plan;
@@ -350,6 +364,9 @@ void MainWindow::inspectPlan(Plan *plan)
   ui->inspectDayCombo->setCurrentIndex(plan->day);
   ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
+
+  ui->editButton->setEnabled(true);
+  ui->deleteButton->setEnabled(true);
 }
 
 void MainWindow::highlightCurrentDay(int dayNum)

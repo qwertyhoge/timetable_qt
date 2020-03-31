@@ -65,7 +65,7 @@ PlanTime *PlanTime::parseTime(QString timeString, char delimiter)
   }
 
   if(timeString[i] != delimiter){
-    // abort someway
+      return nullptr;
   }
 
   int parsedMinute = 0;

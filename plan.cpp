@@ -16,10 +16,12 @@ Plan::Plan(QWidget *parent) : QFrame(parent), planName("")
 Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   : QFrame(parent), planName(name), startTime(start), endTime(end)
 {
+  /*
   qDebug() << "parent: " << parent;
   qDebug() << "name: " << name;
   qDebug() << "start: " << start->hour << ":" << start->minute;
   qDebug() << "end: " << end->hour << ":" << end->minute;
+  */
 
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   setFrameStyle(QFrame::Plain | QFrame::Box);

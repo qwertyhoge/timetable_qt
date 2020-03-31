@@ -4,6 +4,7 @@
 #include "plan.h"
 #include "plantime.h"
 #include "timenotifier.h"
+#include "characterpanel.h"
 
 #include <QtWidgets>
 #include <QFrame>
@@ -24,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
   initData();
   setMenu();
 
+  CharacterPanel *characterPanel = new CharacterPanel();
+  ui->apparea->layout()->addWidget(characterPanel);
+
   for(int i = 0; i < 7; i++){
     rowFrames[i]->installEventFilter(this);
 
@@ -34,16 +38,11 @@ MainWindow::MainWindow(QWidget *parent)
   // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
-  connect(ui->addPlanButton, SIGNAL(clicked()), this, SLOT(addPlan()));
-
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
-  TimeNotifier *timeNotifier = new TimeNotifier();
-  ui->apparea->layout()->addWidget(timeNotifier);
-
-  connect(timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
-  connect(timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
+  connect(ui->timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
 
   /*
   Plan *testPlan = new Plan(rowFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
@@ -288,6 +287,7 @@ void MainWindow::setDefaultTimetable()
 
 void MainWindow::addPlan()
 {
+  /*
   QString name = ui->formNameLine->text();
   QString startTimeText = ui->formStartTime->text();
   QString endTimeText = ui->formEndTime->text();
@@ -306,7 +306,7 @@ void MainWindow::addPlan()
 
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
-
+  */
 }
 
 void MainWindow::setPlan(Plan *newPlan, int dayNum)

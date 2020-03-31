@@ -16,6 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    characterpanel.cpp \
+    characterview.cpp \
     main.cpp \
     mainwindow.cpp \
     plan.cpp \
@@ -23,6 +25,8 @@ SOURCES += \
     timenotifier.cpp
 
 HEADERS += \
+    characterpanel.h \
+    characterview.h \
     mainwindow.h \
     plan.h \
     plantime.h \

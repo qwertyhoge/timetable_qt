@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
   setMenu();
 
   CharacterPanel *characterPanel = new CharacterPanel();
-  ui->apparea->layout()->addWidget(characterPanel);
+  ui->headerArea->layout()->addWidget(characterPanel);
 
   for(int i = 0; i < 7; i++){
     rowFrames[i]->installEventFilter(this);

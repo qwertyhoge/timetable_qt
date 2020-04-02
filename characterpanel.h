@@ -6,7 +6,7 @@
 
 class CharacterView;
 
-class CharacterPanel : public QDockWidget
+class CharacterPanel : public QWidget
 {
 public:
   CharacterPanel(QWidget *parent = nullptr);

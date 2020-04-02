@@ -7,11 +7,10 @@
 #include <QDebug>
 
 CharacterPanel::CharacterPanel(QWidget *parent)
-  : QDockWidget(parent)
+  : QWidget(parent)
 {
-  QWidget *content = new QWidget(this);
   QHBoxLayout *layout = new QHBoxLayout();
-  content->setLayout(layout);
+  setLayout(layout);
 
   textArea = new QTextEdit();
   layout->addWidget(textArea);
@@ -20,8 +19,4 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
 
-  setWidget(content);
-
-  qDebug() << widget();
-  qDebug() << content;
 }

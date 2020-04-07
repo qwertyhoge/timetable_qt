@@ -10,15 +10,15 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   : QDockWidget(parent)
 {
   QWidget *content = new QWidget(this);
-  QHBoxLayout *layout = new QHBoxLayout();
+  QVBoxLayout *layout = new QVBoxLayout();
   content->setLayout(layout);
-
-  textArea = new QTextEdit();
-  layout->addWidget(textArea);
-  layout->setStretch(0, 1);
 
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
+
+  textArea = new QTextEdit();
+  layout->addWidget(textArea);
+  layout->setStretch(1, 1);
 
   setWidget(content);
 

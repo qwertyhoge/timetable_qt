@@ -15,6 +15,7 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
+  connect(characterArea, SIGNAL(characterClicked()), this, SLOT(showMenuMessage()));
 
   textArea = new QTextEdit();
   layout->addWidget(textArea);
@@ -24,4 +25,11 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   qDebug() << widget();
   qDebug() << content;
+}
+
+void CharacterPanel::showMenuMessage()
+{
+
+  // propagate signal
+  emit characterClicked();
 }

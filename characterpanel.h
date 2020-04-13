@@ -8,6 +8,8 @@ class CharacterView;
 
 class CharacterPanel : public QDockWidget
 {
+  Q_OBJECT
+
 public:
   CharacterPanel(QWidget *parent = nullptr);
 
@@ -15,6 +17,11 @@ private:
   QTextEdit *textArea;
   CharacterView *characterArea;
 
+private slots:
+  void showMenuMessage();
+
+signals:
+  void characterClicked();
 };
 
 #endif // CHARACTERPANEL_H

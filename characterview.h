@@ -31,6 +31,9 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event) override;
 
   bool event(QEvent *event) override;
+
+signals:
+  void characterClicked();
 };
 
 #endif // CHARACTER_H

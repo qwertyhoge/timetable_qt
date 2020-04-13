@@ -8,6 +8,8 @@
 #include <QTime>
 #include <QMediaPlayer>
 
+#include "actionmenu.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -51,6 +53,7 @@ private:
   BellType timeToAlerm[24][60];
   Plan *selectedPlan = nullptr;
   QString openingTimetablePath = "";
+  ActionMenu *actionMenu;
 
   void initData();
   bool loadDefaultTimetable();
@@ -78,6 +81,9 @@ private slots:
   void applyEdit();
   void highlightCurrentDay(int day);
   void bellProperBell(QTime currentTime);
+  void openMenu();
+  void disableTimetableArea();
+  void enableTimetableArea();
 
   void on_sundayFrame_customContextMenuRequested(const QPoint &pos);
 };

@@ -61,7 +61,7 @@ void CharacterView::mouseMoveEvent(QMouseEvent *event)
 void CharacterView::mouseReleaseEvent(QMouseEvent *event)
 {
   if(characterPressing){
-    qDebug() << "open menu";
+      emit characterClicked();
   }
 
   if(characterPressing){

@@ -27,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   CharacterPanel *characterPanel = new CharacterPanel();
   ui->apparea->layout()->addWidget(characterPanel);
+  connect(characterPanel, SIGNAL(characterClicked()), this, SLOT(openMenu()));
+
+  actionMenu = new ActionMenu(ui->timetableArea);
+  connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
 
   for(int i = 0; i < 7; i++){
     rowFrames[i]->installEventFilter(this);
@@ -456,6 +460,38 @@ void MainWindow::bellProperBell(QTime currentTime)
       playBell(QUrl("qrc:/sounds/first_bell.mp3"));
       break;
   }
+}
+
+void MainWindow::openMenu()
+{
+  QPoint modalAreaCenter = ui->timetableArea->geometry().center() + pos();
+  QSize modalAreaSize = QSize(ui->timetableArea->width() * 2 / 3, ui->timetableArea->height() * 2 / 3);
+  actionMenu->setMinimumWidth(modalAreaSize.width());
+  actionMenu->setMinimumHeight(modalAreaSize.height());
+  actionMenu->move(modalAreaCenter.x() - modalAreaSize.width() / 2,
+               modalAreaCenter.y() - modalAreaSize.height() / 2);
+
+  actionMenu->show();
+  actionMenu->raise();
+  actionMenu->activateWindow();
+  disableTimetableArea();
+
+}
+
+void MainWindow::disableTimetableArea()
+{
+  ui->timetableArea->setEnabled(false);
+  actionMenu->setEnabled(true);
+
+  ui->timetableArea->setStyleSheet("background-color: #cccccc");
+  actionMenu->setStyleSheet("background-color: #ffffff");
+
+}
+void MainWindow::enableTimetableArea()
+{
+  ui->timetableArea->setEnabled(true);
+  ui->timetableArea->setStyleSheet("");
+  actionMenu->setStyleSheet("");
 }
 
 void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)

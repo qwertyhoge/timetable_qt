@@ -11,6 +11,7 @@ Plan::Plan(QWidget *parent) : QFrame(parent), planName("")
 {
   startTime = new PlanTime(0);
   endTime = new PlanTime(0);
+
 }
 
 Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
@@ -72,6 +73,25 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   setGeometry(geometry);
 
   show();
+}
+
+void Plan::setDayColumn(QFrame *column, int dayNum)
+{
+  /*
+  rowFrames[dayNum] = column;
+  */
+}
+
+void Plan::setDayColumn(QFrame *column, QString day)
+{
+  /*
+  auto dayNum = dayMap.find(day);
+  if(dayNum != dayMap.end()){
+    rowFrames[*dayNum] = column;
+  }else{
+    qDebug() << "such day string was not found";
+  }
+  */
 }
 
 void Plan::updateData()

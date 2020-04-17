@@ -6,6 +6,8 @@
 
 class ActionMenu : public QDialog
 {
+  Q_OBJECT
+
 public:
   ActionMenu(QWidget *parent = nullptr);
 
@@ -15,10 +17,14 @@ private:
   QPushButton *deletePlanButton;
   QPushButton *quitButton;
 
-public slots:
+private slots:
+  void closeMenu();
+  void startAdd();
+  void startDelete();
 
 signals:
-
+  void deleteStarted();
+  void createWindowOpen();
 
 };
 

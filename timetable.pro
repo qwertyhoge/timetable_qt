@@ -19,20 +19,26 @@ SOURCES += \
     actionmenu.cpp \
     characterpanel.cpp \
     characterview.cpp \
+    daycolumn.cpp \
     main.cpp \
     mainwindow.cpp \
     plan.cpp \
+    plancreatewindow.cpp \
     plantime.cpp \
-    timenotifier.cpp
+    timenotifier.cpp \
+    timetable.cpp
 
 HEADERS += \
     actionmenu.h \
     characterpanel.h \
     characterview.h \
+    daycolumn.h \
     mainwindow.h \
     plan.h \
+    plancreatewindow.h \
     plantime.h \
-    timenotifier.h
+    timenotifier.h \
+    timetable.h
 
 FORMS += \
     mainwindow.ui

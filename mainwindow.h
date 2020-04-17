@@ -9,12 +9,14 @@
 #include <QMediaPlayer>
 
 #include "actionmenu.h"
+#include "plancreatewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class Plan;
+class Timetable;
 
 class MainWindow : public QMainWindow
 {
@@ -23,18 +25,6 @@ class MainWindow : public QMainWindow
 public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow() override;
-
-  enum Days{
-    SUNDAY = 0,
-    MONDAY = 1,
-    TUESDAY = 2,
-    WEDNESDAY = 3,
-    THIRSDAY = 4,
-    FRIDAY = 5,
-    SATURDAY = 6
-  };
-
-  QMap<QString, int> dayMap;
 
   void setNewPlan();
 private:
@@ -46,14 +36,27 @@ private:
     END_BELL,
     PRELIM_BELL
   };
+  enum Days{
+    SUNDAY = 0,
+    MONDAY = 1,
+    TUESDAY = 2,
+    WEDNESDAY = 3,
+    THIRSDAY = 4,
+    FRIDAY = 5,
+    SATURDAY = 6
+  };
+  static QMap<QString, int> dayMap;
+  QFrame *rowFrames[7];
 
-  QWidget *rowFrames[7];
   QLabel *rowLabels[7];
-  QVector<Plan*> timetable[7];
+  QVector<Plan*> timetableData[7];
   BellType timeToAlerm[24][60];
   Plan *selectedPlan = nullptr;
   QString openingTimetablePath = "";
   ActionMenu *actionMenu;
+  PlanCreateWindow *planCreateWindow;
+  Timetable *timetable;
+  bool timetableAreaDisabled = false;
 
   void initData();
   bool loadDefaultTimetable();
@@ -82,6 +85,7 @@ private slots:
   void highlightCurrentDay(int day);
   void bellProperBell(QTime currentTime);
   void openMenu();
+  void setPlanCreateWindow();
   void disableTimetableArea();
   void enableTimetableArea();
 

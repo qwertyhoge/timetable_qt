@@ -5,6 +5,8 @@
 #include "plantime.h"
 #include "timenotifier.h"
 #include "characterpanel.h"
+#include "daycolumn.h"
+#include "timetable.h"
 
 #include <QtWidgets>
 #include <QFrame>
@@ -22,6 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
     QDir().mkdir("configs");
   }
 
+  timetable = new Timetable();
+  ui->scrollAreaWidgetContents->layout()->addWidget(timetable);
+  // ui->scrollArea->setWidget(timetable);
+
   initData();
   setMenu();
 
@@ -32,10 +38,13 @@ MainWindow::MainWindow(QWidget *parent)
   actionMenu = new ActionMenu(ui->timetableArea);
   connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
 
+  planCreateWindow = new PlanCreateWindow();
+  connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
+
   for(int i = 0; i < 7; i++){
     rowFrames[i]->installEventFilter(this);
 
-    rowLabels[i]->setAutoFillBackground(true);
+    // rowLabels[i]->setAutoFillBackground(true);
   }
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
@@ -63,31 +72,43 @@ MainWindow::~MainWindow()
 
 void MainWindow::initData()
 {
-  dayMap = {
-    {"Sunday", 0},
-    {"Monday", 1},
-    {"Tuesday", 2},
-    {"Wednesday", 3},
-    {"Thirsday", 4},
-    {"Friday", 5},
-    {"Saturday", 6},
-  };
+  DayColumn *sundayColumn = new DayColumn();
+  timetable->layout->addWidget(sundayColumn);
+  rowFrames[SUNDAY] = sundayColumn;
 
-  rowFrames[SUNDAY] = ui->sundayFrame;
-  rowFrames[MONDAY] = ui->mondayFrame;
-  rowFrames[TUESDAY] = ui->tuesdayFrame;
-  rowFrames[WEDNESDAY] = ui->wednesdayFrame;
-  rowFrames[THIRSDAY] = ui->thirsdayFrame;
-  rowFrames[FRIDAY] = ui->fridayFrame;
-  rowFrames[SATURDAY] = ui->saturdayFrame;
+  DayColumn *mondayColumn = new DayColumn();
+  timetable->layout->addWidget(mondayColumn);
+  rowFrames[MONDAY] = mondayColumn;
 
-  rowLabels[SUNDAY] = ui->sundayLabel;
+  DayColumn *tuesdayColumn = new DayColumn();
+  timetable->layout->addWidget(tuesdayColumn);
+  rowFrames[TUESDAY] = tuesdayColumn;
+
+  DayColumn *wednesdayColumn = new DayColumn();
+  timetable->layout->addWidget(wednesdayColumn);
+  rowFrames[WEDNESDAY] = wednesdayColumn;
+
+  DayColumn *thirsdayColumn = new DayColumn();
+  timetable->layout->addWidget(thirsdayColumn);
+  rowFrames[THIRSDAY] = thirsdayColumn;
+
+  DayColumn *fridayColumn = new DayColumn();
+  timetable->layout->addWidget(fridayColumn);
+  rowFrames[FRIDAY] = fridayColumn;
+
+  DayColumn *saturdayColumn = new DayColumn();
+  timetable->layout->addWidget(saturdayColumn);
+  rowFrames[SATURDAY] = saturdayColumn;
+
+  /*
+  rowLabels[SUNDAY] = sundayColumn->label;
   rowLabels[MONDAY] = ui->mondayLabel;
   rowLabels[TUESDAY] = ui->tuesdayLabel;
   rowLabels[WEDNESDAY] = ui->wednesdayLabel;
   rowLabels[THIRSDAY] = ui->thirsdayLabel;
   rowLabels[FRIDAY] = ui->fridayLabel;
   rowLabels[SATURDAY] = ui->saturdayLabel;
+*/
 
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
@@ -157,7 +178,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
   for(int i = 0; i < 7; i++){
     if(obj == rowFrames[i] && event->type() == QEvent::Resize){
-      for(auto plan : timetable[i]){
+      for(auto plan : timetableData[i]){
         plan->updatePlanGeometry();
       }
       return true;
@@ -196,7 +217,7 @@ void MainWindow::loadFromJson(QByteArray json)
 
   if(!jsonDoc.isNull()){
     for(int day = 0; day < 7; day++){
-      for(auto plan : timetable[day]){
+      for(auto plan : timetableData[day]){
         deletePlan(plan);
       }
     }
@@ -205,7 +226,7 @@ void MainWindow::loadFromJson(QByteArray json)
         timeToAlerm[h][m] = BellType::NONE_BELL;
       }
     }
-    timetable->clear();
+    timetableData->clear();
     for(int day = 0; day < 7; day++){
       QJsonValue dayInfo = jsonDoc[day];
       QJsonArray dayPlans = dayInfo["plans"].toArray();
@@ -246,13 +267,13 @@ void MainWindow::exportTimetable(QString fileName)
       dayObj.insert("day", dayNames[i]);
 
       QJsonArray dayPlans;
-      for(int j = 0; j < timetable[i].size(); j++){
+      for(int j = 0; j < timetableData[i].size(); j++){
         QJsonObject planInfo;
-        qDebug() << "capsling " << timetable[i][j]->planName;
+        qDebug() << "capsling " << timetableData[i][j]->planName;
 
-        planInfo.insert("planName", timetable[i][j]->planName);
-        planInfo.insert("startTime", timetable[i][j]->startTime->toString());
-        planInfo.insert("endTime", timetable[i][j]->endTime->toString());
+        planInfo.insert("planName", timetableData[i][j]->planName);
+        planInfo.insert("startTime", timetableData[i][j]->startTime->toString());
+        planInfo.insert("endTime", timetableData[i][j]->endTime->toString());
 
         dayPlans.push_back(planInfo);
       }
@@ -316,7 +337,7 @@ void MainWindow::addPlan()
 void MainWindow::setPlan(Plan *newPlan, int dayNum)
 {
   newPlan->day = dayNum;
-  timetable[dayNum].push_back(newPlan);
+  timetableData[dayNum].push_back(newPlan);
 
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
 
@@ -341,7 +362,7 @@ void MainWindow::deletePlan(Plan *plan)
 {
   qDebug() << "remove";
 
-  if(!timetable[plan->day].removeOne(plan)){
+  if(!timetableData[plan->day].removeOne(plan)){
     qCritical() << "failed to delete from vector";
   }
   plan->setParent(nullptr);
@@ -441,7 +462,7 @@ void MainWindow::highlightCurrentDay(int dayNum)
       plt.setColor(QPalette::Background, QColor(253, 217, 192));
     }
 
-    rowLabels[i]->setPalette(plt);
+   //  rowLabels[i]->setPalette(plt);
   }
 }
 
@@ -475,23 +496,37 @@ void MainWindow::openMenu()
   actionMenu->raise();
   actionMenu->activateWindow();
   disableTimetableArea();
+}
 
+void MainWindow::setPlanCreateWindow()
+{
+  planCreateWindow->show();
+  planCreateWindow->raise();
+  planCreateWindow->activateWindow();
 }
 
 void MainWindow::disableTimetableArea()
 {
-  ui->timetableArea->setEnabled(false);
-  actionMenu->setEnabled(true);
+  if(!timetableAreaDisabled){
+    ui->timetableArea->setEnabled(false);
+    actionMenu->setEnabled(true);
 
-  ui->timetableArea->setStyleSheet("background-color: #cccccc");
-  actionMenu->setStyleSheet("background-color: #ffffff");
+    ui->timetableArea->setStyleSheet("background-color: #cccccc");
+    actionMenu->setStyleSheet("background-color: #ffffff");
+
+    timetableAreaDisabled = true;
+  }
 
 }
 void MainWindow::enableTimetableArea()
 {
-  ui->timetableArea->setEnabled(true);
-  ui->timetableArea->setStyleSheet("");
-  actionMenu->setStyleSheet("");
+  if(timetableAreaDisabled){
+    ui->timetableArea->setEnabled(true);
+    ui->timetableArea->setStyleSheet("");
+    actionMenu->setStyleSheet("");
+
+    timetableAreaDisabled = false;
+  }
 }
 
 void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)

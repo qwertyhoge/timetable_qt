@@ -6,7 +6,6 @@
 #include <QFrame>
 #include <QLabel>
 #include <QPushButton>
-
 #include <QMap>
 
 class Plan : public QFrame

@@ -14,6 +14,8 @@ class DayColumn : public QFrame
 public:
   DayColumn(QWidget *parent = nullptr);
 
+  QLabel *dayLabel;
+
   int day;
   QString dayString;
 
@@ -21,7 +23,6 @@ public:
 
 private:
   QHBoxLayout *layout;
-  QLabel *dayLabel;
   QWidget *planArea;
 };
 

@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   timetable = new Timetable();
+  connect(timetable, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
   ui->scrollAreaWidgetContents->layout()->addWidget(timetable);
   // ui->scrollArea->setWidget(timetable);
 
@@ -41,24 +42,18 @@ MainWindow::MainWindow(QWidget *parent)
   planCreateWindow = new PlanCreateWindow();
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
 
-  for(int i = 0; i < 7; i++){
-    rowFrames[i]->installEventFilter(this);
 
-    // rowLabels[i]->setAutoFillBackground(true);
-  }
-
-  highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
   // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
-  connect(ui->timeNotifier, SIGNAL(dayChanged(int)), this, SLOT(highlightCurrentDay(int)));
-  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), this, SLOT(bellProperBell(QTime)));
+  connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(bellProperBell(QTime)));
 
   /*
-  Plan *testPlan = new Plan(rowFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
+  Plan *testPlan = new Plan(dayFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
   setPlan(testPlan, SUNDAY);
   */
 
@@ -72,61 +67,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::initData()
 {
-  DayColumn *sundayColumn = new DayColumn();
-  timetable->layout->addWidget(sundayColumn);
-  rowFrames[SUNDAY] = sundayColumn;
-
-  DayColumn *mondayColumn = new DayColumn();
-  timetable->layout->addWidget(mondayColumn);
-  rowFrames[MONDAY] = mondayColumn;
-
-  DayColumn *tuesdayColumn = new DayColumn();
-  timetable->layout->addWidget(tuesdayColumn);
-  rowFrames[TUESDAY] = tuesdayColumn;
-
-  DayColumn *wednesdayColumn = new DayColumn();
-  timetable->layout->addWidget(wednesdayColumn);
-  rowFrames[WEDNESDAY] = wednesdayColumn;
-
-  DayColumn *thirsdayColumn = new DayColumn();
-  timetable->layout->addWidget(thirsdayColumn);
-  rowFrames[THIRSDAY] = thirsdayColumn;
-
-  DayColumn *fridayColumn = new DayColumn();
-  timetable->layout->addWidget(fridayColumn);
-  rowFrames[FRIDAY] = fridayColumn;
-
-  DayColumn *saturdayColumn = new DayColumn();
-  timetable->layout->addWidget(saturdayColumn);
-  rowFrames[SATURDAY] = saturdayColumn;
-
   /*
-  rowLabels[SUNDAY] = sundayColumn->label;
-  rowLabels[MONDAY] = ui->mondayLabel;
-  rowLabels[TUESDAY] = ui->tuesdayLabel;
-  rowLabels[WEDNESDAY] = ui->wednesdayLabel;
-  rowLabels[THIRSDAY] = ui->thirsdayLabel;
-  rowLabels[FRIDAY] = ui->fridayLabel;
-  rowLabels[SATURDAY] = ui->saturdayLabel;
 */
 
-  for(int i = 0; i < 24; i++){
-    for(int j = 0; j < 60; j++){
-      timeToAlerm[i][j] = NONE_BELL;
-    }
-  }
 }
 
 bool MainWindow::loadDefaultTimetable()
 {
   QFile config("./configs/defaulttimetable.cfg");
-
   if(!config.exists()){
     config.open(QIODevice::WriteOnly);
     config.close();
     return false;
   }
-
   if(!config.open(QIODevice::ReadOnly)){
     QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
     return false;
@@ -135,19 +88,17 @@ bool MainWindow::loadDefaultTimetable()
   config.close();
 
   QFile defaultFile(defaultFileName);
-
   if(defaultFileName.isEmpty() || !defaultFile.exists()){
     qDebug() << "the config is empty or such file does not exist";
     return false;
   }
-
   if(!defaultFile.open(QIODevice::ReadOnly)){
     QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
     return false;
   }
   QByteArray contents = defaultFile.readAll();
 
-  loadFromJson(contents);
+  timetable->loadFromJson(contents);
 
   openingTimetablePath = defaultFileName;
 
@@ -174,19 +125,6 @@ void MainWindow::setMenu()
   fileMenu->addAction(exitAction);
 }
 
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-  for(int i = 0; i < 7; i++){
-    if(obj == rowFrames[i] && event->type() == QEvent::Resize){
-      for(auto plan : timetableData[i]){
-        plan->updatePlanGeometry();
-      }
-      return true;
-    }
-  }
-
-  return false;
-}
 
 void MainWindow::importTimetable()
 {
@@ -206,43 +144,11 @@ void MainWindow::importTimetable()
 
     file.close();
 
-    loadFromJson(fileText.toUtf8());
+    timetable->loadFromJson(fileText.toUtf8());
     openingTimetablePath = fileName;
   }
 }
 
-void MainWindow::loadFromJson(QByteArray json)
-{
-  QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
-
-  if(!jsonDoc.isNull()){
-    for(int day = 0; day < 7; day++){
-      for(auto plan : timetableData[day]){
-        deletePlan(plan);
-      }
-    }
-    for(int h = 0; h < 24; h++){
-      for(int m = 0; m < 60; m++){
-        timeToAlerm[h][m] = BellType::NONE_BELL;
-      }
-    }
-    timetableData->clear();
-    for(int day = 0; day < 7; day++){
-      QJsonValue dayInfo = jsonDoc[day];
-      QJsonArray dayPlans = dayInfo["plans"].toArray();
-      for(auto plan = dayPlans.begin(); plan != dayPlans.end(); plan++){
-        QJsonObject planObj = (*plan).toObject();
-        QString planName = planObj["planName"].toString();
-        PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
-        PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
-        Plan *loadedPlan = new Plan(rowFrames[day], planName, startTime, endTime);
-
-        setPlan(loadedPlan, day);
-      }
-    }
-
-  }
-}
 
 void MainWindow::exportTimetable()
 {
@@ -260,27 +166,7 @@ void MainWindow::exportTimetable(QString fileName)
       return;
     }
 
-    QJsonArray jsonTimetable;
-    QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday"};
-    for(int i = 0; i < 7; i++){
-      QJsonObject dayObj;
-      dayObj.insert("day", dayNames[i]);
-
-      QJsonArray dayPlans;
-      for(int j = 0; j < timetableData[i].size(); j++){
-        QJsonObject planInfo;
-        qDebug() << "capsling " << timetableData[i][j]->planName;
-
-        planInfo.insert("planName", timetableData[i][j]->planName);
-        planInfo.insert("startTime", timetableData[i][j]->startTime->toString());
-        planInfo.insert("endTime", timetableData[i][j]->endTime->toString());
-
-        dayPlans.push_back(planInfo);
-      }
-      dayObj.insert("plans", dayPlans);
-
-      jsonTimetable.push_back(dayObj);
-    }
+    QJsonArray jsonTimetable = timetable->exportAsJson();
 
     QJsonDocument document(jsonTimetable);
     QTextStream outStream(&file);
@@ -306,6 +192,7 @@ void MainWindow::setDefaultTimetable()
     QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
     return;
   }
+
   file.write(openingTimetablePath.toUtf8());
   file.close();
 }
@@ -327,51 +214,17 @@ void MainWindow::addPlan()
   PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
   int dayNum = dayMap[day];
 
-  QWidget *column = rowFrames[dayNum];
+  QWidget *column = dayFrames[dayNum];
 
   Plan *newPlan = new Plan(column, name, startTime, endTime);
   setPlan(newPlan, dayNum);
   */
 }
 
-void MainWindow::setPlan(Plan *newPlan, int dayNum)
-{
-  newPlan->day = dayNum;
-  timetableData[dayNum].push_back(newPlan);
-
-  connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
-
-  timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
-  if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
-    timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] = END_BELL;
-  }
-  PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
-  if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
-    timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
-  }
-}
-
-void MainWindow::playBell(QUrl bellPath)
-{
-  bellPlayer->setMedia(bellPath);
-  bellPlayer->setVolume(40);
-  bellPlayer->play();
-}
-
-void MainWindow::deletePlan(Plan *plan)
-{
-  qDebug() << "remove";
-
-  if(!timetableData[plan->day].removeOne(plan)){
-    qCritical() << "failed to delete from vector";
-  }
-  plan->setParent(nullptr);
-  plan->deleteLater();
-}
 
 void MainWindow::deleteSelectedPlan()
 {
-  deletePlan(selectedPlan);
+  timetable->deletePlan(selectedPlan);
   selectedPlan = nullptr;
 
   ui->inspectNameLine->setText("");
@@ -452,37 +305,6 @@ void MainWindow::applyEdit()
   enterInspectMode();
 }
 
-void MainWindow::highlightCurrentDay(int dayNum)
-{
-  for(int i = 0; i < 7; i++){
-    QPalette plt = palette();
-
-    plt.setColor(QPalette::Background, QColor(248, 251, 254));
-    if(i == dayNum){
-      plt.setColor(QPalette::Background, QColor(253, 217, 192));
-    }
-
-   //  rowLabels[i]->setPalette(plt);
-  }
-}
-
-void MainWindow::bellProperBell(QTime currentTime)
-{
-  switch(timeToAlerm[currentTime.hour()][currentTime.minute()]){
-    case NONE_BELL:
-      break;
-    case START_BELL:
-      playBell(QUrl("qrc:/sounds/period_bell.mp3"));
-      break;
-    case END_BELL:
-      playBell(QUrl("qrc:/sounds/period_bell.mp3"));
-      break;
-    case PRELIM_BELL:
-      playBell(QUrl("qrc:/sounds/first_bell.mp3"));
-      break;
-  }
-}
-
 void MainWindow::openMenu()
 {
   QPoint modalAreaCenter = ui->timetableArea->geometry().center() + pos();
@@ -518,6 +340,7 @@ void MainWindow::disableTimetableArea()
   }
 
 }
+
 void MainWindow::enableTimetableArea()
 {
   if(timetableAreaDisabled){
@@ -527,9 +350,4 @@ void MainWindow::enableTimetableArea()
 
     timetableAreaDisabled = false;
   }
-}
-
-void MainWindow::on_sundayFrame_customContextMenuRequested(const QPoint &pos)
-{
-
 }

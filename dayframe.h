@@ -1,5 +1,5 @@
-#ifndef DAYCOLUMN_H
-#define DAYCOLUMN_H
+#ifndef DAYFRAME_H
+#define DAYFRAME_H
 
 #include <QFrame>
 #include <QLayout>
@@ -7,23 +7,22 @@
 
 #include "plan.h"
 
-class DayColumn : public QFrame
+class DayFrame : public QFrame
 {
   Q_OBJECT
 
 public:
-  DayColumn(QWidget *parent = nullptr);
+  DayFrame(QWidget *parent = nullptr, QString dayString = "DAY");
 
   QLabel *dayLabel;
+  QWidget *planArea;
 
-  int day;
   QString dayString;
 
   void addPlan(Plan* plan);
-
+  void updateText();
 private:
   QHBoxLayout *layout;
-  QWidget *planArea;
 };
 
-#endif // DAYCOLUMN_H
+#endif // DAYFRAME_H

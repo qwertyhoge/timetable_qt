@@ -19,7 +19,7 @@ SOURCES += \
     actionmenu.cpp \
     characterpanel.cpp \
     characterview.cpp \
-    daycolumn.cpp \
+    dayframe.cpp \
     main.cpp \
     mainwindow.cpp \
     plan.cpp \
@@ -32,7 +32,7 @@ HEADERS += \
     actionmenu.h \
     characterpanel.h \
     characterview.h \
-    daycolumn.h \
+    dayframe.h \
     mainwindow.h \
     plan.h \
     plancreatewindow.h \

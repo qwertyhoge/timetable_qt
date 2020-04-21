@@ -53,12 +53,7 @@ void PlanCreateWindow::sendPlan()
 
   PlanTime *startTime = PlanTime::parseTime(startTimeText, ':');
   PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
-  /*
-  int dayNum = dayMap[day];
 
-  QWidget *column = rowFrames[dayNum];
-
-  Plan *newPlan = new Plan(column, name, startTime, endTime);
-  setPlan(newPlan, dayNum);
-  */
+  Plan *newPlan = new Plan(name, startTime, endTime, daySelect->currentIndex() - 1);
+  planMake(newPlan);
 }

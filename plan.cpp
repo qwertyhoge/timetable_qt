@@ -7,22 +7,12 @@
 #include <QFrame>
 #include <QDebug>
 
-Plan::Plan(QWidget *parent) : QFrame(parent), planName("")
+Plan::Plan(QString name, PlanTime *start, PlanTime *end, int day)
+  : QFrame(nullptr), planName(name), startTime(start), endTime(end), dayNum(day)
 {
-  startTime = new PlanTime(0);
-  endTime = new PlanTime(0);
-
-}
-
-Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
-  : QFrame(parent), planName(name), startTime(start), endTime(end)
-{
-  /*
-  qDebug() << "parent: " << parent;
   qDebug() << "name: " << name;
   qDebug() << "start: " << start->hour << ":" << start->minute;
   qDebug() << "end: " << end->hour << ":" << end->minute;
-  */
 
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   setFrameStyle(QFrame::Plain | QFrame::Box);
@@ -68,42 +58,18 @@ Plan::Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end)
   bottomLayout->addWidget(endTimeLabel);
   endTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
   endTimeLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-  QRect geometry = calculateGeometry(parent->geometry());
-  setGeometry(geometry);
-
-  show();
 }
 
-void Plan::setDayColumn(QFrame *column, int dayNum)
-{
-  /*
-  rowFrames[dayNum] = column;
-  */
-}
-
-void Plan::setDayColumn(QFrame *column, QString day)
-{
-  /*
-  auto dayNum = dayMap.find(day);
-  if(dayNum != dayMap.end()){
-    rowFrames[*dayNum] = column;
-  }else{
-    qDebug() << "such day string was not found";
-  }
-  */
-}
-
-void Plan::updateData()
+void Plan::updateText()
 {
   nameLabel->setText(planName);
   startTimeLabel->setText(startTime->toString());
   endTimeLabel->setText(endTime->toString());
 
-  updatePlanGeometry();
+  fitGeometry(parentWidget()->size());
 }
 
-QRect Plan::calculateGeometry(QRect parentGeometry)
+QRect Plan::fitGeometry(QSize parentSize)
 {
   QRect geometry;
   int startMinutes = startTime->asMinutes();
@@ -113,23 +79,23 @@ QRect Plan::calculateGeometry(QRect parentGeometry)
     endMinutes = 24 * 60;
   }
 
-  xPos = startMinutes * parentGeometry.width() / 24 / 60;
+  xPos = startMinutes * parentSize.width() / 24 / 60;
   yPos = 0;
 
   geometry.setX(xPos);
   geometry.setY(yPos);
 
-  geometry.setWidth((endMinutes - startMinutes) * parentGeometry.width() / 24 / 60);
-  geometry.setHeight(parentGeometry.height());
+  geometry.setWidth((endMinutes - startMinutes) * parentSize.width() / 24 / 60);
+  geometry.setHeight(parentSize.height());
+
+  setGeometry(geometry);
 
   return geometry;
 }
 
 void Plan::updatePlanGeometry()
 {
-  QRect newGeometry = calculateGeometry(parentWidget()->geometry());
-
-  setGeometry(newGeometry);
+  fitGeometry(parentWidget()->size());
 }
 
 void Plan::mousePressEvent(QMouseEvent *event){

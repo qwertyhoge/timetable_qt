@@ -15,6 +15,7 @@
 #include <QEvent>
 
 #include "plan.h"
+#include "dayframe.h"
 
 class Timetable : public QWidget
 {
@@ -35,19 +36,27 @@ public:
     END_BELL,
     PRELIM_BELL
   };
+  QMap<QString, int> dayMap;
+  QString dayStrings[7] = {
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thirsday",
+    "Friday",
+    "Saturday"
+  };
 
   BellType timeToAlerm[24][60];
-
-  QMap<QString, int> dayMap;
-  QFrame *dayFrames[7];
-  QLabel *dayLabels[7];
   QVector<Plan*> timetableData[7];
+
   QMediaPlayer *bellPlayer = new QMediaPlayer();
 
   QVBoxLayout *layout;
+  DayFrame *dayFrames[7];
 
   explicit Timetable(QWidget *parent = nullptr);
-  void setPlan(Plan *newPlan, int dayNum);
+  void setPlan(Plan *newPlan);
   void playBell(QUrl bellPath);
   void loadFromJson(QByteArray json);
   QJsonArray exportAsJson(void);
@@ -62,6 +71,7 @@ public slots:
   void bellProperBell(QTime currentTime);
   void highlightCurrentDay(int day);
   void deletePlan(Plan *plan);
+  void addPlan(Plan *newPlan);
 
 private slots:
   void propagatePlanClicked(Plan* clickedPlan);

@@ -5,7 +5,7 @@
 #include "plantime.h"
 #include "timenotifier.h"
 #include "characterpanel.h"
-#include "daycolumn.h"
+#include "dayframe.h"
 #include "timetable.h"
 
 #include <QtWidgets>
@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   planCreateWindow = new PlanCreateWindow();
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
+  connect(planCreateWindow, SIGNAL(planMake(Plan*)), timetable, SLOT(addPlan(Plan*)));
 
 
   // mon1~sun7
@@ -52,11 +53,6 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
   connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(bellProperBell(QTime)));
 
-  /*
-  Plan *testPlan = new Plan(dayFrames[SUNDAY], "test", new PlanTime(0), new PlanTime(10));
-  setPlan(testPlan, SUNDAY);
-  */
-
   loadDefaultTimetable();
 }
 
@@ -67,9 +63,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::initData()
 {
-  /*
-*/
-
 }
 
 bool MainWindow::loadDefaultTimetable()
@@ -182,7 +175,7 @@ void MainWindow::setDefaultTimetable()
   QFile file("./configs/defaulttimetable.cfg");
 
   if(openingTimetablePath.isEmpty()){
-    QMessageBox::information(this, "Save timetable", tr("Export the timetable first to set it as default."));
+    QMessageBox::information(this, "Save timetable", tr("Export the timetable once to set as default."));
     exportTimetable();
   }else{
     exportTimetable(openingTimetablePath);
@@ -196,31 +189,6 @@ void MainWindow::setDefaultTimetable()
   file.write(openingTimetablePath.toUtf8());
   file.close();
 }
-
-void MainWindow::addPlan()
-{
-  /*
-  QString name = ui->formNameLine->text();
-  QString startTimeText = ui->formStartTime->text();
-  QString endTimeText = ui->formEndTime->text();
-  QString day = ui->formDayCombo->currentText();
-
-  if(day == ""){
-    // error
-    return;
-  }
-
-  PlanTime *startTime = PlanTime::parseTime(startTimeText, ':');
-  PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
-  int dayNum = dayMap[day];
-
-  QWidget *column = dayFrames[dayNum];
-
-  Plan *newPlan = new Plan(column, name, startTime, endTime);
-  setPlan(newPlan, dayNum);
-  */
-}
-
 
 void MainWindow::deleteSelectedPlan()
 {
@@ -243,7 +211,7 @@ void MainWindow::inspectPlan(Plan *plan)
   enterInspectMode();
 
   ui->inspectNameLine->setText(plan->planName);
-  ui->inspectDayCombo->setCurrentIndex(plan->day);
+  ui->inspectDayCombo->setCurrentIndex(plan->dayNum);
   ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
 }
@@ -287,7 +255,7 @@ void MainWindow::cancelEdit()
   enterInspectMode();
 
   ui->inspectNameLine->setText(selectedPlan->planName);
-  ui->inspectDayCombo->setCurrentIndex(selectedPlan->day);
+  ui->inspectDayCombo->setCurrentIndex(selectedPlan->dayNum);
   ui->inspectStartTime->setTime(QTime(selectedPlan->startTime->hour, selectedPlan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(selectedPlan->endTime->hour, selectedPlan->endTime->minute));
 }
@@ -296,11 +264,11 @@ void MainWindow::applyEdit()
 {
   // sanitizing may be in need
   selectedPlan->planName = ui->inspectNameLine->text();
-  selectedPlan->day = ui->inspectDayCombo->currentIndex();
+  selectedPlan->dayNum = ui->inspectDayCombo->currentIndex();
   selectedPlan->startTime = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
   selectedPlan->endTime = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
 
-  selectedPlan->updateData();
+  selectedPlan->updateText();
 
   enterInspectMode();
 }

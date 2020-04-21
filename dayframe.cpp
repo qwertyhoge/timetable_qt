@@ -1,16 +1,18 @@
-#include "daycolumn.h"
+#include "dayframe.h"
 
-DayColumn::DayColumn(QWidget *parent)
+DayFrame::DayFrame(QWidget *parent, QString dayString)
   : QFrame(parent)
 {
   setFrameStyle(QFrame::Box);
   setLineWidth(1);
 
+  this->dayString = dayString;
+
   layout = new QHBoxLayout();
   layout->setMargin(0);
   setLayout(layout);
 
-  dayLabel = new QLabel("DAY");
+  dayLabel = new QLabel(dayString);
   dayLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
   dayLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   dayLabel->setLineWidth(2);
@@ -21,7 +23,7 @@ DayColumn::DayColumn(QWidget *parent)
   layout->addWidget(planArea);
 }
 
-void DayColumn::addPlan(Plan *plan)
+void DayFrame::addPlan(Plan *plan)
 {
 
 }

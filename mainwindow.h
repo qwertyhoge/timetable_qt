@@ -42,7 +42,6 @@ private slots:
   void exportTimetable();
   void exportTimetable(QString fileName);
   void setDefaultTimetable();
-  void addPlan();
   void deleteSelectedPlan();
   void inspectPlan(Plan *plan);
   void enterInspectMode();

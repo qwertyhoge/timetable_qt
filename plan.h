@@ -12,20 +12,16 @@ class Plan : public QFrame
 {
   Q_OBJECT
 public:
-
-  static void setDayColumn(QFrame *column, int dayNum);
-  static void setDayColumn(QFrame *column, QString day);
-
-  int day;
   QString planName;
   PlanTime *startTime;
   PlanTime *endTime;
+  int dayNum;
 
-  explicit Plan(QWidget *parent = nullptr);
-  Plan(QWidget *parent, QString name, PlanTime *start, PlanTime *end);
+  Plan(QString name, PlanTime *start, PlanTime *end, int day);
 
   void updatePlanGeometry();
-  void updateData();
+  void updateText();
+  QRect fitGeometry(QSize parentSize);
 signals:
   void planClicked(Plan *plan);
 
@@ -36,8 +32,6 @@ private:
   QLabel *nameLabel;
   QLabel *startTimeLabel;
   QLabel *endTimeLabel;
-
-  QRect calculateGeometry(QRect parentGeometry);
 
 protected:
   void mousePressEvent(QMouseEvent *event) override;

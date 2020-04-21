@@ -1,5 +1,5 @@
 #include "timetable.h"
-#include "daycolumn.h"
+#include "dayframe.h"
 
 #include <QLabel>
 #include <QJsonDocument>
@@ -28,58 +28,31 @@ Timetable::Timetable(QWidget *parent)
   setLayout(layout);
   layout->setSpacing(0);
 
-  DayColumn *sundayColumn = new DayColumn();
-  layout->addWidget(sundayColumn);
-  dayFrames[SUNDAY] = sundayColumn;
-
-  DayColumn *mondayColumn = new DayColumn();
-  layout->addWidget(mondayColumn);
-  dayFrames[MONDAY] = mondayColumn;
-
-  DayColumn *tuesdayColumn = new DayColumn();
-  layout->addWidget(tuesdayColumn);
-  dayFrames[TUESDAY] = tuesdayColumn;
-
-  DayColumn *wednesdayColumn = new DayColumn();
-  layout->addWidget(wednesdayColumn);
-  dayFrames[WEDNESDAY] = wednesdayColumn;
-
-  DayColumn *thirsdayColumn = new DayColumn();
-  layout->addWidget(thirsdayColumn);
-  dayFrames[THIRSDAY] = thirsdayColumn;
-
-  DayColumn *fridayColumn = new DayColumn();
-  layout->addWidget(fridayColumn);
-  dayFrames[FRIDAY] = fridayColumn;
-
-  DayColumn *saturdayColumn = new DayColumn();
-  layout->addWidget(saturdayColumn);
-  dayFrames[SATURDAY] = saturdayColumn;
-
-  dayLabels[SUNDAY] = sundayColumn->dayLabel;
-  dayLabels[MONDAY] = mondayColumn->dayLabel;
-  dayLabels[TUESDAY] = tuesdayColumn->dayLabel;
-  dayLabels[WEDNESDAY] = wednesdayColumn->dayLabel;
-  dayLabels[THIRSDAY] = thirsdayColumn->dayLabel;
-  dayLabels[FRIDAY] = fridayColumn->dayLabel;
-  dayLabels[SATURDAY] = saturdayColumn->dayLabel;
+  for(int day = 0; day < 7; day++){
+    DayFrame *dayFrame = new DayFrame(nullptr, dayStrings[day]);
+    layout->addWidget(dayFrame);
+    dayFrames[day] = dayFrame;
+  }
 
   for(int i = 0; i < 7; i++){
     dayFrames[i]->installEventFilter(this);
-    dayLabels[i]->setAutoFillBackground(true);
+    dayFrames[i]->dayLabel->setAutoFillBackground(true);
   }
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
-
 }
 
 
-void Timetable::setPlan(Plan *newPlan, int dayNum)
+void Timetable::setPlan(Plan *newPlan)
 {
-  newPlan->day = dayNum;
-  timetableData[dayNum].push_back(newPlan);
+  QWidget *parentArea = dayFrames[newPlan->dayNum]->planArea;
+  timetableData[newPlan->dayNum].push_back(newPlan);
+  newPlan->fitGeometry(parentArea->size());
+  newPlan->setParent(parentArea);
 
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(propagatePlanClicked(Plan*)));
+
+  newPlan->show();
 
   timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
   if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
@@ -89,6 +62,7 @@ void Timetable::setPlan(Plan *newPlan, int dayNum)
   if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
     timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
   }
+
 }
 
 void Timetable::highlightCurrentDay(int dayNum)
@@ -101,7 +75,7 @@ void Timetable::highlightCurrentDay(int dayNum)
       plt.setColor(QPalette::Background, QColor(253, 217, 192));
     }
 
-    dayLabels[i]->setPalette(plt);
+    dayFrames[i]->dayLabel->setPalette(plt);
   }
 }
 
@@ -130,7 +104,7 @@ void Timetable::deletePlan(Plan *plan)
 {
   qDebug() << "remove";
 
-  if(!timetableData[plan->day].removeOne(plan)){
+  if(!timetableData[plan->dayNum].removeOne(plan)){
     qCritical() << "failed to delete from vector";
   }
   plan->setParent(nullptr);
@@ -161,9 +135,9 @@ void Timetable::loadFromJson(QByteArray json)
         QString planName = planObj["planName"].toString();
         PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
         PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
-        Plan *loadedPlan = new Plan(dayFrames[day], planName, startTime, endTime);
+        Plan *loadedPlan = new Plan(planName, startTime, endTime, day);
 
-        setPlan(loadedPlan, day);
+        setPlan(loadedPlan);
       }
     }
 
@@ -172,7 +146,6 @@ void Timetable::loadFromJson(QByteArray json)
 
 QJsonArray Timetable::exportAsJson()
 {
-
   QJsonArray jsonTimetable;
   QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday"};
   for(int i = 0; i < 7; i++){
@@ -213,6 +186,13 @@ void Timetable::bellProperBell(QTime currentTime)
       playBell(QUrl("qrc:/sounds/first_bell.mp3"));
       break;
   }
+}
+
+void Timetable::addPlan(Plan* newPlan)
+{
+  qDebug() << "addplan";
+  qDebug() << "day: " << newPlan->dayNum;
+  setPlan(newPlan);
 }
 
 void Timetable::propagatePlanClicked(Plan* clickedPlan)

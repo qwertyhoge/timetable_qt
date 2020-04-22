@@ -32,11 +32,9 @@ Timetable::Timetable(QWidget *parent)
     DayFrame *dayFrame = new DayFrame(nullptr, dayStrings[day]);
     layout->addWidget(dayFrame);
     dayFrames[day] = dayFrame;
-  }
 
-  for(int i = 0; i < 7; i++){
-    dayFrames[i]->installEventFilter(this);
-    dayFrames[i]->dayLabel->setAutoFillBackground(true);
+    dayFrames[day]->installEventFilter(this);
+    dayFrames[day]->dayLabel->setAutoFillBackground(true);
   }
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
@@ -45,14 +43,9 @@ Timetable::Timetable(QWidget *parent)
 
 void Timetable::setPlan(Plan *newPlan)
 {
-  QWidget *parentArea = dayFrames[newPlan->dayNum]->planArea;
-  timetableData[newPlan->dayNum].push_back(newPlan);
-  newPlan->fitGeometry(parentArea->size());
-  newPlan->setParent(parentArea);
+  dayFrames[newPlan->dayNum]->addPlan(newPlan);
 
-  connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(propagatePlanClicked(Plan*)));
-
-  newPlan->show();
+  connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
 
   timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
   if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
@@ -82,11 +75,8 @@ void Timetable::highlightCurrentDay(int dayNum)
 bool Timetable::eventFilter(QObject *obj, QEvent *event)
 {
   for(int i = 0; i < 7; i++){
-    if(obj == dayFrames[i] && event->type() == QEvent::Resize){
-      for(auto plan : timetableData[i]){
-        plan->updatePlanGeometry();
-      }
-      return true;
+    if(obj == dayFrames[i] && event->type() == QEvent::Show){
+      qDebug() << "label of day " << i << " is shown";
     }
   }
 
@@ -102,13 +92,7 @@ void Timetable::playBell(QUrl bellPath)
 
 void Timetable::deletePlan(Plan *plan)
 {
-  qDebug() << "remove";
-
-  if(!timetableData[plan->dayNum].removeOne(plan)){
-    qCritical() << "failed to delete from vector";
-  }
-  plan->setParent(nullptr);
-  plan->deleteLater();
+  dayFrames[plan->dayNum]->deletePlan(plan);
 }
 
 void Timetable::loadFromJson(QByteArray json)
@@ -116,17 +100,16 @@ void Timetable::loadFromJson(QByteArray json)
   QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
 
   if(!jsonDoc.isNull()){
+
     for(int day = 0; day < 7; day++){
-      for(auto plan : timetableData[day]){
-        deletePlan(plan);
-      }
+      dayFrames[day]->clearPlans();
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
         timeToAlerm[h][m] = NONE_BELL;
       }
     }
-    timetableData->clear();
+
     for(int day = 0; day < 7; day++){
       QJsonValue dayInfo = jsonDoc[day];
       QJsonArray dayPlans = dayInfo["plans"].toArray();
@@ -152,18 +135,7 @@ QJsonArray Timetable::exportAsJson()
     QJsonObject dayObj;
     dayObj.insert("day", dayNames[i]);
 
-    QJsonArray dayPlans;
-    for(int j = 0; j < timetableData[i].size(); j++){
-      QJsonObject planInfo;
-      qDebug() << "capsling " << timetableData[i][j]->planName;
-
-      planInfo.insert("planName", timetableData[i][j]->planName);
-      planInfo.insert("startTime", timetableData[i][j]->startTime->toString());
-      planInfo.insert("endTime", timetableData[i][j]->endTime->toString());
-
-      dayPlans.push_back(planInfo);
-    }
-    dayObj.insert("plans", dayPlans);
+    dayObj.insert("plans", dayFrames[i]->extractDayJsonArray());
 
     jsonTimetable.push_back(dayObj);
   }
@@ -195,7 +167,7 @@ void Timetable::addPlan(Plan* newPlan)
   setPlan(newPlan);
 }
 
-void Timetable::propagatePlanClicked(Plan* clickedPlan)
+void Timetable::raisePlanClicked(Plan* clickedPlan)
 {
   emit planClicked(clickedPlan);
 }

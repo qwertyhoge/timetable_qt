@@ -48,7 +48,6 @@ public:
   };
 
   BellType timeToAlerm[24][60];
-  QVector<Plan*> timetableData[7];
 
   QMediaPlayer *bellPlayer = new QMediaPlayer();
 
@@ -74,7 +73,7 @@ public slots:
   void addPlan(Plan *newPlan);
 
 private slots:
-  void propagatePlanClicked(Plan* clickedPlan);
+  void raisePlanClicked(Plan* clickedPlan);
 };
 
 #endif // TIMETABLE_H

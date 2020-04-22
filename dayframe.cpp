@@ -1,5 +1,9 @@
 #include "dayframe.h"
 
+#include <QDebug>
+#include <QJsonArray>
+#include <QJsonObject>
+
 DayFrame::DayFrame(QWidget *parent, QString dayString)
   : QFrame(parent)
 {
@@ -13,7 +17,7 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
   setLayout(layout);
 
   dayLabel = new QLabel(dayString);
-  dayLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+  dayLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
   dayLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   dayLabel->setLineWidth(2);
   dayLabel->setMargin(0);
@@ -23,7 +27,51 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
   layout->addWidget(planArea);
 }
 
-void DayFrame::addPlan(Plan *plan)
+void DayFrame::resizeEvent(QResizeEvent *event)
 {
+  for(auto plan : plans){
+    plan->updatePlanGeometry();
+  }
+}
 
+void DayFrame::addPlan(Plan *newPlan)
+{
+  plans.push_back(newPlan);
+  newPlan->fitGeometry(size());
+  newPlan->setParent(this);
+
+  newPlan->show();
+}
+
+void DayFrame::deletePlan(Plan *plan)
+{
+  if(!plans.removeOne(plan)){
+    qCritical() << "failed to delete from vector";
+  }
+  plan->setParent(nullptr);
+  plan->deleteLater();
+}
+
+void DayFrame::clearPlans(void)
+{
+  for(auto plan : plans){
+    deletePlan(plan);
+  }
+}
+
+QJsonArray DayFrame::extractDayJsonArray()
+{
+  QJsonArray dayPlans;
+  for(auto plan : plans){
+    QJsonObject planInfo;
+    qDebug() << "capsling " << plan->planName;
+
+    planInfo.insert("planName", plan->planName);
+    planInfo.insert("startTime", plan->startTime->toString());
+    planInfo.insert("endTime", plan->endTime->toString());
+
+    dayPlans.push_back(planInfo);
+  }
+
+  return dayPlans;
 }

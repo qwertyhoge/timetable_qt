@@ -14,13 +14,21 @@ class DayFrame : public QFrame
 public:
   DayFrame(QWidget *parent = nullptr, QString dayString = "DAY");
 
+  QString dayString;
+  QVector<Plan*> plans;
+
   QLabel *dayLabel;
   QWidget *planArea;
 
-  QString dayString;
-
   void addPlan(Plan* plan);
+  void deletePlan(Plan* plan);
   void updateText();
+  void clearPlans(void);
+  QJsonArray extractDayJsonArray(void);
+
+protected:
+  void resizeEvent(QResizeEvent *event) override;
+
 private:
   QHBoxLayout *layout;
 };

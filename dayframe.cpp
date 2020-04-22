@@ -19,6 +19,7 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
   dayLabel = new QLabel(dayString);
   dayLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
   dayLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  dayLabel->setAlignment(Qt::AlignCenter);
   dayLabel->setLineWidth(2);
   dayLabel->setMargin(0);
   layout->addWidget(dayLabel);

@@ -46,6 +46,8 @@ public:
     "Friday",
     "Saturday"
   };
+  bool allShown = false;
+  int labelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
   BellType timeToAlerm[24][60];
 

@@ -74,10 +74,37 @@ void Timetable::highlightCurrentDay(int dayNum)
 
 bool Timetable::eventFilter(QObject *obj, QEvent *event)
 {
-  for(int i = 0; i < 7; i++){
-    if(obj == dayFrames[i] && event->type() == QEvent::Show){
-      qDebug() << "label of day " << i << " is shown";
+  if(!allShown){
+    for(int i = 0; i < 7; i++){
+      if(obj == dayFrames[i] && event->type() == QEvent::Show){
+        qDebug() << "frame of day " << i << " is shown";
+        labelWidths[i] = dayFrames[i]->dayLabel->size().width();
+
+        auto searchMaxWidth = [&]{
+          int maxWidth = 0;
+          for(int i = 0; i < 7; i++){
+            if(labelWidths[i] == -1){
+              return -1;
+            }else if(labelWidths[i] > maxWidth){
+              maxWidth = labelWidths[i];
+            }
+          }
+
+          return maxWidth;
+        };
+
+        int maxWidth = searchMaxWidth();
+        if(maxWidth != -1){
+          for(int i = 0; i < 7; i++){
+            dayFrames[i]->dayLabel->setFixedWidth(maxWidth);
+          }
+          allShown = true;
+        }
+
+        return true;
+      }
     }
+
   }
 
   return false;

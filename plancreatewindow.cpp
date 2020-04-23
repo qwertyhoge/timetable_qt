@@ -7,6 +7,10 @@
 PlanCreateWindow::PlanCreateWindow(QWidget *parent)
   : QDialog(parent)
 {
+  unsigned int flags = windowFlags();
+  flags = flags & (~Qt::WindowContextHelpButtonHint);
+  setWindowFlags(Qt::WindowFlags(flags));
+
   formLayout = new QFormLayout();
   setLayout(formLayout);
 

@@ -21,7 +21,7 @@ public:
 
   void updatePlanGeometry();
   void updateText();
-  QRect fitGeometry(QSize parentSize);
+  QRect fitGeometry();
 signals:
   void planClicked(Plan *plan);
 

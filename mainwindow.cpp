@@ -36,10 +36,10 @@ MainWindow::MainWindow(QWidget *parent)
   ui->apparea->layout()->addWidget(characterPanel);
   connect(characterPanel, SIGNAL(characterClicked()), this, SLOT(openMenu()));
 
-  actionMenu = new ActionMenu(ui->timetableArea);
+  actionMenu = new ActionMenu(this);
   connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
 
-  planCreateWindow = new PlanCreateWindow();
+  planCreateWindow = new PlanCreateWindow(this);
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
   connect(planCreateWindow, SIGNAL(planMake(Plan*)), timetable, SLOT(addPlan(Plan*)));
 
@@ -301,8 +301,7 @@ void MainWindow::disableTimetableArea()
     ui->timetableArea->setEnabled(false);
     actionMenu->setEnabled(true);
 
-    ui->timetableArea->setStyleSheet("background-color: #cccccc");
-    actionMenu->setStyleSheet("background-color: #ffffff");
+    ui->timetableArea->setStyleSheet("background: #cccccc");
 
     timetableAreaDisabled = true;
   }
@@ -314,7 +313,6 @@ void MainWindow::enableTimetableArea()
   if(timetableAreaDisabled){
     ui->timetableArea->setEnabled(true);
     ui->timetableArea->setStyleSheet("");
-    actionMenu->setStyleSheet("");
 
     timetableAreaDisabled = false;
   }

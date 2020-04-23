@@ -14,6 +14,7 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
 
   layout = new QHBoxLayout();
   layout->setMargin(0);
+  layout->setSpacing(0);
   setLayout(layout);
 
   dayLabel = new QLabel(dayString);
@@ -38,8 +39,8 @@ void DayFrame::resizeEvent(QResizeEvent *event)
 void DayFrame::addPlan(Plan *newPlan)
 {
   plans.push_back(newPlan);
-  newPlan->fitGeometry(size());
-  newPlan->setParent(this);
+  newPlan->setParent(planArea);
+  newPlan->fitGeometry();
 
   newPlan->show();
 }

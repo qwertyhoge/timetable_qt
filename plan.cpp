@@ -66,12 +66,13 @@ void Plan::updateText()
   startTimeLabel->setText(startTime->toString());
   endTimeLabel->setText(endTime->toString());
 
-  fitGeometry(parentWidget()->size());
+  fitGeometry();
 }
 
-QRect Plan::fitGeometry(QSize parentSize)
+QRect Plan::fitGeometry()
 {
   QRect geometry;
+  QSize parentSize = parentWidget()->size();
   int startMinutes = startTime->asMinutes();
   int endMinutes = endTime->asMinutes();
 
@@ -95,7 +96,7 @@ QRect Plan::fitGeometry(QSize parentSize)
 
 void Plan::updatePlanGeometry()
 {
-  fitGeometry(parentWidget()->size());
+  fitGeometry();
 }
 
 void Plan::mousePressEvent(QMouseEvent *event){

@@ -77,7 +77,6 @@ bool Timetable::eventFilter(QObject *obj, QEvent *event)
   if(!allShown){
     for(int i = 0; i < 7; i++){
       if(obj == dayFrames[i] && event->type() == QEvent::Show){
-        qDebug() << "frame of day " << i << " is shown";
         labelWidths[i] = dayFrames[i]->dayLabel->size().width();
 
         auto searchMaxWidth = [&]{

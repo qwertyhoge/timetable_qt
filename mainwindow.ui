@@ -14,9 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow{
-	background-color: #fcfbfe;
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="apparea">
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1">
@@ -95,7 +93,7 @@
             </sizepolicy>
            </property>
            <property name="styleSheet">
-            <string notr="true">font-size: 16px;</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::Box</enum>

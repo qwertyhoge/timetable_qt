@@ -1,28 +1,32 @@
 #include "actionmenu.h"
-#include "plancreatewindow.h"
 
 #include <QPushButton>
 
 ActionMenu::ActionMenu(QWidget *parent)
   : QDialog(parent)
 {
+  unsigned int flags = windowFlags();
+  flags = flags & (~Qt::WindowContextHelpButtonHint);
+  flags |= Qt::FramelessWindowHint;
+  setWindowFlags(Qt::WindowFlags(flags));
+
+  setStyleSheet("ActionMenu{\
+                  border: 5px double #b3dfc6;\
+                  background: #f8fcfe\
+                }");
   layout = new QVBoxLayout();
   setLayout(layout);
-  layout->addStretch(1);
 
   addPlanButton = new QPushButton(tr("Add plan"));
   layout->addWidget(addPlanButton);
-  layout->addStretch(1);
   connect(addPlanButton, SIGNAL(clicked()), this, SLOT(startAdd()));
 
   deletePlanButton = new QPushButton(tr("Delete plans"));
   layout->addWidget(deletePlanButton);
-  layout->addStretch(1);
   connect(deletePlanButton, SIGNAL(clicked()), this, SLOT(startDelete()));
 
   quitButton = new QPushButton(tr("Quit menu"));
   layout->addWidget(quitButton);
-  layout->addStretch(1);
   connect(quitButton, SIGNAL(clicked()), this, SLOT(closeMenu()));
 }
 

@@ -2,7 +2,7 @@
 #define ACTIONMENU_H
 
 #include <QDialog>
-#include <QLayout>
+#include <QVBoxLayout>
 
 class ActionMenu : public QDialog
 {

@@ -124,50 +124,56 @@ void MainWindow::importTimetable()
   QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), "", "JSON Files (*.json)");
 
   if(!fileName.isEmpty()){
-    QFile file(fileName);
-    if(!file.open(QIODevice::ReadOnly)){
-      QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-      return;
-    }
-    QTextStream inStream(&file);
-    QString fileText;
-    while(!inStream.atEnd()){
-      fileText += inStream.readLine() + '\n';
-    }
-
-    file.close();
-
-    timetable->loadFromJson(fileText.toUtf8());
-    openingTimetablePath = fileName;
+    importTimetable(fileName);
   }
+
 }
 
+void MainWindow::importTimetable(QString fileName)
+{
+
+  QFile file(fileName);
+  if(!file.open(QIODevice::ReadOnly)){
+    QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+    return;
+  }
+  QTextStream inStream(&file);
+  QString fileText;
+  while(!inStream.atEnd()){
+    fileText += inStream.readLine() + '\n';
+  }
+
+  file.close();
+
+  timetable->loadFromJson(fileText.toUtf8());
+  openingTimetablePath = fileName;
+}
 
 void MainWindow::exportTimetable()
 {
   QString fileName = QFileDialog::getSaveFileName(this, tr("Export File"), "", "JSON Files (*.json)");
 
-  exportTimetable(fileName);
+  if(!fileName.isEmpty()){
+    exportTimetable(fileName);
+    }
 }
 
 void MainWindow::exportTimetable(QString fileName)
 {
-  if(!fileName.isEmpty()){
-    QFile file(fileName);
-    if(!file.open(QIODevice::WriteOnly)){
-      QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
-      return;
-    }
-
-    QJsonArray jsonTimetable = timetable->exportAsJson();
-
-    QJsonDocument document(jsonTimetable);
-    QTextStream outStream(&file);
-    outStream << document.toJson(QJsonDocument::Indented);
-    file.close();
-
-    openingTimetablePath = fileName;
+  QFile file(fileName);
+  if(!file.open(QIODevice::WriteOnly)){
+    QMessageBox::critical(this, tr("Error"), tr("Could not open the file."));
+    return;
   }
+
+  QJsonArray jsonTimetable = timetable->exportAsJson();
+
+  QJsonDocument document(jsonTimetable);
+  QTextStream outStream(&file);
+  outStream << document.toJson(QJsonDocument::Indented);
+  file.close();
+
+  openingTimetablePath = fileName;
 }
 
 void MainWindow::setDefaultTimetable()

@@ -22,7 +22,6 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow() override;
 
-  void setNewPlan();
 private:
   Ui::MainWindow *ui;
 
@@ -39,6 +38,7 @@ private:
 
 private slots:
   void importTimetable();
+  void importTimetable(QString fileName);
   void exportTimetable();
   void exportTimetable(QString fileName);
   void setDefaultTimetable();

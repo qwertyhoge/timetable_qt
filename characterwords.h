@@ -2,7 +2,6 @@
 #define CHARACTERWORDS_H
 
 #include <QString>
-#include <QMap>
 #include <QHash>
 
 class CharacterWords

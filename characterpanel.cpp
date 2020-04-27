@@ -35,8 +35,8 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
 void CharacterPanel::showMenuMessage()
 {
-  //characterWords->
-  textArea->setText("");
+  QString word = characterWords->pickRandomOne(CharacterWords::MENU_OPEN);
+  textArea->setText(word);
 
   // propagate signal
   emit characterClicked();

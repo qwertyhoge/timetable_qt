@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
+#include <QRandomGenerator>
 
 CharacterWords::CharacterWords()
 {
@@ -56,7 +57,7 @@ bool CharacterWords::parseWordsJson(QByteArray json)
     qDebug() << error.errorString() << " " << error.offset;
     return false;
   }
-  QMap<QString, QVector<QString> > aliases;
+  QHash<QString, QVector<QString> > aliases;
   QJsonObject aliasPart = jsonDoc["alias"].toObject();
   for(auto timing : timingStrings){
     if(aliasPart.contains(timing)){
@@ -73,7 +74,7 @@ bool CharacterWords::parseWordsJson(QByteArray json)
     for(auto timingAlias : aliases[timing]){
       QJsonArray words = jsonDoc[timingAlias].toArray();
       for(auto word : words){
-        aliases[timingAlias].push_back(word.toString());
+        wordList[timing].push_back(word.toString());
       }
     }
   }
@@ -83,5 +84,10 @@ bool CharacterWords::parseWordsJson(QByteArray json)
 
 QString CharacterWords::pickRandomOne(Timings timing)
 {
+  const QString timingKey = timingStrings[timing];
+  const QVector<QString> wordVec = wordList[timingKey];
 
+  int randomIndex = int(QRandomGenerator::global()->generate() % uint(wordVec.size()));
+
+  return wordVec[randomIndex];
 }

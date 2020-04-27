@@ -9,14 +9,15 @@
 
 CharacterWords::CharacterWords()
 {
-  timings.append("run");
-  timings.append("menuopen");
-  timings.append("menuquit");
-  timings.append("planeditstart");
-  timings.append("planeditcancel");
-  timings.append("planeditdone");
-  timings.append("plancreate");
-  timings.append("plandelete");
+
+  timingStrings[RUN] = "run";
+  timingStrings[MENU_OPEN] = "menuopen";
+  timingStrings[MENU_QUIT] = "menuquit";
+  timingStrings[PLAN_EDIT_START] = "planeditstart";
+  timingStrings[PLAN_EDIT_CANCEL] = "planeditcancel";
+  timingStrings[PLAN_EDIT_DONE] = "planeditdone";
+  timingStrings[PLAN_CREATE] = "plancreate";
+  timingStrings[PLAN_DELETE] = "plandelete";
 }
 
 bool CharacterWords::loadWords()
@@ -27,12 +28,20 @@ bool CharacterWords::loadWords()
     qDebug() << "words file does not exist";
     return false;
   }
+  if(!words.open(QIODevice::ReadOnly)){
+    qDebug() << "failed to open words file";
+    return false;
+  }
 
   QTextStream inStream(&words);
   QString fileText;
   while(!inStream.atEnd()){
-    fileText += inStream.readLine() + '\n';
+    QString line = inStream.readLine();
+    line.replace("\\", "\\\\");
+    fileText += line + '\n';
   }
+
+  words.close();
 
   return parseWordsJson(fileText.toUtf8());
 }
@@ -40,13 +49,16 @@ bool CharacterWords::loadWords()
 
 bool CharacterWords::parseWordsJson(QByteArray json)
 {
-  QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
+  QJsonParseError error;
+  QJsonDocument jsonDoc = QJsonDocument::fromJson(json, &error);
   if(jsonDoc.isNull()){
+    qDebug() << "document is null";
+    qDebug() << error.errorString() << " " << error.offset;
     return false;
   }
   QMap<QString, QVector<QString> > aliases;
   QJsonObject aliasPart = jsonDoc["alias"].toObject();
-  for(auto timing : timings){
+  for(auto timing : timingStrings){
     if(aliasPart.contains(timing)){
       QJsonArray aliasArray = aliasPart[timing].toArray();
       for(auto alias : aliasArray){
@@ -55,7 +67,7 @@ bool CharacterWords::parseWordsJson(QByteArray json)
     }
   }
 
-  for(auto timing : timings){
+  for(auto timing : timingStrings){
     aliases[timing].push_front(timing);
 
     for(auto timingAlias : aliases[timing]){
@@ -67,4 +79,9 @@ bool CharacterWords::parseWordsJson(QByteArray json)
   }
 
   return true;
+}
+
+QString CharacterWords::pickRandomOne(Timings timing)
+{
+
 }

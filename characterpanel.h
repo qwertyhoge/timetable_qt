@@ -5,6 +5,7 @@
 #include <QTextEdit>
 
 class CharacterView;
+class CharacterWords;
 
 class CharacterPanel : public QDockWidget
 {
@@ -16,6 +17,7 @@ public:
 private:
   QTextEdit *textArea;
   CharacterView *characterArea;
+  CharacterWords *characterWords;
 
 private slots:
   void showMenuMessage();

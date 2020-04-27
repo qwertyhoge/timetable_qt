@@ -1,6 +1,7 @@
 #include "characterpanel.h"
 
 #include "characterview.h"
+#include "characterwords.h"
 
 #include <QLayout>
 #include <QTextEdit>
@@ -9,6 +10,11 @@
 CharacterPanel::CharacterPanel(QWidget *parent)
   : QDockWidget(parent)
 {
+  characterWords = new CharacterWords();
+  if(!characterWords->loadWords()){
+    qCritical() << "failed to load words";
+  }
+
   QWidget *content = new QWidget(this);
   QVBoxLayout *layout = new QVBoxLayout();
   content->setLayout(layout);
@@ -29,6 +35,8 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
 void CharacterPanel::showMenuMessage()
 {
+  //characterWords->
+  textArea->setText("");
 
   // propagate signal
   emit characterClicked();

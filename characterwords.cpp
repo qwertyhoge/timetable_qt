@@ -87,6 +87,11 @@ QString CharacterWords::pickRandomOne(Timings timing)
   const QString timingKey = timingStrings[timing];
   const QVector<QString> wordVec = wordList[timingKey];
 
+  qDebug() << "running pick random";
+  if(wordVec.empty()){
+    return "";
+  }
+
   int randomIndex = int(QRandomGenerator::global()->generate() % uint(wordVec.size()));
 
   return wordVec[randomIndex];

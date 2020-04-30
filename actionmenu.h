@@ -23,6 +23,7 @@ private slots:
   void startDelete();
 
 signals:
+  void menuQuit();
   void deleteStarted();
   void createWindowOpen();
 

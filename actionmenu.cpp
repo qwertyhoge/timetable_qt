@@ -32,6 +32,7 @@ ActionMenu::ActionMenu(QWidget *parent)
 
 void ActionMenu::closeMenu()
 {
+  emit menuQuit();
   close();
 }
 

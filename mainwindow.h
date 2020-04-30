@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 
 class Plan;
 class Timetable;
+class CharacterPanel;
 
 class MainWindow : public QMainWindow
 {
@@ -29,6 +30,8 @@ private:
   ActionMenu *actionMenu;
   PlanCreateWindow *planCreateWindow;
   Timetable *timetable;
+  CharacterPanel *characterPanel;
+
   bool timetableAreaDisabled = false;
   Plan *selectedPlan = nullptr;
 

@@ -21,7 +21,7 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
-  connect(characterArea, SIGNAL(characterClicked()), this, SLOT(showMenuMessage()));
+  connect(characterArea, SIGNAL(characterClicked()), this, SLOT(sendMenuOpen()));
 
   textArea = new QTextEdit();
   layout->addWidget(textArea);
@@ -33,11 +33,57 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   qDebug() << content;
 }
 
-void CharacterPanel::showMenuMessage()
+void CharacterPanel::speakWord(CharacterWords::Timings timing)
 {
-  QString word = characterWords->pickRandomOne(CharacterWords::MENU_OPEN);
+  QString word = characterWords->pickRandomOne(timing);
+  word.replace("\\n", "\n");
   textArea->setText(word);
+}
+
+void CharacterPanel::sendMenuOpen()
+{
+  showMenuOpenMessage();
 
   // propagate signal
   emit characterClicked();
+}
+
+void CharacterPanel::showRunMessage()
+{
+  speakWord(CharacterWords::RUN);
+}
+
+void CharacterPanel::showMenuOpenMessage()
+{
+  speakWord(CharacterWords::MENU_OPEN);
+}
+
+void CharacterPanel::showMenuQuitMessage()
+{
+  speakWord(CharacterWords::MENU_QUIT);
+}
+
+void CharacterPanel::showPlanEditStartMessage()
+{
+  speakWord(CharacterWords::PLAN_EDIT_START);
+}
+
+void CharacterPanel::showPlanEditCancelMessage()
+{
+  speakWord(CharacterWords::PLAN_EDIT_CANCEL);
+}
+
+void CharacterPanel::showPlanEditDoneMessage()
+{
+  speakWord(CharacterWords::PLAN_EDIT_DONE);
+}
+
+void CharacterPanel::showPlanCreateMessage()
+{
+  speakWord(CharacterWords::PLAN_CREATE);
+}
+
+void CharacterPanel::showPlanDeleteMessage()
+{
+  speakWord(CharacterWords::PLAN_DELETE);
 }

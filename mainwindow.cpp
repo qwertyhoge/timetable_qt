@@ -32,23 +32,27 @@ MainWindow::MainWindow(QWidget *parent)
   initData();
   setMenu();
 
-  CharacterPanel *characterPanel = new CharacterPanel();
+  characterPanel = new CharacterPanel();
   ui->apparea->layout()->addWidget(characterPanel);
+  characterPanel->showRunMessage();
   connect(characterPanel, SIGNAL(characterClicked()), this, SLOT(openMenu()));
 
   actionMenu = new ActionMenu(this);
   connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
+  connect(actionMenu, SIGNAL(menuQuit()), characterPanel, SLOT(showMenuQuitMessage()));
 
   planCreateWindow = new PlanCreateWindow(this);
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
   connect(planCreateWindow, SIGNAL(planMake(Plan*)), timetable, SLOT(addPlan(Plan*)));
-
+  connect(planCreateWindow, SIGNAL(planMake(Plan*)), characterPanel, SLOT(showPlanCreateMessage()));
 
   // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
+  connect(ui->deleteButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanDeleteMessage()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
+  connect(ui->editCancelButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditCancelMessage()));
 
   connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
   connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(bellProperBell(QTime)));
@@ -231,8 +235,9 @@ void MainWindow::enterInspectMode()
 
   ui->editButton->setEnabled(true);
   ui->editButton->setText("Edit plan");
-  disconnect(ui->editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
+  disconnect(ui->editButton, SIGNAL(clicked()), nullptr, nullptr);
   connect(ui->editButton, SIGNAL(clicked()), this, SLOT(enterEditMode()));
+  // connect(ui->editButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditStartMessage()));
 
   ui->editCancelButton->setEnabled(false);
 
@@ -241,6 +246,8 @@ void MainWindow::enterInspectMode()
 
 void MainWindow::enterEditMode()
 {
+  characterPanel->showPlanEditStartMessage();
+
   ui->inspectNameLine->setEnabled(true);
   ui->inspectDayCombo->setEnabled(true);
   ui->inspectStartTime->setEnabled(true);
@@ -248,8 +255,10 @@ void MainWindow::enterEditMode()
 
   ui->editButton->setEnabled(true);
   ui->editButton->setText("Apply edit");
-  disconnect(ui->editButton, SIGNAL(clicked()), this, SLOT(enterEditMode()));
+  disconnect(ui->editButton, SIGNAL(clicked()), nullptr, nullptr);
   connect(ui->editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
+  // connect(ui->editButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditDoneMessage()));
+  qDebug() << characterPanel;
 
   ui->editCancelButton->setEnabled(true);
 
@@ -268,6 +277,8 @@ void MainWindow::cancelEdit()
 
 void MainWindow::applyEdit()
 {
+  characterPanel->showPlanEditDoneMessage();
+
   // sanitizing may be in need
   selectedPlan->planName = ui->inspectNameLine->text();
   selectedPlan->dayNum = ui->inspectDayCombo->currentIndex();

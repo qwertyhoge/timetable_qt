@@ -3,9 +3,9 @@
 
 #include <QDockWidget>
 #include <QTextEdit>
+#include <characterwords.h>
 
 class CharacterView;
-class CharacterWords;
 
 class CharacterPanel : public QDockWidget
 {
@@ -19,8 +19,20 @@ private:
   CharacterView *characterArea;
   CharacterWords *characterWords;
 
+  void speakWord(CharacterWords::Timings timing);
+
 private slots:
-  void showMenuMessage();
+  void sendMenuOpen();
+
+public slots:
+  void showRunMessage();
+  void showMenuOpenMessage();
+  void showMenuQuitMessage();
+  void showPlanEditStartMessage();
+  void showPlanEditCancelMessage();
+  void showPlanEditDoneMessage();
+  void showPlanCreateMessage();
+  void showPlanDeleteMessage();
 
 signals:
   void characterClicked();

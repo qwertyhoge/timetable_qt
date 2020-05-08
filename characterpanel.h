@@ -3,9 +3,11 @@
 
 #include <QDockWidget>
 #include <QTextEdit>
+
 #include <characterwords.h>
 
 class CharacterView;
+class ReplyBox;
 
 class CharacterPanel : public QDockWidget
 {
@@ -17,6 +19,8 @@ public:
 private:
   QTextEdit *textArea;
   CharacterView *characterArea;
+  ReplyBox *replyBox;
+
   CharacterWords *characterWords;
 
   void speakWord(CharacterWords::Timings timing);

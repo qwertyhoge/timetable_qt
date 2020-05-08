@@ -1,6 +1,8 @@
 #include "characterpanel.h"
 
 #include "characterview.h"
+#include "replybox.h"
+
 #include "characterwords.h"
 
 #include <QLayout>
@@ -26,6 +28,9 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   textArea = new QTextEdit();
   layout->addWidget(textArea);
   layout->setStretch(1, 1);
+
+  replyBox = new ReplyBox();
+  layout->addWidget(replyBox);
 
   setWidget(content);
 

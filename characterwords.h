@@ -4,6 +4,24 @@
 #include <QString>
 #include <QHash>
 
+class WordTree
+{
+public:
+  WordTree(QString sentence);
+  WordTree(QString sentence, WordTree *yes, WordTree *no);
+
+  QString sentence;
+
+  WordTree* convoYes = nullptr;
+  WordTree* convoNo = nullptr;
+
+  void setConvo(WordTree *yes, WordTree *no);
+  bool parseConvo(QString ynStr, QString sentence);
+
+private:
+  void deleteFromChildren();
+};
+
 class CharacterWords
 {
 public:
@@ -22,14 +40,14 @@ public:
 
   bool loadWords();
   bool parseWordsJson(QByteArray json);
-  QString pickRandomOne(Timings timing);
+  WordTree *pickRandomOne(Timings timing);
 
   QString wordsPath = "./characters/proto/words.json";
 
 private:
   QHash<Timings, QString> timingStrings;
 
-  QHash<QString, QVector<QString> > wordList;
+  QHash<QString, QVector<WordTree> > wordList;
 
 };
 

@@ -22,8 +22,10 @@ private:
   ReplyBox *replyBox;
 
   CharacterWords *characterWords;
+  WordTree *currentWord;
 
   void speakWord(CharacterWords::Timings timing);
+  void setConvo();
 
 private slots:
   void sendMenuOpen();
@@ -37,6 +39,8 @@ public slots:
   void showPlanEditDoneMessage();
   void showPlanCreateMessage();
   void showPlanDeleteMessage();
+  void yesReply();
+  void noReply();
 
 signals:
   void characterClicked();

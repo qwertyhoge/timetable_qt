@@ -8,6 +8,11 @@
 #include <QJsonArray>
 #include <QRandomGenerator>
 
+WordTree::WordTree()
+{
+
+}
+
 WordTree::WordTree(QString sentence)
   : sentence(sentence)
 {
@@ -35,12 +40,35 @@ bool WordTree::parseConvo(QString ynStr, QString sentence)
   }else{
     if(ynStr[0] == 'y'){
       return convoYes->parseConvo(ynStr.mid(1), sentence);
-    }else if(ynStr[1] == 'n'){
+    }else if(ynStr[0] == 'n'){
       return convoNo->parseConvo(ynStr.mid(1), sentence);
     }else{
       return false;
     }
   }
+}
+
+bool WordTree::hasConvo()
+{
+  return convoYes != nullptr && convoNo != nullptr;
+}
+
+bool WordTree::allHasBoth()
+{
+  if(convoYes == nullptr){
+    if(convoNo == nullptr){
+      return true;
+    }else{
+      return false;
+    }
+  }else{
+    if(convoNo == nullptr){
+      return false;
+    }else{
+      return convoNo->allHasBoth() && convoYes->allHasBoth();
+    }
+  }
+
 }
 
 void WordTree::setConvo(WordTree *yes, WordTree *no)
@@ -129,13 +157,17 @@ bool CharacterWords::parseWordsJson(QByteArray json)
         QJsonObject treeObj = word.toObject();
         QString sentence = treeObj["message"].toString();
         WordTree treeRoot = WordTree(sentence);
-        wordList[timing].push_back(treeRoot);
 
         QStringList keys = treeObj.keys();
         keys.sort();
 
         for(auto key : treeObj.keys()){
             treeRoot.parseConvo(key, treeObj[key].toString());
+        }
+        if(treeRoot.allHasBoth()){
+            wordList[timing].push_back(treeRoot);
+        }else{
+          qDebug() << sentence << " is rejected for children constraint";
         }
       }
     }

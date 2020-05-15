@@ -30,19 +30,33 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   layout->setStretch(1, 1);
 
   replyBox = new ReplyBox();
-  layout->addWidget(replyBox);
 
   setWidget(content);
-
-  qDebug() << widget();
-  qDebug() << content;
 }
 
 void CharacterPanel::speakWord(CharacterWords::Timings timing)
 {
-  QString word = characterWords->pickRandomOne(timing);
-  word.replace("\\n", "\n");
-  textArea->setText(word);
+  currentWord = characterWords->pickRandomOne(timing);
+
+  setConvo();
+}
+
+void CharacterPanel::setConvo()
+{
+  QString escapedStr = currentWord->sentence.replace("\\n", "\n");
+  textArea->setText(escapedStr);
+
+  if(currentWord->hasConvo()){
+    widget()->layout()->addWidget(replyBox);
+
+    disconnect(replyBox, SIGNAL(yesClicked()), nullptr, nullptr);
+    disconnect(replyBox, SIGNAL(noClicked()), nullptr, nullptr);
+
+    connect(replyBox, SIGNAL(yesClicked()), this, SLOT(yesReply()));
+    connect(replyBox, SIGNAL(noClicked()), this, SLOT(noReply()));
+  }else{
+    replyBox->setParent(nullptr);
+  }
 }
 
 void CharacterPanel::sendMenuOpen()
@@ -51,6 +65,20 @@ void CharacterPanel::sendMenuOpen()
 
   // propagate signal
   emit characterClicked();
+}
+
+void CharacterPanel::yesReply()
+{
+  currentWord = currentWord->convoYes;
+
+  setConvo();
+}
+
+void CharacterPanel::noReply()
+{
+  currentWord = currentWord->convoNo;
+
+  setConvo();
 }
 
 void CharacterPanel::showRunMessage()

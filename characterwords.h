@@ -7,6 +7,7 @@
 class WordTree
 {
 public:
+  WordTree();
   WordTree(QString sentence);
   WordTree(QString sentence, WordTree *yes, WordTree *no);
 
@@ -16,6 +17,8 @@ public:
   WordTree* convoNo = nullptr;
 
   void setConvo(WordTree *yes, WordTree *no);
+  bool hasConvo();
+  bool allHasBoth();
   bool parseConvo(QString ynStr, QString sentence);
 
 private:

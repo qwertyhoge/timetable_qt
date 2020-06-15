@@ -13,7 +13,7 @@ Timetable::Timetable(QWidget *parent)
   dayMap["Monday"] = MONDAY;
   dayMap["Tuesday"] = TUESDAY;
   dayMap["Wednesday"] = WEDNESDAY;
-  dayMap["Thirsday"] = THIRSDAY;
+  dayMap["Thursday"] = THURSDAY;
   dayMap["Friday"] = FRIDAY;
   dayMap["Saturday"] = SATURDAY;
 
@@ -179,7 +179,7 @@ void Timetable::loadFromJson(QByteArray json)
 QJsonArray Timetable::exportAsJson()
 {
   QJsonArray jsonTimetable;
-  QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thirsday", "Friday", "Saturday"};
+  QString dayNames[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
   for(int i = 0; i < 7; i++){
     QJsonObject dayObj;
     dayObj.insert("day", dayNames[i]);

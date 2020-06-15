@@ -26,7 +26,7 @@ public:
     MONDAY = 1,
     TUESDAY = 2,
     WEDNESDAY = 3,
-    THIRSDAY = 4,
+    THURSDAY = 4,
     FRIDAY = 5,
     SATURDAY = 6
   };
@@ -42,7 +42,7 @@ public:
     "Monday",
     "Tuesday",
     "Wednesday",
-    "Thirsday",
+    "Thursday",
     "Friday",
     "Saturday"
   };

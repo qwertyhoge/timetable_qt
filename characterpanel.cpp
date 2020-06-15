@@ -7,6 +7,9 @@
 
 #include <QLayout>
 #include <QTextEdit>
+
+#include <QPropertyAnimation>
+
 #include <QDebug>
 
 CharacterPanel::CharacterPanel(QWidget *parent)
@@ -16,7 +19,6 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   if(!characterWords->loadWords()){
     qCritical() << "failed to load words";
   }
-
   QWidget *content = new QWidget(this);
   QVBoxLayout *layout = new QVBoxLayout();
   content->setLayout(layout);
@@ -24,10 +26,14 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
   connect(characterArea, SIGNAL(characterClicked()), this, SLOT(sendMenuOpen()));
+  characterArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
-  textArea = new QTextEdit();
-  layout->addWidget(textArea);
-  layout->setStretch(1, 1);
+  convoArea = new QWidget();
+  layout->addWidget(convoArea);
+  convoArea->installEventFilter(this);
+
+  textArea = new QTextEdit(convoArea);
+  textArea->move(0, 0);
 
   replyBox = new ReplyBox();
 
@@ -36,9 +42,23 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
 void CharacterPanel::speakWord(CharacterWords::Timings timing)
 {
+  QPropertyAnimation *anim = new QPropertyAnimation(textArea, "geometry");
+
+  anim->setDuration(600);
+  anim->setEasingCurve(QEasingCurve::InOutQuart);
+  anim->setStartValue(QRect(0, 0, 0, 0));
+  anim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
+  qDebug() << convoArea->width();
+  qDebug() << this->width();
+
+  anim->start();
+
   currentWord = characterWords->pickRandomOne(timing);
 
-  setConvo();
+
+  if(currentWord != nullptr){
+    setConvo();
+  }
 }
 
 void CharacterPanel::setConvo()
@@ -58,6 +78,17 @@ void CharacterPanel::setConvo()
     replyBox->setParent(nullptr);
   }
 }
+
+bool CharacterPanel::eventFilter(QObject *obj, QEvent *event)
+{
+  if(obj == convoArea && event->type() == QEvent::Show){
+    speakWord(CharacterWords::RUN);
+    return true;
+  }
+
+  return false;
+}
+
 
 void CharacterPanel::sendMenuOpen()
 {
@@ -83,7 +114,6 @@ void CharacterPanel::noReply()
 
 void CharacterPanel::showRunMessage()
 {
-  speakWord(CharacterWords::RUN);
 }
 
 void CharacterPanel::showMenuOpenMessage()

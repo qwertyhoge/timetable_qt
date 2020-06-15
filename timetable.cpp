@@ -47,13 +47,16 @@ void Timetable::setPlan(Plan *newPlan)
 
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
 
-  timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
-  if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
-    timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] = END_BELL;
-  }
-  PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
-  if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
-    timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+  if(newPlan->dayNum == QDate::currentDate().dayOfWeek() % 7){
+    timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
+    if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
+      timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] = END_BELL;
+    }
+
+    PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
+    if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
+      timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+    }
   }
 
 }
@@ -69,6 +72,26 @@ void Timetable::highlightCurrentDay(int dayNum)
     }
 
     dayFrames[i]->dayLabel->setPalette(plt);
+  }
+
+  for(int i = 0; i < 24; i++){
+    for(int j = 0; j < 60; j++){
+      timeToAlerm[i][j] = NONE_BELL;
+    }
+  }
+
+  for(auto plan : dayFrames[dayNum]->plans){
+    PlanTime *start = plan->startTime;
+    PlanTime *end = plan->endTime;
+    PlanTime *prelim = start - 5;
+
+    if(timeToAlerm[prelim->hour][prelim->minute] == NONE_BELL){
+      timeToAlerm[prelim->hour][prelim->minute] = PRELIM_BELL;
+    }
+    if(timeToAlerm[end->hour][end->minute] != START_BELL){
+      timeToAlerm[end->hour][end->minute] = END_BELL;
+    }
+    timeToAlerm[start->hour][start->minute] = START_BELL;
   }
 }
 

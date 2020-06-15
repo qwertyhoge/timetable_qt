@@ -30,7 +30,6 @@ void TimeNotifier::updateTime()
     emit dayChanged(currentDay);
   }
   if(formerMinute != currentMinute){
-    qDebug() << "emitting minuteChanged";
     emit minuteChanged(currentDateTime.time());
   }
 

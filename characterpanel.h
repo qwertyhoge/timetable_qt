@@ -20,12 +20,16 @@ private:
   QTextEdit *textArea;
   CharacterView *characterArea;
   ReplyBox *replyBox;
+  QWidget *convoArea;
 
   CharacterWords *characterWords;
   WordTree *currentWord;
 
   void speakWord(CharacterWords::Timings timing);
   void setConvo();
+
+protected:
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
   void sendMenuOpen();

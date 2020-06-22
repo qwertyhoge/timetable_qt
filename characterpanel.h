@@ -24,6 +24,8 @@ private:
 
   CharacterWords *characterWords;
   WordTree *currentWord;
+  QTimer *speakTimer;
+  int showMessageMSec = 2000;
 
   void speakWord(CharacterWords::Timings timing);
   void setConvo();
@@ -33,6 +35,7 @@ protected:
 
 private slots:
   void sendMenuOpen();
+  void collapseMessage();
 
 public slots:
   void showRunMessage();

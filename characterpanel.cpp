@@ -7,6 +7,7 @@
 
 #include <QLayout>
 #include <QTextEdit>
+#include <QTimer>
 
 #include <QPropertyAnimation>
 
@@ -15,6 +16,8 @@
 CharacterPanel::CharacterPanel(QWidget *parent)
   : QDockWidget(parent)
 {
+  speakTimer = new QTimer();
+
   characterWords = new CharacterWords();
   if(!characterWords->loadWords()){
     qCritical() << "failed to load words";
@@ -34,6 +37,8 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   textArea = new QTextEdit(convoArea);
   textArea->move(0, 0);
+  textArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  textArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   replyBox = new ReplyBox();
 
@@ -46,7 +51,7 @@ void CharacterPanel::speakWord(CharacterWords::Timings timing)
 
   anim->setDuration(600);
   anim->setEasingCurve(QEasingCurve::InOutQuart);
-  anim->setStartValue(QRect(0, 0, 0, 0));
+  anim->setStartValue(textArea->geometry());
   anim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
   qDebug() << convoArea->width();
   qDebug() << this->width();
@@ -55,10 +60,22 @@ void CharacterPanel::speakWord(CharacterWords::Timings timing)
 
   currentWord = characterWords->pickRandomOne(timing);
 
-
   if(currentWord != nullptr){
     setConvo();
   }
+}
+
+void CharacterPanel::collapseMessage()
+{
+  QPropertyAnimation *anim = new QPropertyAnimation(textArea, "geometry");
+
+  qDebug() << "collapse";
+  anim->setDuration(600);
+  anim->setEasingCurve(QEasingCurve::InOutQuart);
+  anim->setStartValue(textArea->geometry());
+  anim->setEndValue(QRect(0, 0, 0, 0));
+
+  anim->start();
 }
 
 void CharacterPanel::setConvo()
@@ -76,6 +93,11 @@ void CharacterPanel::setConvo()
     connect(replyBox, SIGNAL(noClicked()), this, SLOT(noReply()));
   }else{
     replyBox->setParent(nullptr);
+
+    speakTimer->setSingleShot(true);
+    speakTimer->setInterval(600 + showMessageMSec);
+    speakTimer->start();
+    connect(speakTimer, SIGNAL(timeout()), this, SLOT(collapseMessage()));
   }
 }
 

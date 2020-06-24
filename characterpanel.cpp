@@ -16,7 +16,16 @@
 CharacterPanel::CharacterPanel(QWidget *parent)
   : QDockWidget(parent)
 {
+  boxTimer = new QTimer();
+  boxTimer->setSingleShot(true);
+  boxTimer->setInterval(showMessageMSec);
+  connect(boxTimer, SIGNAL(timeout()), this, SLOT(collapseBox()));
+
   speakTimer = new QTimer();
+  speakTimer->setInterval(charInterval);
+  connect(speakTimer, SIGNAL(timeout()), this, SLOT(speakCharByChar()));
+
+  connect(this, SIGNAL(speakEnd()), this, SLOT(setConvo()));
 
   characterWords = new CharacterWords();
   if(!characterWords->loadWords()){
@@ -37,8 +46,11 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   textArea = new QTextEdit(convoArea);
   textArea->move(0, 0);
+  textArea->resize(0, 0);
   textArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   textArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  boxAnim = new QPropertyAnimation(textArea, "geometry");
 
   replyBox = new ReplyBox();
 
@@ -47,42 +59,72 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
 void CharacterPanel::speakWord(CharacterWords::Timings timing)
 {
-  QPropertyAnimation *anim = new QPropertyAnimation(textArea, "geometry");
-
-  anim->setDuration(600);
-  anim->setEasingCurve(QEasingCurve::InOutQuart);
-  anim->setStartValue(textArea->geometry());
-  anim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
+  boxAnim->setDuration(600);
+  boxAnim->setEasingCurve(QEasingCurve::InOutQuart);
+  boxAnim->setStartValue(textArea->geometry());
+  boxAnim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
   qDebug() << convoArea->width();
   qDebug() << this->width();
 
-  anim->start();
+  boxAnim->start();
+
+  connect(boxAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxAppeared(const QVariant&)));
 
   currentWord = characterWords->pickRandomOne(timing);
 
-  if(currentWord != nullptr){
-    setConvo();
+  connect(this, SIGNAL(boxAppeared()), this, SLOT(startSpeak()));
+}
+
+void CharacterPanel::collapseBox()
+{
+  qDebug() << "collapse";
+
+  textArea->setText("");
+
+  boxAnim->setDuration(600);
+  boxAnim->setEasingCurve(QEasingCurve::InOutQuart);
+  boxAnim->setStartValue(textArea->geometry());
+  boxAnim->setEndValue(QRect(0, 0, 0, 0));
+
+  boxAnim->start();
+}
+
+void CharacterPanel::watchBoxAppeared(const QVariant& animVal)
+{
+  if(animVal == boxAnim->endValue()){
+    disconnect(boxAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxAppeared(const QVariant&)));
+    emit boxAppeared();
   }
 }
 
-void CharacterPanel::collapseMessage()
+void CharacterPanel::startSpeak()
 {
-  QPropertyAnimation *anim = new QPropertyAnimation(textArea, "geometry");
+  QString escapedStr = currentWord->sentence.replace("\\n", "\n");
 
-  qDebug() << "collapse";
-  anim->setDuration(600);
-  anim->setEasingCurve(QEasingCurve::InOutQuart);
-  anim->setStartValue(textArea->geometry());
-  anim->setEndValue(QRect(0, 0, 0, 0));
+  wordQue.clear();
+  for(auto ch = escapedStr.begin(); ch !=escapedStr.end(); ch++){
+    wordQue.enqueue(*ch);
+  }
+  textArea->setText("");
 
-  anim->start();
+  speakTimer->start();
+  qDebug() << "started timer";
+}
+
+void CharacterPanel::speakCharByChar()
+{
+  if(!wordQue.empty()){
+    textArea->setText(textArea->toPlainText() + wordQue.dequeue());
+  }else{
+    // end this process itself
+    speakTimer->stop();
+
+    emit speakEnd();
+  }
 }
 
 void CharacterPanel::setConvo()
 {
-  QString escapedStr = currentWord->sentence.replace("\\n", "\n");
-  textArea->setText(escapedStr);
-
   if(currentWord->hasConvo()){
     widget()->layout()->addWidget(replyBox);
 
@@ -94,10 +136,7 @@ void CharacterPanel::setConvo()
   }else{
     replyBox->setParent(nullptr);
 
-    speakTimer->setSingleShot(true);
-    speakTimer->setInterval(600 + showMessageMSec);
-    speakTimer->start();
-    connect(speakTimer, SIGNAL(timeout()), this, SLOT(collapseMessage()));
+    boxTimer->start();
   }
 }
 
@@ -124,14 +163,14 @@ void CharacterPanel::yesReply()
 {
   currentWord = currentWord->convoYes;
 
-  setConvo();
+  startSpeak();
 }
 
 void CharacterPanel::noReply()
 {
   currentWord = currentWord->convoNo;
 
-  setConvo();
+  startSpeak();
 }
 
 void CharacterPanel::showRunMessage()

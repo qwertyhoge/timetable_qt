@@ -3,6 +3,8 @@
 
 #include <QDockWidget>
 #include <QTextEdit>
+#include <QQueue>
+#include <QPropertyAnimation>
 
 #include <characterwords.h>
 
@@ -22,20 +24,28 @@ private:
   ReplyBox *replyBox;
   QWidget *convoArea;
 
-  CharacterWords *characterWords;
-  WordTree *currentWord;
+  QPropertyAnimation *boxAnim;
+  QTimer *boxTimer;
   QTimer *speakTimer;
   int showMessageMSec = 2000;
+  int charInterval = 70;
+
+  CharacterWords *characterWords;
+  WordTree *currentWord;
+  QQueue<QChar> wordQue;
 
   void speakWord(CharacterWords::Timings timing);
-  void setConvo();
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
   void sendMenuOpen();
-  void collapseMessage();
+  void collapseBox();
+  void watchBoxAppeared(const QVariant&);
+  void startSpeak();
+  void speakCharByChar();
+  void setConvo();
 
 public slots:
   void showRunMessage();
@@ -51,6 +61,8 @@ public slots:
 
 signals:
   void characterClicked();
+  void boxAppeared();
+  void speakEnd();
 };
 
 #endif // CHARACTERPANEL_H

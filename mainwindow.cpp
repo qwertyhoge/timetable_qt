@@ -19,6 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
 {
+  QLineEdit *test = new QLineEdit();
+  qDebug() << "証"[0] << endl;
+  qDebug() << QString("瓶").left(1) << endl;
+  QString testStr = "";
+  testStr += QString("あいうえお")[3];
+  qDebug() << testStr;
+
   ui->setupUi(this);
   if(!QDir("configs").exists()){
     QDir().mkdir("configs");

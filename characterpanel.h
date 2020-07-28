@@ -24,11 +24,19 @@ private:
   ReplyBox *replyBox;
   QWidget *convoArea;
 
-  QPropertyAnimation *boxAnim;
-  QTimer *boxTimer;
+  QPropertyAnimation *openAnim;
+  QPropertyAnimation *closeAnim;
+  QTimer *closeTimer;
   QTimer *speakTimer;
   int showMessageMSec = 2000;
   int charInterval = 70;
+  int currentState = HIDDEN;
+  enum AnimState{
+    HIDDEN,
+    OPENING,
+    CLOSING,
+    OPENED
+  };
 
   CharacterWords *characterWords;
   WordTree *currentWord;
@@ -43,6 +51,7 @@ private slots:
   void sendMenuOpen();
   void collapseBox();
   void watchBoxAppeared(const QVariant&);
+  void watchBoxDisappeared(const QVariant&);
   void startSpeak();
   void speakCharByChar();
   void setConvo();
@@ -61,7 +70,6 @@ public slots:
 
 signals:
   void characterClicked();
-  void boxAppeared();
   void speakEnd();
 };
 

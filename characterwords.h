@@ -18,7 +18,7 @@ public:
 
   void setConvo(WordTree *yes, WordTree *no);
   bool hasConvo();
-  bool allHasBoth();
+  bool allHaveBothConvo();
   bool parseConvo(QString ynStr, QString sentence);
 
 private:
@@ -42,14 +42,14 @@ public:
   };
 
   bool loadWords();
-  bool parseWordsJson(QByteArray json);
+  bool hasTree(Timings timing);
   WordTree *pickRandomOne(Timings timing);
 
   QString wordsPath = "./characters/proto/words.json";
 
 private:
+  bool parseWordsJson(QByteArray json);
   QHash<Timings, QString> timingStrings;
-
   QHash<QString, QVector<WordTree> > wordList;
 
 };

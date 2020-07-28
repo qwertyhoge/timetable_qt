@@ -23,3 +23,13 @@ ReplyBox::ReplyBox(QWidget *parent) : QFrame(parent)
   setFrameShape(QFrame::Box);
   setFrameShadow(QFrame::Sunken);
 }
+
+void ReplyBox::processYesClicked()
+{
+  emit yesClicked();
+}
+
+void ReplyBox::processNoClicked()
+{
+  emit noClicked();
+}

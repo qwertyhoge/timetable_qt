@@ -16,16 +16,14 @@
 CharacterPanel::CharacterPanel(QWidget *parent)
   : QDockWidget(parent)
 {
-  boxTimer = new QTimer();
-  boxTimer->setSingleShot(true);
-  boxTimer->setInterval(showMessageMSec);
-  connect(boxTimer, SIGNAL(timeout()), this, SLOT(collapseBox()));
+  closeTimer = new QTimer();
+  closeTimer->setSingleShot(true);
+  closeTimer->setInterval(showMessageMSec);
+  connect(closeTimer, SIGNAL(timeout()), this, SLOT(collapseBox()));
 
   speakTimer = new QTimer();
   speakTimer->setInterval(charInterval);
   connect(speakTimer, SIGNAL(timeout()), this, SLOT(speakCharByChar()));
-
-  connect(this, SIGNAL(speakEnd()), this, SLOT(setConvo()));
 
   characterWords = new CharacterWords();
   if(!characterWords->loadWords()){
@@ -50,7 +48,10 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   textArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   textArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  boxAnim = new QPropertyAnimation(textArea, "geometry");
+  openAnim = new QPropertyAnimation(textArea, "geometry");
+  connect(openAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxAppeared(const QVariant&)));
+  closeAnim = new QPropertyAnimation(textArea, "geometry");
+  connect(closeAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxDisappeared(const QVariant&)));
 
   replyBox = new ReplyBox();
 
@@ -59,20 +60,29 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
 void CharacterPanel::speakWord(CharacterWords::Timings timing)
 {
-  boxAnim->setDuration(600);
-  boxAnim->setEasingCurve(QEasingCurve::InOutQuart);
-  boxAnim->setStartValue(textArea->geometry());
-  boxAnim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
-  qDebug() << convoArea->width();
-  qDebug() << this->width();
+  qDebug() << "speakWord";
+  qDebug() << currentState;
 
-  boxAnim->start();
+  if(characterWords->hasTree(timing)){
+    currentWord = characterWords->pickRandomOne(timing);
 
-  connect(boxAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxAppeared(const QVariant&)));
+    if(currentState == HIDDEN || currentState == CLOSING){
+      closeAnim->stop();
+      openAnim->setDuration(600);
+      openAnim->setEasingCurve(QEasingCurve::InOutQuart);
+      openAnim->setStartValue(textArea->geometry());
+      openAnim->setEndValue(QRect(0, 0, convoArea->width(), this->height() / 4));
+      qDebug() << convoArea->width();
+      qDebug() << this->width();
 
-  currentWord = characterWords->pickRandomOne(timing);
-
-  connect(this, SIGNAL(boxAppeared()), this, SLOT(startSpeak()));
+      currentState = OPENING;
+      // call startSpeak() after this animation
+      openAnim->start();
+    }else if(currentState == OPENED){
+      closeTimer->stop();
+      startSpeak();
+    }
+  }
 }
 
 void CharacterPanel::collapseBox()
@@ -81,25 +91,36 @@ void CharacterPanel::collapseBox()
 
   textArea->setText("");
 
-  boxAnim->setDuration(600);
-  boxAnim->setEasingCurve(QEasingCurve::InOutQuart);
-  boxAnim->setStartValue(textArea->geometry());
-  boxAnim->setEndValue(QRect(0, 0, 0, 0));
+  closeAnim->setDuration(600);
+  closeAnim->setEasingCurve(QEasingCurve::InOutQuart);
+  closeAnim->setStartValue(textArea->geometry());
+  closeAnim->setEndValue(QRect(0, 0, 0, 0));
 
-  boxAnim->start();
+  closeAnim->start();
+  currentState = CLOSING;
 }
 
 void CharacterPanel::watchBoxAppeared(const QVariant& animVal)
 {
-  if(animVal == boxAnim->endValue()){
-    disconnect(boxAnim, SIGNAL(valueChanged(const QVariant&)), this, SLOT(watchBoxAppeared(const QVariant&)));
-    emit boxAppeared();
+  if(animVal == openAnim->endValue()){
+    currentState = OPENED;
+    qDebug() << "completely appeared";
+    startSpeak();
+  }
+}
+
+void CharacterPanel::watchBoxDisappeared(const QVariant& animVal)
+{
+  if(animVal == closeAnim->endValue()){
+    currentState = HIDDEN;
   }
 }
 
 void CharacterPanel::startSpeak()
 {
   QString escapedStr = currentWord->sentence.replace("\\n", "\n");
+
+  replyBox->setParent(nullptr);
 
   wordQue.clear();
   for(auto ch = escapedStr.begin(); ch !=escapedStr.end(); ch++){
@@ -116,10 +137,10 @@ void CharacterPanel::speakCharByChar()
   if(!wordQue.empty()){
     textArea->setText(textArea->toPlainText() + wordQue.dequeue());
   }else{
-    // end this process itself
+    // end this speak loop itself
     speakTimer->stop();
 
-    emit speakEnd();
+    setConvo();
   }
 }
 
@@ -134,9 +155,7 @@ void CharacterPanel::setConvo()
     connect(replyBox, SIGNAL(yesClicked()), this, SLOT(yesReply()));
     connect(replyBox, SIGNAL(noClicked()), this, SLOT(noReply()));
   }else{
-    replyBox->setParent(nullptr);
-
-    boxTimer->start();
+    closeTimer->start();
   }
 }
 

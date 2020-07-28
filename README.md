@@ -15,6 +15,8 @@ Each commit prefixes means below:
     - An existing function get better someway.
 - \[CHANGE\]
     - The design is going different way(e.g. layout changes) from before.
+- \[FIX\]
+    - Some bugs are fixed.
 - \[REFACTOR\]
     - Refactoring has been done for the purpose such as simplifying or spreading function.
 - \[DELETE\]

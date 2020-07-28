@@ -18,6 +18,8 @@ signals:
   void noClicked();
 
 public slots:
+  void processYesClicked();
+  void processNoClicked();
 };
 
 #endif // REPLYBOX_H

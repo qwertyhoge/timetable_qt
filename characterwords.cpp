@@ -53,7 +53,7 @@ bool WordTree::hasConvo()
   return convoYes != nullptr && convoNo != nullptr;
 }
 
-bool WordTree::allHasBoth()
+bool WordTree::allHaveBothConvo()
 {
   if(convoYes == nullptr){
     if(convoNo == nullptr){
@@ -65,7 +65,7 @@ bool WordTree::allHasBoth()
     if(convoNo == nullptr){
       return false;
     }else{
-      return convoNo->allHasBoth() && convoYes->allHasBoth();
+      return convoNo->allHaveBothConvo() && convoYes->allHaveBothConvo();
     }
   }
 
@@ -127,6 +127,12 @@ bool CharacterWords::loadWords()
   return parseWordsJson(fileText.toUtf8());
 }
 
+bool CharacterWords::hasTree(Timings timing)
+{
+  QString timStr = timingStrings[timing];
+  return !wordList[timStr].empty();
+}
+
 
 bool CharacterWords::parseWordsJson(QByteArray json)
 {
@@ -164,7 +170,7 @@ bool CharacterWords::parseWordsJson(QByteArray json)
         for(auto key : treeObj.keys()){
             treeRoot.parseConvo(key, treeObj[key].toString());
         }
-        if(treeRoot.allHasBoth()){
+        if(treeRoot.allHaveBothConvo()){
             wordList[timing].push_back(treeRoot);
         }else{
           qDebug() << sentence << " is rejected for children constraint";
@@ -187,5 +193,5 @@ WordTree *CharacterWords::pickRandomOne(Timings timing)
 
   int randomIndex = int(QRandomGenerator::global()->generate() % uint(wordVec.size()));
 
-  return &wordVec[randomIndex];
+  return &wordVec[0];
 }

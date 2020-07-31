@@ -71,6 +71,11 @@ QJsonArray DayFrame::extractDayJsonArray()
     planInfo.insert("planName", plan->planName);
     planInfo.insert("startTime", plan->startTime->toString());
     planInfo.insert("endTime", plan->endTime->toString());
+    QJsonArray dirArray;
+    for(QDir &dir : plan->workingDirs){
+      dirArray.push_back(dir.path());
+    }
+    planInfo.insert("workingDirectories", dirArray);
 
     dayPlans.push_back(planInfo);
   }

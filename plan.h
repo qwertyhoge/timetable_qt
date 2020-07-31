@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QMap>
+#include <QDir>
 
 class Plan : public QFrame
 {
@@ -16,8 +17,9 @@ public:
   PlanTime *startTime;
   PlanTime *endTime;
   int dayNum;
+  QVector<QDir> workingDirs;
 
-  Plan(QString name, PlanTime *start, PlanTime *end, int day);
+  Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dir);
 
   void updatePlanGeometry();
   void updateText();

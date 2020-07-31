@@ -275,6 +275,20 @@
              </item>
             </layout>
            </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="inspectDirLabel">
+             <property name="text">
+              <string>Working Directory</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="inspectDirLine">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>

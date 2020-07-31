@@ -167,8 +167,13 @@ void Timetable::loadFromJson(QByteArray json)
         QString planName = planObj["planName"].toString();
         PlanTime *startTime = PlanTime::parseTime(planObj["startTime"].toString(), ':');
         PlanTime *endTime = PlanTime::parseTime(planObj["endTime"].toString(), ':');
-        Plan *loadedPlan = new Plan(planName, startTime, endTime, day);
+        QJsonArray dirArr = planObj["workingDirs"].toArray();
+        QVector<QDir> workingDirs;
+        for(auto dir : dirArr){
+          workingDirs.push_back(QDir(dir.toString()));
+        }
 
+        Plan *loadedPlan = new Plan(planName, startTime, endTime, day, workingDirs);
         setPlan(loadedPlan);
       }
     }

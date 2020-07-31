@@ -22,9 +22,12 @@ private:
   QTimeEdit *startTime;
   QTimeEdit *endTime;
   QComboBox *daySelect;
+  QLineEdit *workingDir;
+  QVector<QDir> workingDirectories;
 
 private slots:
   void sendPlan();
+  void openWorkingDirDialog();
 
 signals:
   void planMake(Plan*);

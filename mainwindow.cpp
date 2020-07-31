@@ -224,6 +224,11 @@ void MainWindow::inspectPlan(Plan *plan)
   ui->inspectDayCombo->setCurrentIndex(plan->dayNum);
   ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
+  QString paths = "";
+  for(QDir &dir : plan->workingDirs){
+    paths += dir.path();
+  }
+  ui->inspectDirLine->setText(paths);
 }
 
 void MainWindow::enterInspectMode()

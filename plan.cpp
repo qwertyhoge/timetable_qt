@@ -7,8 +7,8 @@
 #include <QFrame>
 #include <QDebug>
 
-Plan::Plan(QString name, PlanTime *start, PlanTime *end, int day)
-  : QFrame(nullptr), planName(name), startTime(start), endTime(end), dayNum(day)
+Plan::Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir> &dir)
+  : QFrame(nullptr), planName(name), startTime(start), endTime(end), dayNum(day), workingDirs(dir)
 {
   qDebug() << "name: " << name;
   qDebug() << "start: " << start->hour << ":" << start->minute;

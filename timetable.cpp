@@ -6,6 +6,15 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+ReservedPlan::ReservedPlan()
+: bellType(NONE_BELL), planRef(nullptr)
+{
+}
+ReservedPlan::ReservedPlan(BellType bell, Plan &plan)
+  : bellType(bell), planRef(&plan)
+{
+}
+
 Timetable::Timetable(QWidget *parent)
   : QWidget(parent)
 {
@@ -16,12 +25,6 @@ Timetable::Timetable(QWidget *parent)
   dayMap["Thursday"] = THURSDAY;
   dayMap["Friday"] = FRIDAY;
   dayMap["Saturday"] = SATURDAY;
-
-  for(int i = 0; i < 24; i++){
-    for(int j = 0; j < 60; j++){
-      timeToAlerm[i][j] = NONE_BELL;
-    }
-  }
 
   move(0, 0);
   layout = new QVBoxLayout();
@@ -48,14 +51,17 @@ void Timetable::setPlan(Plan *newPlan)
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
 
   if(newPlan->dayNum == QDate::currentDate().dayOfWeek() % 7){
-    timeToAlerm[newPlan->startTime->hour][newPlan->startTime->minute] = START_BELL;
-    if(timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] != START_BELL){
-      timeToAlerm[newPlan->endTime->hour][newPlan->startTime->minute] = END_BELL;
+    reservedPlan[newPlan->startTime->hour][newPlan->startTime->minute].bellType = START_BELL;
+    reservedPlan[newPlan->startTime->hour][newPlan->startTime->minute].planRef = newPlan;
+    if(reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].bellType != START_BELL){
+      reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].bellType = END_BELL;
+      reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].planRef = newPlan;
     }
 
     PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
-    if(timeToAlerm[prelimTime->hour][prelimTime->minute] == NONE_BELL){
-      timeToAlerm[prelimTime->hour][prelimTime->minute] = PRELIM_BELL;
+    if(reservedPlan[prelimTime->hour][prelimTime->minute].bellType == NONE_BELL){
+      reservedPlan[prelimTime->hour][prelimTime->minute].bellType = PRELIM_BELL;
+      reservedPlan[prelimTime->hour][prelimTime->minute].planRef = newPlan;
     }
   }
 
@@ -76,7 +82,8 @@ void Timetable::highlightCurrentDay(int dayNum)
 
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
-      timeToAlerm[i][j] = NONE_BELL;
+      reservedPlan[i][j].bellType = NONE_BELL;
+      reservedPlan[i][j].planRef = nullptr;
     }
   }
 
@@ -85,13 +92,16 @@ void Timetable::highlightCurrentDay(int dayNum)
     PlanTime *end = plan->endTime;
     PlanTime *prelim = start - 5;
 
-    if(timeToAlerm[prelim->hour][prelim->minute] == NONE_BELL){
-      timeToAlerm[prelim->hour][prelim->minute] = PRELIM_BELL;
+    if(reservedPlan[prelim->hour][prelim->minute].bellType == NONE_BELL){
+      reservedPlan[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
+      reservedPlan[prelim->hour][prelim->minute].planRef = plan;
     }
-    if(timeToAlerm[end->hour][end->minute] != START_BELL){
-      timeToAlerm[end->hour][end->minute] = END_BELL;
+    if(reservedPlan[end->hour][end->minute].bellType != START_BELL){
+      reservedPlan[end->hour][end->minute].bellType = END_BELL;
+      reservedPlan[end->hour][end->minute].planRef = plan;
     }
-    timeToAlerm[start->hour][start->minute] = START_BELL;
+    reservedPlan[start->hour][start->minute].bellType = START_BELL;
+    reservedPlan[start->hour][start->minute].planRef = plan;
   }
 }
 
@@ -155,7 +165,8 @@ void Timetable::loadFromJson(QByteArray json)
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
-        timeToAlerm[h][m] = NONE_BELL;
+        reservedPlan[h][m].bellType = NONE_BELL;
+        reservedPlan[h][m].planRef = nullptr;
       }
     }
 
@@ -199,7 +210,7 @@ QJsonArray Timetable::exportAsJson()
 
 void Timetable::bellProperBell(QTime currentTime)
 {
-  switch(timeToAlerm[currentTime.hour()][currentTime.minute()]){
+  switch(reservedPlan[currentTime.hour()][currentTime.minute()].bellType){
     case NONE_BELL:
       break;
     case START_BELL:

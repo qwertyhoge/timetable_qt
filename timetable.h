@@ -17,25 +17,36 @@
 #include "plan.h"
 #include "dayframe.h"
 
+enum Days{
+  SUNDAY = 0,
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6
+};
+enum BellType{
+  NONE_BELL,
+  START_BELL,
+  END_BELL,
+  PRELIM_BELL
+};
+
+class ReservedPlan
+{
+public:
+  ReservedPlan();
+  ReservedPlan(BellType bell, Plan &plan);
+
+  BellType bellType;
+  Plan *planRef;
+};
+
 class Timetable : public QWidget
 {
   Q_OBJECT
 public:
-  enum Days{
-    SUNDAY = 0,
-    MONDAY = 1,
-    TUESDAY = 2,
-    WEDNESDAY = 3,
-    THURSDAY = 4,
-    FRIDAY = 5,
-    SATURDAY = 6
-  };
-  enum BellType{
-    NONE_BELL,
-    START_BELL,
-    END_BELL,
-    PRELIM_BELL
-  };
   QMap<QString, int> dayMap;
   QString dayStrings[7] = {
     "Sunday",
@@ -49,7 +60,7 @@ public:
   bool allShown = false;
   int labelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
-  BellType timeToAlerm[24][60];
+  ReservedPlan reservedPlan[24][60];
 
   QMediaPlayer *bellPlayer = new QMediaPlayer();
 
@@ -77,5 +88,6 @@ public slots:
 private slots:
   void raisePlanClicked(Plan* clickedPlan);
 };
+
 
 #endif // TIMETABLE_H

@@ -60,7 +60,7 @@ public:
   bool allShown = false;
   int labelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
-  ReservedPlan reservedPlan[24][60];
+  ReservedPlan reservedPlans[24][60];
 
   QMediaPlayer *bellPlayer = new QMediaPlayer();
 
@@ -80,6 +80,7 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 public slots:
+  void processPlanStart(QTime currentTime);
   void bellProperBell(QTime currentTime);
   void highlightCurrentDay(int day);
   void deletePlan(Plan *plan);

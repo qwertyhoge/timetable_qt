@@ -5,6 +5,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDesktopServices>
+#include <QUrl>
 
 ReservedPlan::ReservedPlan()
 : bellType(NONE_BELL), planRef(nullptr)
@@ -51,17 +53,17 @@ void Timetable::setPlan(Plan *newPlan)
   connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
 
   if(newPlan->dayNum == QDate::currentDate().dayOfWeek() % 7){
-    reservedPlan[newPlan->startTime->hour][newPlan->startTime->minute].bellType = START_BELL;
-    reservedPlan[newPlan->startTime->hour][newPlan->startTime->minute].planRef = newPlan;
-    if(reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].bellType != START_BELL){
-      reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].bellType = END_BELL;
-      reservedPlan[newPlan->endTime->hour][newPlan->startTime->minute].planRef = newPlan;
+    reservedPlans[newPlan->startTime->hour][newPlan->startTime->minute].bellType = START_BELL;
+    reservedPlans[newPlan->startTime->hour][newPlan->startTime->minute].planRef = newPlan;
+    if(reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].bellType != START_BELL){
+      reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].bellType = END_BELL;
+      reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].planRef = newPlan;
     }
 
     PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
-    if(reservedPlan[prelimTime->hour][prelimTime->minute].bellType == NONE_BELL){
-      reservedPlan[prelimTime->hour][prelimTime->minute].bellType = PRELIM_BELL;
-      reservedPlan[prelimTime->hour][prelimTime->minute].planRef = newPlan;
+    if(reservedPlans[prelimTime->hour][prelimTime->minute].bellType == NONE_BELL){
+      reservedPlans[prelimTime->hour][prelimTime->minute].bellType = PRELIM_BELL;
+      reservedPlans[prelimTime->hour][prelimTime->minute].planRef = newPlan;
     }
   }
 
@@ -82,8 +84,8 @@ void Timetable::highlightCurrentDay(int dayNum)
 
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
-      reservedPlan[i][j].bellType = NONE_BELL;
-      reservedPlan[i][j].planRef = nullptr;
+      reservedPlans[i][j].bellType = NONE_BELL;
+      reservedPlans[i][j].planRef = nullptr;
     }
   }
 
@@ -92,16 +94,16 @@ void Timetable::highlightCurrentDay(int dayNum)
     PlanTime *end = plan->endTime;
     PlanTime *prelim = start - 5;
 
-    if(reservedPlan[prelim->hour][prelim->minute].bellType == NONE_BELL){
-      reservedPlan[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
-      reservedPlan[prelim->hour][prelim->minute].planRef = plan;
+    if(reservedPlans[prelim->hour][prelim->minute].bellType == NONE_BELL){
+      reservedPlans[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
+      reservedPlans[prelim->hour][prelim->minute].planRef = plan;
     }
-    if(reservedPlan[end->hour][end->minute].bellType != START_BELL){
-      reservedPlan[end->hour][end->minute].bellType = END_BELL;
-      reservedPlan[end->hour][end->minute].planRef = plan;
+    if(reservedPlans[end->hour][end->minute].bellType != START_BELL){
+      reservedPlans[end->hour][end->minute].bellType = END_BELL;
+      reservedPlans[end->hour][end->minute].planRef = plan;
     }
-    reservedPlan[start->hour][start->minute].bellType = START_BELL;
-    reservedPlan[start->hour][start->minute].planRef = plan;
+    reservedPlans[start->hour][start->minute].bellType = START_BELL;
+    reservedPlans[start->hour][start->minute].planRef = plan;
   }
 }
 
@@ -165,8 +167,8 @@ void Timetable::loadFromJson(QByteArray json)
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
-        reservedPlan[h][m].bellType = NONE_BELL;
-        reservedPlan[h][m].planRef = nullptr;
+        reservedPlans[h][m].bellType = NONE_BELL;
+        reservedPlans[h][m].planRef = nullptr;
       }
     }
 
@@ -208,9 +210,25 @@ QJsonArray Timetable::exportAsJson()
   return jsonTimetable;
 }
 
+void Timetable::processPlanStart(QTime currentTime)
+{
+  ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
+
+  if(reserved.bellType == START_BELL){
+    for(QDir &workingDir : reserved.planRef->workingDirs){
+      if(workingDir.exists()){
+        QUrl dirUrl = "file:///" + workingDir.path();
+        QDesktopServices::openUrl(dirUrl);
+      }
+    }
+  }
+
+  bellProperBell(currentTime);
+}
+
 void Timetable::bellProperBell(QTime currentTime)
 {
-  switch(reservedPlan[currentTime.hour()][currentTime.minute()].bellType){
+  switch(reservedPlans[currentTime.hour()][currentTime.minute()].bellType){
     case NONE_BELL:
       break;
     case START_BELL:

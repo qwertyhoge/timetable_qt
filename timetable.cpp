@@ -215,12 +215,17 @@ void Timetable::processPlanTimings(QTime currentTime)
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
 
   if(reserved.bellType == START_BELL){
+    emit planStart();
     for(QDir &workingDir : reserved.planRef->workingDirs){
       if(workingDir.exists()){
         QUrl dirUrl = "file:///" + workingDir.path();
         QDesktopServices::openUrl(dirUrl);
       }
     }
+  }else if(reserved.bellType == END_BELL){
+    emit planEnd();
+  }else if(reserved.bellType == PRELIM_BELL){
+    emit planPrelim();
   }
 
   bellProperBell(currentTime);

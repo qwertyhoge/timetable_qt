@@ -65,6 +65,9 @@ public slots:
   void showPlanEditDoneMessage();
   void showPlanCreateMessage();
   void showPlanDeleteMessage();
+  void showPlanStartMessage();
+  void showPlanEndMessage();
+  void showPlanPrelimMessage();
   void yesReply();
   void noReply();
 

@@ -75,6 +75,9 @@ public:
 
 signals:
   void planClicked(Plan*);
+  void planStart();
+  void planEnd();
+  void planPrelim();
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;

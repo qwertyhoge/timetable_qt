@@ -235,3 +235,13 @@ void CharacterPanel::showPlanStartMessage()
 {
   speakWord(CharacterWords::PLAN_START);
 }
+
+void CharacterPanel::showPlanEndMessage()
+{
+  speakWord(CharacterWords::PLAN_END);
+}
+
+void CharacterPanel::showPlanPrelimMessage()
+{
+  speakWord(CharacterWords::PLAN_PRELIM);
+}

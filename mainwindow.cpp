@@ -55,7 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->editCancelButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditCancelMessage()));
 
   connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
-  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(processPlanStart(QTime)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(processPlanTimings(QTime)));
+  connect(timetable, SIGNAL(planStart()), characterPanel, SLOT(showPlanStartMessage()));
+  connect(timetable, SIGNAL(planEnd()), characterPanel, SLOT(showPlanEndMessage()));
+  connect(timetable, SIGNAL(planPrelim()), characterPanel, SLOT(showPlanPrelimMessage()));
 
   loadDefaultTimetable();
 }

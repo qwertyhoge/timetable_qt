@@ -99,6 +99,9 @@ CharacterWords::CharacterWords()
   timingStrings[PLAN_EDIT_DONE] = "planeditdone";
   timingStrings[PLAN_CREATE] = "plancreate";
   timingStrings[PLAN_DELETE] = "plandelete";
+  timingStrings[PLAN_START] = "planstart";
+  timingStrings[PLAN_END] = "planend";
+  timingStrings[PLAN_PRELIM] = "planprelim";
 }
 
 bool CharacterWords::loadWords()

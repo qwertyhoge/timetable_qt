@@ -12,6 +12,7 @@ ReservedPlan::ReservedPlan()
 : bellType(NONE_BELL), planRef(nullptr)
 {
 }
+
 ReservedPlan::ReservedPlan(BellType bell, Plan &plan)
   : bellType(bell), planRef(&plan)
 {
@@ -44,7 +45,6 @@ Timetable::Timetable(QWidget *parent)
 
   highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
 }
-
 
 void Timetable::setPlan(Plan *newPlan)
 {
@@ -210,7 +210,7 @@ QJsonArray Timetable::exportAsJson()
   return jsonTimetable;
 }
 
-void Timetable::processPlanStart(QTime currentTime)
+void Timetable::processPlanTimings(QTime currentTime)
 {
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
 

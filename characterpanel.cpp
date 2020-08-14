@@ -230,3 +230,8 @@ void CharacterPanel::showPlanDeleteMessage()
 {
   speakWord(CharacterWords::PLAN_DELETE);
 }
+
+void CharacterPanel::showPlanStartMessage()
+{
+  speakWord(CharacterWords::PLAN_START);
+}

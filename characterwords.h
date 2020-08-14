@@ -38,7 +38,10 @@ public:
     PLAN_EDIT_CANCEL,
     PLAN_EDIT_DONE,
     PLAN_CREATE,
-    PLAN_DELETE
+    PLAN_DELETE,
+    PLAN_START,
+    PLAN_END,
+    PLAN_PRELIM
   };
 
   bool loadWords();

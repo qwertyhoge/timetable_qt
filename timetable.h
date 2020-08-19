@@ -17,6 +17,8 @@
 #include "plan.h"
 #include "dayframe.h"
 
+#include "characterwords.h"
+
 enum Days{
   SUNDAY = 0,
   MONDAY = 1,
@@ -75,9 +77,9 @@ public:
 
 signals:
   void planClicked(Plan*);
-  void planStart();
-  void planEnd();
-  void planPrelim();
+  void planStartedMessage(CharacterWords::Timings);
+  void planEndedMessage(CharacterWords::Timings);
+  void planPrelimMessage(CharacterWords::Timings);
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;

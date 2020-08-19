@@ -32,7 +32,7 @@ ActionMenu::ActionMenu(QWidget *parent)
 
 void ActionMenu::closeMenu()
 {
-  emit menuQuit();
+  emit menuQuitMessage(CharacterWords::MENU_QUIT);
   close();
 }
 

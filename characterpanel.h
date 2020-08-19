@@ -57,17 +57,7 @@ private slots:
   void setConvo();
 
 public slots:
-  void showRunMessage();
-  void showMenuOpenMessage();
-  void showMenuQuitMessage();
-  void showPlanEditStartMessage();
-  void showPlanEditCancelMessage();
-  void showPlanEditDoneMessage();
-  void showPlanCreateMessage();
-  void showPlanDeleteMessage();
-  void showPlanStartMessage();
-  void showPlanEndMessage();
-  void showPlanPrelimMessage();
+  void processTimings(CharacterWords::Timings timing);
   void yesReply();
   void noReply();
 

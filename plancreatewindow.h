@@ -9,6 +9,8 @@
 
 #include "plan.h"
 
+#include "characterwords.h"
+
 class PlanCreateWindow : public QDialog
 {
   Q_OBJECT
@@ -30,7 +32,8 @@ private slots:
   void openWorkingDirDialog();
 
 signals:
-  void planMake(Plan*);
+  void planCreated(Plan*);
+  void planCreatedMessage(CharacterWords::Timings planMakeTim);
 };
 
 #endif // PLANCREATEWINDOW_H

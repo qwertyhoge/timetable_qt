@@ -172,7 +172,7 @@ bool CharacterPanel::eventFilter(QObject *obj, QEvent *event)
 
 void CharacterPanel::sendMenuOpen()
 {
-  showMenuOpenMessage();
+  processTimings(CharacterWords::MENU_OPEN);
 
   // propagate signal
   emit characterClicked();
@@ -192,56 +192,7 @@ void CharacterPanel::noReply()
   startSpeak();
 }
 
-void CharacterPanel::showRunMessage()
+void CharacterPanel::processTimings(CharacterWords::Timings timing)
 {
-}
-
-void CharacterPanel::showMenuOpenMessage()
-{
-  speakWord(CharacterWords::MENU_OPEN);
-}
-
-void CharacterPanel::showMenuQuitMessage()
-{
-  speakWord(CharacterWords::MENU_QUIT);
-}
-
-void CharacterPanel::showPlanEditStartMessage()
-{
-  speakWord(CharacterWords::PLAN_EDIT_START);
-}
-
-void CharacterPanel::showPlanEditCancelMessage()
-{
-  speakWord(CharacterWords::PLAN_EDIT_CANCEL);
-}
-
-void CharacterPanel::showPlanEditDoneMessage()
-{
-  speakWord(CharacterWords::PLAN_EDIT_DONE);
-}
-
-void CharacterPanel::showPlanCreateMessage()
-{
-  speakWord(CharacterWords::PLAN_CREATE);
-}
-
-void CharacterPanel::showPlanDeleteMessage()
-{
-  speakWord(CharacterWords::PLAN_DELETE);
-}
-
-void CharacterPanel::showPlanStartMessage()
-{
-  speakWord(CharacterWords::PLAN_START);
-}
-
-void CharacterPanel::showPlanEndMessage()
-{
-  speakWord(CharacterWords::PLAN_END);
-}
-
-void CharacterPanel::showPlanPrelimMessage()
-{
-  speakWord(CharacterWords::PLAN_PRELIM);
+  speakWord(timing);
 }

@@ -1,4 +1,5 @@
 #include "plancreatewindow.h"
+#include "characterpanel.h"
 
 #include <QFormLayout>
 #include <QLabel>
@@ -72,7 +73,9 @@ void PlanCreateWindow::sendPlan()
   PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
 
   Plan *newPlan = new Plan(name, startTime, endTime, daySelect->currentIndex() - 1, workingDirectories);
-  planMake(newPlan);
+
+  emit planCreated(newPlan);
+  emit planCreatedMessage(CharacterWords::PLAN_CREATE);
 }
 
 void PlanCreateWindow::openWorkingDirDialog()

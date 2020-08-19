@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
+#include "characterwords.h"
+
 class ActionMenu : public QDialog
 {
   Q_OBJECT
@@ -23,7 +25,7 @@ private slots:
   void startDelete();
 
 signals:
-  void menuQuit();
+  void menuQuitMessage(CharacterWords::Timings);
   void deleteStarted();
   void createWindowOpen();
 

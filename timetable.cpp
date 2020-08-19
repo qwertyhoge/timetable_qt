@@ -215,7 +215,7 @@ void Timetable::processPlanTimings(QTime currentTime)
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
 
   if(reserved.bellType == START_BELL){
-    emit planStart();
+    emit planStartedMessage(CharacterWords::PLAN_START);
     for(QDir &workingDir : reserved.planRef->workingDirs){
       if(workingDir.exists()){
         QUrl dirUrl = "file:///" + workingDir.path();
@@ -223,9 +223,9 @@ void Timetable::processPlanTimings(QTime currentTime)
       }
     }
   }else if(reserved.bellType == END_BELL){
-    emit planEnd();
+    emit planEndedMessage(CharacterWords::PLAN_END);
   }else if(reserved.bellType == PRELIM_BELL){
-    emit planPrelim();
+    emit planPrelimMessage(CharacterWords::PLAN_PRELIM);
   }
 
   bellProperBell(currentTime);

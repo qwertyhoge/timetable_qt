@@ -34,31 +34,28 @@ MainWindow::MainWindow(QWidget *parent)
 
   characterPanel = new CharacterPanel();
   ui->apparea->layout()->addWidget(characterPanel);
-  characterPanel->showRunMessage();
   connect(characterPanel, SIGNAL(characterClicked()), this, SLOT(openMenu()));
 
   actionMenu = new ActionMenu(this);
   connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
-  connect(actionMenu, SIGNAL(menuQuit()), characterPanel, SLOT(showMenuQuitMessage()));
+  connect(actionMenu, SIGNAL(menuQuitMessage(CharacterWords::Timings)), characterPanel, SLOT(showMenuQuitMessage(CharacterWords::Timings)));
 
   planCreateWindow = new PlanCreateWindow(this);
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
-  connect(planCreateWindow, SIGNAL(planMake(Plan*)), timetable, SLOT(addPlan(Plan*)));
-  connect(planCreateWindow, SIGNAL(planMake(Plan*)), characterPanel, SLOT(showPlanCreateMessage()));
+  connect(planCreateWindow, SIGNAL(planCreated(Plan*)), timetable, SLOT(addPlan(Plan*)));
+  connect(planCreateWindow, SIGNAL(planCreatedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
 
   // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
 
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
-  connect(ui->deleteButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanDeleteMessage()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
-  connect(ui->editCancelButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditCancelMessage()));
 
   connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
   connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(processPlanTimings(QTime)));
-  connect(timetable, SIGNAL(planStart()), characterPanel, SLOT(showPlanStartMessage()));
-  connect(timetable, SIGNAL(planEnd()), characterPanel, SLOT(showPlanEndMessage()));
-  connect(timetable, SIGNAL(planPrelim()), characterPanel, SLOT(showPlanPrelimMessage()));
+  connect(timetable, SIGNAL(planStartedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
+  connect(timetable, SIGNAL(planEndedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
+  connect(timetable, SIGNAL(planPrelimMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
 
   loadDefaultTimetable();
 }
@@ -215,6 +212,9 @@ void MainWindow::deleteSelectedPlan()
 
   ui->editButton->setEnabled(false);
   ui->deleteButton->setEnabled(false);
+
+  // this must be moved to connected slot after moving delete button from ui to source
+  characterPanel->processTimings(CharacterWords::PLAN_DELETE);
 }
 
 void MainWindow::inspectPlan(Plan *plan)
@@ -254,7 +254,8 @@ void MainWindow::enterInspectMode()
 
 void MainWindow::enterEditMode()
 {
-  characterPanel->showPlanEditStartMessage();
+  // connect after move from ui to source
+  characterPanel->processTimings(CharacterWords::PLAN_EDIT_START);
 
   ui->inspectNameLine->setEnabled(true);
   ui->inspectDayCombo->setEnabled(true);
@@ -281,11 +282,16 @@ void MainWindow::cancelEdit()
   ui->inspectDayCombo->setCurrentIndex(selectedPlan->dayNum);
   ui->inspectStartTime->setTime(QTime(selectedPlan->startTime->hour, selectedPlan->startTime->minute));
   ui->inspectEndTime->setTime(QTime(selectedPlan->endTime->hour, selectedPlan->endTime->minute));
+
+  // this must be moved to connected slot after moving cancel button from ui to source
+
+  characterPanel->processTimings(CharacterWords::PLAN_EDIT_CANCEL);
 }
 
 void MainWindow::applyEdit()
 {
-  characterPanel->showPlanEditDoneMessage();
+  // connect after move from ui to source
+  characterPanel->processTimings(CharacterWords::PLAN_EDIT_DONE);
 
   // sanitizing may be in need
   selectedPlan->planName = ui->inspectNameLine->text();

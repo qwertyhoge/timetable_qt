@@ -43,7 +43,7 @@ Timetable::Timetable(QWidget *parent)
     dayFrames[day]->dayLabel->setAutoFillBackground(true);
   }
 
-  highlightCurrentDay(QDate::currentDate().dayOfWeek() % 7);
+  switchHighlightedDay(QDate::currentDate().dayOfWeek() % 7);
 }
 
 void Timetable::setPlan(Plan *newPlan)
@@ -69,7 +69,7 @@ void Timetable::setPlan(Plan *newPlan)
 
 }
 
-void Timetable::highlightCurrentDay(int dayNum)
+void Timetable::switchHighlightedDay(int dayNum)
 {
   for(int i = 0; i < 7; i++){
     QPalette plt = palette();
@@ -210,8 +210,14 @@ QJsonArray Timetable::exportAsJson()
   return jsonTimetable;
 }
 
-void Timetable::processPlanTimings(QTime currentTime)
+void Timetable::processPlanTimings(QDateTime &currentDateTime, bool dayChanged)
 {
+  const QTime &currentTime = currentDateTime.time();
+
+  if(dayChanged){
+    switchHighlightedDay(currentDateTime.date().day());
+  }
+
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
 
   if(reserved.bellType == START_BELL){

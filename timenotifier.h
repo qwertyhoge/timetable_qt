@@ -18,8 +18,7 @@ public:
   explicit TimeNotifier(QWidget *parent = nullptr);
 
 signals:
-  void dayChanged(int dayNum);
-  void minuteChanged(QTime time);
+  void minuteChanged(QDateTime &dateTime, bool dayChanged);
 public slots:
   void updateTime();
 };

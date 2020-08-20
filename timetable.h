@@ -85,9 +85,9 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 public slots:
-  void processPlanTimings(QTime currentTime);
+  void processPlanTimings(QDateTime &currentTime, bool dayChanged);
   void bellProperBell(QTime currentTime);
-  void highlightCurrentDay(int day);
+  void switchHighlightedDay(int day);
   void deletePlan(Plan *plan);
   void addPlan(Plan *newPlan);
 

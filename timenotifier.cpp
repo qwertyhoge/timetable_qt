@@ -26,11 +26,12 @@ void TimeNotifier::updateTime()
 
   setText(currentDateTime.time().toString());
 
+  bool dayChanged = false;
   if(formerDay != currentDay){
-    emit dayChanged(currentDay);
+    dayChanged = true;
   }
   if(formerMinute != currentMinute){
-    emit minuteChanged(currentDateTime.time());
+    emit minuteChanged(currentDateTime, dayChanged);
   }
 
   formerDay = currentDay;

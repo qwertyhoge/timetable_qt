@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   actionMenu = new ActionMenu(this);
   connect(actionMenu, SIGNAL(finished(int)), this, SLOT(enableTimetableArea()));
-  connect(actionMenu, SIGNAL(menuQuitMessage(CharacterWords::Timings)), characterPanel, SLOT(showMenuQuitMessage(CharacterWords::Timings)));
+  connect(actionMenu, SIGNAL(menuQuitMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
 
   planCreateWindow = new PlanCreateWindow(this);
   connect(actionMenu, SIGNAL(createWindowOpen()), this, SLOT(setPlanCreateWindow()));
@@ -51,8 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
-  connect(ui->timeNotifier, SIGNAL(dayChanged(int)), timetable, SLOT(highlightCurrentDay(int)));
-  connect(ui->timeNotifier, SIGNAL(minuteChanged(QTime)), timetable, SLOT(processPlanTimings(QTime)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(QDateTime&, bool)), timetable, SLOT(processPlanTimings(QDateTime&, bool)));
   connect(timetable, SIGNAL(planStartedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planEndedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planPrelimMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));

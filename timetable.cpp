@@ -13,7 +13,7 @@ ReservedPlan::ReservedPlan()
 {
 }
 
-ReservedPlan::ReservedPlan(BellType bell, Plan &plan)
+ReservedPlan::ReservedPlan(BellTypes bell, Plan &plan)
   : bellType(bell), planRef(&plan)
 {
 }
@@ -40,7 +40,6 @@ Timetable::Timetable(QWidget *parent)
     dayFrames[day] = dayFrame;
 
     dayFrames[day]->installEventFilter(this);
-    dayFrames[day]->dayLabel->setAutoFillBackground(true);
   }
 
   switchHighlightedDay(QDate::currentDate().dayOfWeek() % 7);
@@ -72,39 +71,14 @@ void Timetable::setPlan(Plan *newPlan)
 void Timetable::switchHighlightedDay(int dayNum)
 {
   for(int i = 0; i < 7; i++){
-    QPalette plt = palette();
-
-    plt.setColor(QPalette::Background, QColor(248, 251, 254));
     if(i == dayNum){
-      plt.setColor(QPalette::Background, QColor(253, 217, 192));
-    }
-
-    dayFrames[i]->dayLabel->setPalette(plt);
-  }
-
-  for(int i = 0; i < 24; i++){
-    for(int j = 0; j < 60; j++){
-      reservedPlans[i][j].bellType = NONE_BELL;
-      reservedPlans[i][j].planRef = nullptr;
+      dayFrames[i]->highlight();
+    }else{
+      dayFrames[i]->lowlight();
     }
   }
 
-  for(auto plan : dayFrames[dayNum]->plans){
-    PlanTime *start = plan->startTime;
-    PlanTime *end = plan->endTime;
-    PlanTime *prelim = start - 5;
-
-    if(reservedPlans[prelim->hour][prelim->minute].bellType == NONE_BELL){
-      reservedPlans[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
-      reservedPlans[prelim->hour][prelim->minute].planRef = plan;
-    }
-    if(reservedPlans[end->hour][end->minute].bellType != START_BELL){
-      reservedPlans[end->hour][end->minute].bellType = END_BELL;
-      reservedPlans[end->hour][end->minute].planRef = plan;
-    }
-    reservedPlans[start->hour][start->minute].bellType = START_BELL;
-    reservedPlans[start->hour][start->minute].planRef = plan;
-  }
+  dayFrames[dayNum]->fillReservedPlans(reservedPlans);
 }
 
 bool Timetable::eventFilter(QObject *obj, QEvent *event)
@@ -112,7 +86,7 @@ bool Timetable::eventFilter(QObject *obj, QEvent *event)
   if(!allShown){
     for(int i = 0; i < 7; i++){
       if(obj == dayFrames[i] && event->type() == QEvent::Show){
-        labelWidths[i] = dayFrames[i]->dayLabel->size().width();
+        labelWidths[i] = dayFrames[i]->labelWidth();
 
         auto searchMaxWidth = [&]{
           int maxWidth = 0;
@@ -130,7 +104,7 @@ bool Timetable::eventFilter(QObject *obj, QEvent *event)
         int maxWidth = searchMaxWidth();
         if(maxWidth != -1){
           for(int i = 0; i < 7; i++){
-            dayFrames[i]->dayLabel->setFixedWidth(maxWidth);
+            dayFrames[i]->setLabelWidth(maxWidth);
           }
           allShown = true;
         }

@@ -1,5 +1,6 @@
 #include "characterwords.h"
 
+
 #include <QFile>
 #include <QDebug>
 #include <QJsonDocument>
@@ -196,5 +197,5 @@ WordTree *CharacterWords::pickRandomOne(Timings timing)
 
   int randomIndex = int(QRandomGenerator::global()->generate() % uint(wordVec.size()));
 
-  return &wordVec[0];
+  return &wordVec[randomIndex];
 }

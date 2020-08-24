@@ -12,7 +12,6 @@ public:
   WordTree(QString sentence, WordTree *yes, WordTree *no);
 
   QString sentence;
-
   WordTree* convoYes = nullptr;
   WordTree* convoNo = nullptr;
 
@@ -20,7 +19,6 @@ public:
   bool hasConvo();
   bool allHaveBothConvo();
   bool parseConvo(QString ynStr, QString sentence);
-
 private:
   void deleteFromChildren();
 };
@@ -48,13 +46,12 @@ public:
   bool hasTree(Timings timing);
   WordTree *pickRandomOne(Timings timing);
 
-  QString wordsPath = "./characters/proto/words.json";
-
 private:
   bool parseWordsJson(QByteArray json);
   QHash<Timings, QString> timingStrings;
   QHash<QString, QVector<WordTree> > wordList;
 
+  QString wordsPath = "./characters/proto/words.json";
 };
 
 #endif // CHARACTERWORDS_H

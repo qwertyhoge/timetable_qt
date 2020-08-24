@@ -23,6 +23,7 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
   dayLabel->setAlignment(Qt::AlignCenter);
   dayLabel->setLineWidth(2);
   dayLabel->setMargin(0);
+  dayLabel->setAutoFillBackground(true);
   layout->addWidget(dayLabel);
 
   planArea = new QWidget();
@@ -33,6 +34,51 @@ void DayFrame::resizeEvent(QResizeEvent *event)
 {
   for(auto plan : plans){
     plan->updatePlanGeometry();
+  }
+}
+
+void DayFrame::highlight()
+{
+  QPalette plt = palette();
+
+  plt.setColor(QPalette::Background, QColor(253, 217, 192));
+
+  dayLabel->setPalette(plt);
+}
+
+void DayFrame::lowlight()
+{
+  QPalette plt = palette();
+
+  plt.setColor(QPalette::Background, QColor(248, 251, 254));
+
+  dayLabel->setPalette(plt);
+}
+
+void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
+{
+  for(int i = 0; i < 24; i++){
+    for(int j = 0; j < 60; j++){
+      reservedPlans[i][j].bellType = NONE_BELL;
+      reservedPlans[i][j].planRef = nullptr;
+    }
+  }
+
+  for(auto plan : plans){
+    PlanTime *start = plan->startTime;
+    PlanTime *end = plan->endTime;
+    PlanTime *prelim = start - 5;
+
+    if(reservedPlans[prelim->hour][prelim->minute].bellType == NONE_BELL){
+      reservedPlans[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
+      reservedPlans[prelim->hour][prelim->minute].planRef = plan;
+    }
+    if(reservedPlans[end->hour][end->minute].bellType != START_BELL){
+      reservedPlans[end->hour][end->minute].bellType = END_BELL;
+      reservedPlans[end->hour][end->minute].planRef = plan;
+    }
+    reservedPlans[start->hour][start->minute].bellType = START_BELL;
+    reservedPlans[start->hour][start->minute].planRef = plan;
   }
 }
 
@@ -81,4 +127,14 @@ QJsonArray DayFrame::extractDayJsonArray()
   }
 
   return dayPlans;
+}
+
+int DayFrame::labelWidth()
+{
+  return dayLabel->width();
+}
+
+void DayFrame::setLabelWidth(int labelWidth)
+{
+  dayLabel->setFixedWidth(labelWidth);
 }

@@ -41,6 +41,7 @@ HEADERS += \
     plancreatewindow.h \
     plantime.h \
     replybox.h \
+    reservedplan.h \
     timenotifier.h \
     timetable.h
 

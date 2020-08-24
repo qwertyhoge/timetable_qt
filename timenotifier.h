@@ -9,12 +9,11 @@ class TimeNotifier : public QLabel
 {
   Q_OBJECT
 private:
-
-public:
-  QDateTime currentDateTime;
   int formerDay;
   int formerMinute;
+  QDateTime currentDateTime;
 
+public:
   explicit TimeNotifier(QWidget *parent = nullptr);
 
 signals:

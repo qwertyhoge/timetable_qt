@@ -6,6 +6,7 @@
 #include <QLabel>
 
 #include "plan.h"
+#include "reservedplan.h"
 
 class DayFrame : public QFrame
 {
@@ -14,23 +15,28 @@ class DayFrame : public QFrame
 public:
   DayFrame(QWidget *parent = nullptr, QString dayString = "DAY");
 
-  QString dayString;
-  QVector<Plan*> plans;
-
-  QLabel *dayLabel;
-  QWidget *planArea;
-
+  void highlight();
+  void lowlight();
   void addPlan(Plan* plan);
   void deletePlan(Plan* plan);
   void updateText();
-  void clearPlans(void);
-  QJsonArray extractDayJsonArray(void);
+  void clearPlans();
+  QJsonArray extractDayJsonArray();
+  void fillReservedPlans(ReservedPlan reservedPlans[24][60]);
 
+  int labelWidth();
+  void setLabelWidth(int labelWidth);
 protected:
   void resizeEvent(QResizeEvent *event) override;
 
 private:
   QHBoxLayout *layout;
+
+  QLabel *dayLabel;
+  QWidget *planArea;
+
+  QVector<Plan*> plans;
+  QString dayString;
 };
 
 #endif // DAYFRAME_H

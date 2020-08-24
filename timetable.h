@@ -16,6 +16,7 @@
 
 #include "plan.h"
 #include "dayframe.h"
+#include "reservedplan.h"
 
 #include "characterwords.h"
 
@@ -27,22 +28,6 @@ enum Days{
   THURSDAY = 4,
   FRIDAY = 5,
   SATURDAY = 6
-};
-enum BellType{
-  NONE_BELL,
-  START_BELL,
-  END_BELL,
-  PRELIM_BELL
-};
-
-class ReservedPlan
-{
-public:
-  ReservedPlan();
-  ReservedPlan(BellType bell, Plan &plan);
-
-  BellType bellType;
-  Plan *planRef;
 };
 
 class Timetable : public QWidget

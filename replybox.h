@@ -10,6 +10,7 @@ class ReplyBox : public QFrame
 public:
   explicit ReplyBox(QWidget *parent = nullptr);
 
+private:
   QPushButton *yesButton;
   QPushButton *noButton;
 

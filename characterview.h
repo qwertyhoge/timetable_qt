@@ -13,6 +13,7 @@ class CharacterView : public QGraphicsView
 public:
   CharacterView(QWidget *parent = nullptr);
 
+private:
   QRect imageRect;
   QPoint characterPoint;
   QRect boundingRect;
@@ -22,7 +23,6 @@ public:
 
   bool characterHovered = false;
   bool characterPressing = false;
-private:
 
 protected:
   void paintEvent(QPaintEvent*) override;

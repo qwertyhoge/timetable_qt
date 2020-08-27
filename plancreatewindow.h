@@ -7,7 +7,7 @@
 #include <QTimeEdit>
 #include <QComboBox>
 
-#include "plan.h"
+#include "planframe.h"
 
 #include "characterwords.h"
 

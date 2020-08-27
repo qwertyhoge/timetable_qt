@@ -1,5 +1,5 @@
-#ifndef TIME_H
-#define TIME_H
+#ifndef PLANTIME_H
+#define PLANTIME_H
 
 #include <QString>
 
@@ -21,4 +21,4 @@ public:
   static PlanTime *parseTime(QString timeString, char delimiter);
 };
 
-#endif // TIME_H
+#endif // PLANTIME_H

@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QFileDialog>
 
+#include "plan.h"
+
 PlanCreateWindow::PlanCreateWindow(QWidget *parent)
   : QDialog(parent), workingDirectories()
 {

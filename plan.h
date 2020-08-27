@@ -1,42 +1,40 @@
 #ifndef PLAN_H
 #define PLAN_H
 
-#include <QWidget>
-#include <plantime.h>
-#include <QFrame>
-#include <QLabel>
-#include <QPushButton>
-#include <QMap>
 #include <QDir>
+#include <QVector>
 
-class Plan : public QFrame
+#include "plantime.h"
+
+class Plan
 {
-  Q_OBJECT
 public:
+  Plan();
+  Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dirs);
+
+  QString getPlanName(void);
+  PlanTime getStartTime();
+  PlanTime getEndTime();
+  int getDayNum();
+  QString dirsAsString();
+
+  void setName(QString planName);
+  void setTime(PlanTime &start, PlanTime &end);
+
+  void addWorkingDir(QDir newDir);
+  bool removeWorkingDir(QDir dirToRemove);
+  QJsonObject getJsonObj();
+
+private:
   QString planName;
   PlanTime *startTime;
   PlanTime *endTime;
   int dayNum;
   QVector<QDir> workingDirs;
 
-  Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dir);
-
-  void updatePlanGeometry();
-  void updateText();
-  QRect fitGeometry();
 signals:
-  void planClicked(Plan *plan);
 
-private:
-  int xPos;
-  int yPos = 0;
-
-  QLabel *nameLabel;
-  QLabel *startTimeLabel;
-  QLabel *endTimeLabel;
-
-protected:
-  void mousePressEvent(QMouseEvent *event) override;
+public slots:
 };
 
 #endif // PLAN_H

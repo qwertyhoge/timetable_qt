@@ -14,7 +14,7 @@
 #include <QMediaPlayer>
 #include <QEvent>
 
-#include "plan.h"
+#include "planframe.h"
 #include "dayframe.h"
 #include "reservedplan.h"
 
@@ -61,7 +61,7 @@ public:
   QJsonArray exportAsJson(void);
 
 signals:
-  void planClicked(Plan*);
+  void planClicked(PlanFrame*);
   void planStartedMessage(CharacterWords::Timings);
   void planEndedMessage(CharacterWords::Timings);
   void planPrelimMessage(CharacterWords::Timings);
@@ -73,11 +73,11 @@ public slots:
   void processPlanTimings(QDateTime &currentTime, bool dayChanged);
   void bellProperBell(QTime currentTime);
   void switchHighlightedDay(int day);
-  void deletePlan(Plan *plan);
+  void deletePlan(PlanFrame *plan);
   void addPlan(Plan *newPlan);
 
 private slots:
-  void raisePlanClicked(Plan* clickedPlan);
+  void raisePlanClicked(PlanFrame* clickedPlan);
 };
 
 

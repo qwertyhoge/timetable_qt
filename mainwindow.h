@@ -11,7 +11,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class Plan;
+class PlanFrame;
 class Timetable;
 class CharacterPanel;
 
@@ -33,7 +33,7 @@ private:
   CharacterPanel *characterPanel;
 
   bool timetableAreaDisabled = false;
-  Plan *selectedPlan = nullptr;
+  PlanFrame *selectedPlan = nullptr;
 
   void initData();
   bool loadDefaultTimetable();
@@ -46,7 +46,7 @@ private slots:
   void exportTimetable(QString fileName);
   void setDefaultTimetable();
   void deleteSelectedPlan();
-  void inspectPlan(Plan *plan);
+  void inspectPlan(PlanFrame *plan);
   void enterInspectMode();
   void enterEditMode();
   void cancelEdit();

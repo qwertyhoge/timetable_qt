@@ -8,16 +8,6 @@
 #include <QDesktopServices>
 #include <QUrl>
 
-ReservedPlan::ReservedPlan()
-: bellType(NONE_BELL), planRef(nullptr)
-{
-}
-
-ReservedPlan::ReservedPlan(BellTypes bell, Plan &plan)
-  : bellType(bell), planRef(&plan)
-{
-}
-
 Timetable::Timetable(QWidget *parent)
   : QWidget(parent)
 {
@@ -47,19 +37,21 @@ Timetable::Timetable(QWidget *parent)
 
 void Timetable::setPlan(Plan *newPlan)
 {
-  dayFrames[newPlan->dayNum]->addPlan(newPlan);
+  dayFrames[newPlan->getDayNum()]->addPlan(newPlan);
 
-  connect(newPlan, SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
+  connect(newPlan, SIGNAL(planClicked(PlanFrame*)), this, SLOT(raisePlanClicked(PlanFrame*)));
 
-  if(newPlan->dayNum == QDate::currentDate().dayOfWeek() % 7){
-    reservedPlans[newPlan->startTime->hour][newPlan->startTime->minute].bellType = START_BELL;
-    reservedPlans[newPlan->startTime->hour][newPlan->startTime->minute].planRef = newPlan;
-    if(reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].bellType != START_BELL){
-      reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].bellType = END_BELL;
-      reservedPlans[newPlan->endTime->hour][newPlan->startTime->minute].planRef = newPlan;
+  if(newPlan->getDayNum() == QDate::currentDate().dayOfWeek() % 7){
+    PlanTime startTime = newPlan->getStartTime();
+    PlanTime endTime = newPlan->getEndTime();
+    reservedPlans[startTime.hour][startTime.minute].bellType = START_BELL;
+    reservedPlans[startTime.hour][startTime.minute].planRef = newPlan;
+    if(reservedPlans[endTime.hour][startTime.minute].bellType != START_BELL){
+      reservedPlans[endTime.hour][startTime.minute].bellType = END_BELL;
+      reservedPlans[endTime.hour][startTime.minute].planRef = newPlan;
     }
 
-    PlanTime *prelimTime = *(newPlan->startTime) - new PlanTime(0, 5);
+    PlanTime *prelimTime = startTime - new PlanTime(0, 5);
     if(reservedPlans[prelimTime->hour][prelimTime->minute].bellType == NONE_BELL){
       reservedPlans[prelimTime->hour][prelimTime->minute].bellType = PRELIM_BELL;
       reservedPlans[prelimTime->hour][prelimTime->minute].planRef = newPlan;
@@ -125,7 +117,7 @@ void Timetable::playBell(QUrl bellPath)
   bellPlayer->play();
 }
 
-void Timetable::deletePlan(Plan *plan)
+void Timetable::deletePlan(PlanFrame *plan)
 {
   dayFrames[plan->dayNum]->deletePlan(plan);
 }
@@ -160,7 +152,7 @@ void Timetable::loadFromJson(QByteArray json)
           workingDirs.push_back(QDir(dir.toString()));
         }
 
-        Plan *loadedPlan = new Plan(planName, startTime, endTime, day, workingDirs);
+        PlanFrame *loadedPlan = new PlanFrame(planName, startTime, endTime, day, workingDirs);
         setPlan(loadedPlan);
       }
     }
@@ -230,12 +222,10 @@ void Timetable::bellProperBell(QTime currentTime)
 
 void Timetable::addPlan(Plan* newPlan)
 {
-  qDebug() << "addplan";
-  qDebug() << "day: " << newPlan->dayNum;
   setPlan(newPlan);
 }
 
-void Timetable::raisePlanClicked(Plan* clickedPlan)
+void Timetable::raisePlanClicked(PlanFrame* clickedPlan)
 {
   emit planClicked(clickedPlan);
 }

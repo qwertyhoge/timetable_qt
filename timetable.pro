@@ -25,6 +25,7 @@ SOURCES += \
     mainwindow.cpp \
     plan.cpp \
     plancreatewindow.cpp \
+    planframe.cpp \
     plantime.cpp \
     replybox.cpp \
     timenotifier.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     mainwindow.h \
     plan.h \
     plancreatewindow.h \
+    planframe.h \
     plantime.h \
     replybox.h \
     reservedplan.h \

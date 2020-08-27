@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "plan.h"
+#include "planframe.h"
 #include "plantime.h"
 #include "timenotifier.h"
 #include "characterpanel.h"
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   timetable = new Timetable();
-  connect(timetable, SIGNAL(planClicked(Plan*)), this, SLOT(inspectPlan(Plan*)));
+  connect(timetable, SIGNAL(planClicked(PlanFrame*)), this, SLOT(inspectPlan(PlanFrame*)));
   ui->scrollAreaWidgetContents->layout()->addWidget(timetable);
   // ui->scrollArea->setWidget(timetable);
 
@@ -216,7 +216,7 @@ void MainWindow::deleteSelectedPlan()
   characterPanel->processTimings(CharacterWords::PLAN_DELETE);
 }
 
-void MainWindow::inspectPlan(Plan *plan)
+void MainWindow::inspectPlan(PlanFrame *plan)
 {
   selectedPlan = plan;
 

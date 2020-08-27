@@ -32,7 +32,7 @@ DayFrame::DayFrame(QWidget *parent, QString dayString)
 
 void DayFrame::resizeEvent(QResizeEvent *event)
 {
-  for(auto plan : plans){
+  for(auto plan : planFrames){
     plan->updatePlanGeometry();
   }
 }
@@ -64,36 +64,40 @@ void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
     }
   }
 
-  for(auto plan : plans){
-    PlanTime *start = plan->startTime;
-    PlanTime *end = plan->endTime;
-    PlanTime *prelim = start - 5;
+  for(auto pf : planFrames){
+    Plan *plan = pf->getPlanData();
+    PlanTime start = plan->getStartTime();
+    PlanTime end = plan->getEndTime();
+    PlanTime *prelim = &start - 5;
 
     if(reservedPlans[prelim->hour][prelim->minute].bellType == NONE_BELL){
       reservedPlans[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
       reservedPlans[prelim->hour][prelim->minute].planRef = plan;
     }
-    if(reservedPlans[end->hour][end->minute].bellType != START_BELL){
-      reservedPlans[end->hour][end->minute].bellType = END_BELL;
-      reservedPlans[end->hour][end->minute].planRef = plan;
+    if(reservedPlans[end.hour][end.minute].bellType != START_BELL){
+      reservedPlans[end.hour][end.minute].bellType = END_BELL;
+      reservedPlans[end.hour][end.minute].planRef = plan;
     }
-    reservedPlans[start->hour][start->minute].bellType = START_BELL;
-    reservedPlans[start->hour][start->minute].planRef = plan;
+    reservedPlans[start.hour][start.minute].bellType = START_BELL;
+    reservedPlans[start.hour][start.minute].planRef = plan;
   }
 }
 
 void DayFrame::addPlan(Plan *newPlan)
 {
-  plans.push_back(newPlan);
-  newPlan->setParent(planArea);
-  newPlan->fitGeometry();
+  PlanFrame *newPlanFrame = new PlanFrame();
+  newPlanFrame->attachPlan(newPlan);
 
-  newPlan->show();
+  planFrames.push_back(newPlanFrame);
+  newPlanFrame->setParent(planArea);
+  newPlanFrame->fitGeometry();
+
+  newPlanFrame->show();
 }
 
-void DayFrame::deletePlan(Plan *plan)
+void DayFrame::deletePlan(PlanFrame *plan)
 {
-  if(!plans.removeOne(plan)){
+  if(!planFrames.removeOne(plan)){
     qCritical() << "failed to delete from vector";
   }
   plan->setParent(nullptr);
@@ -102,7 +106,7 @@ void DayFrame::deletePlan(Plan *plan)
 
 void DayFrame::clearPlans(void)
 {
-  for(auto plan : plans){
+  for(auto plan : planFrames){
     deletePlan(plan);
   }
 }
@@ -110,18 +114,8 @@ void DayFrame::clearPlans(void)
 QJsonArray DayFrame::extractDayJsonArray()
 {
   QJsonArray dayPlans;
-  for(auto plan : plans){
-    QJsonObject planInfo;
-    qDebug() << "capsling " << plan->planName;
-
-    planInfo.insert("planName", plan->planName);
-    planInfo.insert("startTime", plan->startTime->toString());
-    planInfo.insert("endTime", plan->endTime->toString());
-    QJsonArray dirArray;
-    for(QDir &dir : plan->workingDirs){
-      dirArray.push_back(dir.path());
-    }
-    planInfo.insert("workingDirectories", dirArray);
+  for(auto plan : planFrames){
+    QJsonObject planInfo = plan->getPlanData()->getJsonObj();
 
     dayPlans.push_back(planInfo);
   }

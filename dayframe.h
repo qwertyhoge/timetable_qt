@@ -5,7 +5,7 @@
 #include <QLayout>
 #include <QLabel>
 
-#include "plan.h"
+#include "planframe.h"
 #include "reservedplan.h"
 
 class DayFrame : public QFrame
@@ -17,8 +17,8 @@ public:
 
   void highlight();
   void lowlight();
-  void addPlan(Plan* plan);
-  void deletePlan(Plan* plan);
+  void addPlan(Plan *plan);
+  void deletePlan(PlanFrame *plan);
   void updateText();
   void clearPlans();
   QJsonArray extractDayJsonArray();
@@ -35,7 +35,7 @@ private:
   QLabel *dayLabel;
   QWidget *planArea;
 
-  QVector<Plan*> plans;
+  QVector<PlanFrame*> planFrames;
   QString dayString;
 };
 

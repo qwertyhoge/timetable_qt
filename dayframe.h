@@ -37,7 +37,7 @@ private:
   QString dayString;
 
 signals:
-  void planClicked(Plan*);
+  void planClicked(PlanFrame*);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;

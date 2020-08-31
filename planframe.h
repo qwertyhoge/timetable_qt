@@ -24,7 +24,7 @@ public:
 
   void attachPlan(Plan *plan);
 signals:
-  void planClicked(Plan *plan);
+  void planClicked(PlanFrame *self);
 
 private:
   int xPos;

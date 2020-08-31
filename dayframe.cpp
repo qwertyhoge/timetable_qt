@@ -92,7 +92,7 @@ void DayFrame::addPlan(Plan *newPlan)
   newPlanFrame->setParent(planArea);
   newPlanFrame->fitGeometry();
 
-  connect(newPlanFrame, SIGNAL(planClicked(Plan*)), this, SIGNAL(planClicked(Plan*)));
+  connect(newPlanFrame, SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
 
   newPlanFrame->show();
 }

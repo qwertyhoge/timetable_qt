@@ -31,7 +31,7 @@ Timetable::Timetable(QWidget *parent)
 
     dayFrames[day]->installEventFilter(this);
 
-    connect(dayFrames[day], SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
+    connect(dayFrames[day], SIGNAL(planClicked(PlanFrame*)), this, SLOT(raisePlanClicked(PlanFrame*)));
   }
 
   switchHighlightedDay(QDate::currentDate().dayOfWeek() % 7);
@@ -227,7 +227,7 @@ void Timetable::addPlan(Plan* newPlan)
 }
 
 
-void Timetable::raisePlanClicked(Plan* clickedPlan)
+void Timetable::raisePlanClicked(PlanFrame* clickedPlan)
 {
   emit planClicked(clickedPlan);
 }

@@ -102,5 +102,5 @@ void PlanFrame::updatePlanGeometry()
 }
 
 void PlanFrame::mousePressEvent(QMouseEvent *event){
-  emit planClicked(planData);
+  emit planClicked(this);
 }

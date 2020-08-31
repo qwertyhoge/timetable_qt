@@ -61,7 +61,7 @@ public:
   QJsonArray exportAsJson(void);
 
 signals:
-  void planClicked(Plan*);
+  void planClicked(PlanFrame*);
   void planStartedMessage(CharacterWords::Timings);
   void planEndedMessage(CharacterWords::Timings);
   void planPrelimMessage(CharacterWords::Timings);
@@ -77,7 +77,7 @@ public slots:
   void addPlan(Plan *newPlan);
 
 private slots:
-  void raisePlanClicked(Plan* clickedPlan);
+  void raisePlanClicked(PlanFrame* clickedPlan);
 };
 
 

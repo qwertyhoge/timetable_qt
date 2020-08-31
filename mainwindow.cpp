@@ -218,15 +218,16 @@ void MainWindow::deleteSelectedPlan()
 void MainWindow::inspectPlan(PlanFrame *plan)
 {
   selectedPlanFrame = plan;
+  Plan *planData = selectedPlanFrame->getPlanData();
 
   enterInspectMode();
 
-  ui->inspectNameLine->setText(plan->getPlanName());
-  ui->inspectDayCombo->setCurrentIndex(plan->getDayNum());
-  ui->inspectStartTime->setTime(plan->getStartTime().toQTime());
-  ui->inspectEndTime->setTime(plan->getEndTime().toQTime());
+  ui->inspectNameLine->setText(planData->getPlanName());
+  ui->inspectDayCombo->setCurrentIndex(planData->getDayNum());
+  ui->inspectStartTime->setTime(planData->getStartTime().toQTime());
+  ui->inspectEndTime->setTime(planData->getEndTime().toQTime());
 
-  ui->inspectDirLine->setText(plan->dirsAsString());
+  ui->inspectDirLine->setText(planData->dirsAsString());
 }
 
 void MainWindow::enterInspectMode()
@@ -273,10 +274,12 @@ void MainWindow::cancelEdit()
 {
   enterInspectMode();
 
-  ui->inspectNameLine->setText(selectedPlan->getPlanName());
-  ui->inspectDayCombo->setCurrentIndex(selectedPlan->getDayNum());
-  ui->inspectStartTime->setTime(selectedPlan->getStartTime().toQTime());
-  ui->inspectEndTime->setTime(selectedPlan->getEndTime().toQTime());
+  Plan *planData = selectedPlanFrame->getPlanData();
+
+  ui->inspectNameLine->setText(planData->getPlanName());
+  ui->inspectDayCombo->setCurrentIndex(planData->getDayNum());
+  ui->inspectStartTime->setTime(planData->getStartTime().toQTime());
+  ui->inspectEndTime->setTime(planData->getEndTime().toQTime());
 
   // this must be moved to connected slot after moving cancel button from ui to source
 

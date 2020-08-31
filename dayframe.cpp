@@ -86,11 +86,11 @@ void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
 void DayFrame::addPlan(Plan *newPlan)
 {
   PlanFrame *newPlanFrame = new PlanFrame();
-  newPlanFrame->attachPlan(newPlan);
 
   planFrames.push_back(newPlanFrame);
   newPlanFrame->setParent(planArea);
-  newPlanFrame->fitGeometry();
+
+  newPlanFrame->attachPlan(newPlan);
 
   connect(newPlanFrame, SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
 

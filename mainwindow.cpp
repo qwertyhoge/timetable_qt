@@ -1,12 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "planframe.h"
 #include "plantime.h"
 #include "timenotifier.h"
 #include "characterpanel.h"
-#include "dayframe.h"
 #include "timetable.h"
+#include "plancreatewindow.h"
 
 #include <QtWidgets>
 #include <QFrame>
@@ -201,8 +200,8 @@ void MainWindow::setDefaultTimetable()
 
 void MainWindow::deleteSelectedPlan()
 {
-  timetable->deletePlan(selectedPlan);
-  selectedPlan = nullptr;
+  timetable->deletePlanFrame(selectedPlanFrame);
+  selectedPlanFrame = nullptr;
 
   ui->inspectNameLine->setText("");
   ui->inspectDayCombo->setCurrentIndex(-1);
@@ -218,19 +217,16 @@ void MainWindow::deleteSelectedPlan()
 
 void MainWindow::inspectPlan(PlanFrame *plan)
 {
-  selectedPlan = plan;
+  selectedPlanFrame = plan;
 
   enterInspectMode();
 
-  ui->inspectNameLine->setText(plan->planName);
-  ui->inspectDayCombo->setCurrentIndex(plan->dayNum);
-  ui->inspectStartTime->setTime(QTime(plan->startTime->hour, plan->startTime->minute));
-  ui->inspectEndTime->setTime(QTime(plan->endTime->hour, plan->endTime->minute));
-  QString paths = "";
-  for(QDir &dir : plan->workingDirs){
-    paths += dir.path();
-  }
-  ui->inspectDirLine->setText(paths);
+  ui->inspectNameLine->setText(plan->getPlanName());
+  ui->inspectDayCombo->setCurrentIndex(plan->getDayNum());
+  ui->inspectStartTime->setTime(plan->getStartTime().toQTime());
+  ui->inspectEndTime->setTime(plan->getEndTime().toQTime());
+
+  ui->inspectDirLine->setText(plan->dirsAsString());
 }
 
 void MainWindow::enterInspectMode()
@@ -277,10 +273,10 @@ void MainWindow::cancelEdit()
 {
   enterInspectMode();
 
-  ui->inspectNameLine->setText(selectedPlan->planName);
-  ui->inspectDayCombo->setCurrentIndex(selectedPlan->dayNum);
-  ui->inspectStartTime->setTime(QTime(selectedPlan->startTime->hour, selectedPlan->startTime->minute));
-  ui->inspectEndTime->setTime(QTime(selectedPlan->endTime->hour, selectedPlan->endTime->minute));
+  ui->inspectNameLine->setText(selectedPlan->getPlanName());
+  ui->inspectDayCombo->setCurrentIndex(selectedPlan->getDayNum());
+  ui->inspectStartTime->setTime(selectedPlan->getStartTime().toQTime());
+  ui->inspectEndTime->setTime(selectedPlan->getEndTime().toQTime());
 
   // this must be moved to connected slot after moving cancel button from ui to source
 
@@ -293,12 +289,19 @@ void MainWindow::applyEdit()
   characterPanel->processTimings(CharacterWords::PLAN_EDIT_DONE);
 
   // sanitizing may be in need
-  selectedPlan->planName = ui->inspectNameLine->text();
-  selectedPlan->dayNum = ui->inspectDayCombo->currentIndex();
-  selectedPlan->startTime = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
-  selectedPlan->endTime = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
+  QString name = ui->inspectNameLine->text();
+  int dayNum = ui->inspectDayCombo->currentIndex();
+  PlanTime *start = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
+  PlanTime *end = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
+  QVector<QDir> dirs;
+  for(auto path : selectedPlanFrame->getPlanData()->dirsAsString().split(';')){
+    QDir dir(path);
+    dirs.push_back(dir);
+  }
 
-  selectedPlan->updateText();
+  Plan *edittedPlan = new Plan(name, start, end, dayNum, dirs);
+
+  selectedPlanFrame->attachPlan(edittedPlan);
 
   enterInspectMode();
 }

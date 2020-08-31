@@ -18,14 +18,13 @@ public:
   PlanFrame();
 
   void updatePlanGeometry();
-  void updateText();
   QRect fitGeometry();
 
   Plan *getPlanData();
 
   void attachPlan(Plan *plan);
 signals:
-  void planClicked(PlanFrame *plan);
+  void planClicked(Plan *plan);
 
 private:
   int xPos;

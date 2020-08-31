@@ -2,6 +2,7 @@
 #define PLANTIME_H
 
 #include <QString>
+#include <QTime>
 
 class PlanTime
 {
@@ -17,6 +18,9 @@ public:
 
   int asMinutes();
   QString toString();
+
+  bool areSame(const PlanTime &another);
+  QTime toQTime();
 
   static PlanTime *parseTime(QString timeString, char delimiter);
 };

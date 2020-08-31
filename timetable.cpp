@@ -30,6 +30,8 @@ Timetable::Timetable(QWidget *parent)
     dayFrames[day] = dayFrame;
 
     dayFrames[day]->installEventFilter(this);
+
+    connect(dayFrames[day], SIGNAL(planClicked(Plan*)), this, SLOT(raisePlanClicked(Plan*)));
   }
 
   switchHighlightedDay(QDate::currentDate().dayOfWeek() % 7);
@@ -38,8 +40,6 @@ Timetable::Timetable(QWidget *parent)
 void Timetable::setPlan(Plan *newPlan)
 {
   dayFrames[newPlan->getDayNum()]->addPlan(newPlan);
-
-  connect(newPlan, SIGNAL(planClicked(PlanFrame*)), this, SLOT(raisePlanClicked(PlanFrame*)));
 
   if(newPlan->getDayNum() == QDate::currentDate().dayOfWeek() % 7){
     PlanTime startTime = newPlan->getStartTime();
@@ -117,9 +117,9 @@ void Timetable::playBell(QUrl bellPath)
   bellPlayer->play();
 }
 
-void Timetable::deletePlan(PlanFrame *plan)
+void Timetable::deletePlanFrame(PlanFrame *plan)
 {
-  dayFrames[plan->dayNum]->deletePlan(plan);
+  dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
 }
 
 void Timetable::loadFromJson(QByteArray json)
@@ -152,7 +152,7 @@ void Timetable::loadFromJson(QByteArray json)
           workingDirs.push_back(QDir(dir.toString()));
         }
 
-        PlanFrame *loadedPlan = new PlanFrame(planName, startTime, endTime, day, workingDirs);
+        Plan *loadedPlan = new Plan(planName, startTime, endTime, day, workingDirs);
         setPlan(loadedPlan);
       }
     }
@@ -188,7 +188,8 @@ void Timetable::processPlanTimings(QDateTime &currentDateTime, bool dayChanged)
 
   if(reserved.bellType == START_BELL){
     emit planStartedMessage(CharacterWords::PLAN_START);
-    for(QDir &workingDir : reserved.planRef->workingDirs){
+    for(QString path : reserved.planRef->dirsAsString().split(';')){
+      QDir workingDir = QDir(path);
       if(workingDir.exists()){
         QUrl dirUrl = "file:///" + workingDir.path();
         QDesktopServices::openUrl(dirUrl);
@@ -225,7 +226,8 @@ void Timetable::addPlan(Plan* newPlan)
   setPlan(newPlan);
 }
 
-void Timetable::raisePlanClicked(PlanFrame* clickedPlan)
+
+void Timetable::raisePlanClicked(Plan* clickedPlan)
 {
   emit planClicked(clickedPlan);
 }

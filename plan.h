@@ -16,15 +16,17 @@ public:
   PlanTime getStartTime();
   PlanTime getEndTime();
   int getDayNum();
-  QString dirsAsString();
+  QString dirsAsString() const;
 
-  void setName(QString planName);
-  void setTime(PlanTime &start, PlanTime &end);
+  void setPlanName(QString newPlanName);
+  void setTimes(PlanTime newStartTime, PlanTime newEndTime);
+  void setDayNum(int newDayNum);
 
   void addWorkingDir(QDir newDir);
   bool removeWorkingDir(QDir dirToRemove);
   QJsonObject getJsonObj();
 
+  bool areSame(const Plan &another);
 private:
   QString planName;
   PlanTime *startTime;

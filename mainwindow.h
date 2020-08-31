@@ -5,15 +5,15 @@
 #include <QMap>
 
 #include "actionmenu.h"
-#include "plancreatewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class PlanFrame;
 class Timetable;
 class CharacterPanel;
+class PlanCreateWindow;
+class PlanFrame;
 
 class MainWindow : public QMainWindow
 {
@@ -33,7 +33,7 @@ private:
   CharacterPanel *characterPanel;
 
   bool timetableAreaDisabled = false;
-  PlanFrame *selectedPlan = nullptr;
+  PlanFrame *selectedPlanFrame = nullptr;
 
   void initData();
   bool loadDefaultTimetable();

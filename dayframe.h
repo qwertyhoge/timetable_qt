@@ -18,7 +18,7 @@ public:
   void highlight();
   void lowlight();
   void addPlan(Plan *plan);
-  void deletePlan(PlanFrame *plan);
+  void deletePlanFrame(PlanFrame *plan);
   void updateText();
   void clearPlans();
   QJsonArray extractDayJsonArray();
@@ -26,8 +26,6 @@ public:
 
   int labelWidth();
   void setLabelWidth(int labelWidth);
-protected:
-  void resizeEvent(QResizeEvent *event) override;
 
 private:
   QHBoxLayout *layout;
@@ -37,6 +35,12 @@ private:
 
   QVector<PlanFrame*> planFrames;
   QString dayString;
+
+signals:
+  void planClicked(Plan*);
+
+protected:
+  void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // DAYFRAME_H

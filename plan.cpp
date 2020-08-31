@@ -34,7 +34,7 @@ int Plan::getDayNum()
   return dayNum;
 }
 
-QString Plan::dirsAsString()
+QString Plan::dirsAsString() const
 {
   QString dirsStr = "";
   for(auto dir : workingDirs){
@@ -46,15 +46,20 @@ QString Plan::dirsAsString()
   return dirsStr;
 }
 
-void Plan::setName(QString newPlanName)
+void Plan::setPlanName(QString newPlanName)
 {
   planName = newPlanName;
 }
 
-void Plan::setTime(PlanTime &newStartTime, PlanTime &newEndTime)
+void Plan::setTimes(PlanTime newStartTime, PlanTime newEndTime)
 {
   startTime = &newStartTime;
   endTime = &newEndTime;
+}
+
+void Plan::setDayNum(int newDayNum)
+{
+  dayNum = newDayNum;
 }
 
 void Plan::addWorkingDir(QDir newDir)
@@ -88,4 +93,28 @@ QJsonObject Plan::getJsonObj()
   obj.insert("workingDirectories", dirArray);
 
   return obj;
+}
+
+bool Plan::areSame(const Plan &another)
+{
+  if(planName != another.planName){
+    return false;
+  }
+
+  if(!startTime->areSame(*another.startTime)){
+    return false;
+  }
+  if(!endTime->areSame(*another.endTime)){
+    return false;
+  }
+
+  if(dayNum != another.dayNum){
+    return false;
+  }
+
+  if(dirsAsString() != another.dirsAsString()){
+    return false;
+  }
+
+  return true;
 }

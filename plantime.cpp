@@ -81,3 +81,21 @@ PlanTime *PlanTime::parseTime(QString timeString, char delimiter)
 
   return planTime;
 }
+
+QTime PlanTime::toQTime()
+{
+  return QTime(hour, minute);
+}
+
+bool PlanTime::areSame(const PlanTime &another)
+{
+  if(hour != another.hour){
+    return false;
+  }
+  if(minute != another.minute){
+    return false;
+  }
+
+  return true;
+}
+

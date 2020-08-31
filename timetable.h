@@ -61,7 +61,7 @@ public:
   QJsonArray exportAsJson(void);
 
 signals:
-  void planClicked(PlanFrame*);
+  void planClicked(Plan*);
   void planStartedMessage(CharacterWords::Timings);
   void planEndedMessage(CharacterWords::Timings);
   void planPrelimMessage(CharacterWords::Timings);
@@ -73,11 +73,11 @@ public slots:
   void processPlanTimings(QDateTime &currentTime, bool dayChanged);
   void bellProperBell(QTime currentTime);
   void switchHighlightedDay(int day);
-  void deletePlan(PlanFrame *plan);
+  void deletePlanFrame(PlanFrame *plan);
   void addPlan(Plan *newPlan);
 
 private slots:
-  void raisePlanClicked(PlanFrame* clickedPlan);
+  void raisePlanClicked(Plan* clickedPlan);
 };
 
 

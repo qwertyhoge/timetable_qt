@@ -56,29 +56,22 @@ PlanFrame::PlanFrame()
   endTimeLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 }
 
-void PlanFrame::updateText()
-{
-  nameLabel->setText(planData->getPlanName());
-  startTimeLabel->setText(planData->getStartTime().toString());
-  endTimeLabel->setText(planData->getEndTime().toString());
-
-  fitGeometry();
-}
-
 void PlanFrame::attachPlan(Plan *plan)
 {
   planData = plan;
   nameLabel->setText(plan->getPlanName());
   startTimeLabel->setText(plan->getStartTime().toString());
   endTimeLabel->setText(plan->getEndTime().toString());
+
+  fitGeometry();
 }
 
 QRect PlanFrame::fitGeometry()
 {
   QRect geometry;
   QSize parentSize = parentWidget()->size();
-  int startMinutes = planData.getStartTime().asMinutes();
-  int endMinutes = planData.getEndTime().asMinutes();
+  int startMinutes = planData->getStartTime().asMinutes();
+  int endMinutes = planData->getEndTime().asMinutes();
 
   if(endMinutes == 0){
     endMinutes = 24 * 60;
@@ -109,5 +102,5 @@ void PlanFrame::updatePlanGeometry()
 }
 
 void PlanFrame::mousePressEvent(QMouseEvent *event){
-  emit planClicked(this);
+  emit planClicked(planData);
 }

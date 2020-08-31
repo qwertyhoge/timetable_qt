@@ -92,22 +92,34 @@ void DayFrame::addPlan(Plan *newPlan)
   newPlanFrame->setParent(planArea);
   newPlanFrame->fitGeometry();
 
+  connect(newPlanFrame, SIGNAL(planClicked(Plan*)), this, SIGNAL(planClicked(Plan*)));
+
   newPlanFrame->show();
 }
 
-void DayFrame::deletePlan(PlanFrame *plan)
+void DayFrame::deletePlanFrame(PlanFrame *plan)
 {
-  if(!planFrames.removeOne(plan)){
-    qCritical() << "failed to delete from vector";
+  PlanFrame *toBeRemoved = nullptr;
+  for(int i = 0; i < planFrames.length(); i++){
+    if(planFrames[i] == plan){
+      toBeRemoved = planFrames[i];
+    }
   }
-  plan->setParent(nullptr);
-  plan->deleteLater();
+
+  if(toBeRemoved != nullptr){
+    planFrames.removeOne(toBeRemoved);
+
+    toBeRemoved->setParent(nullptr);
+    toBeRemoved->deleteLater();
+  }else{
+    qCritical() << "failed to remove from plan frame vector.";
+  }
 }
 
 void DayFrame::clearPlans(void)
 {
   for(auto plan : planFrames){
-    deletePlan(plan);
+    deletePlanFrame(plan);
   }
 }
 

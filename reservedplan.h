@@ -13,8 +13,13 @@ class Plan;
 class ReservedPlan
 {
 public:
-  ReservedPlan();
-  ReservedPlan(BellTypes bell, Plan &plan);
+  ReservedPlan(){
+  }
+
+  ReservedPlan(BellTypes bell, Plan &plan){
+    bellType = bell;
+    planRef = &plan;
+  }
 
   BellTypes bellType;
   Plan *planRef;

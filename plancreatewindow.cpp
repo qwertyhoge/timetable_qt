@@ -54,12 +54,12 @@ PlanCreateWindow::PlanCreateWindow(QWidget *parent)
   formLayout->addRow(dirLabel, leftArea);
 
   QPushButton *makePlanButton = new QPushButton(tr("Make plan"));
-  connect(makePlanButton, SIGNAL(clicked()), this, SLOT(sendPlan()));
+  connect(makePlanButton, SIGNAL(clicked()), this, SLOT(sendFormPlan()));
   formLayout->addRow(nullptr, makePlanButton);
 
 }
 
-void PlanCreateWindow::sendPlan()
+void PlanCreateWindow::sendFormPlan()
 {
   QString name = planName->text();
   QString startTimeText = startTime->text();

@@ -12,21 +12,21 @@ PlanTime::PlanTime(int h, int m)
 {
 }
 
-PlanTime *PlanTime::operator+(PlanTime *time)
+PlanTime PlanTime::operator+(const PlanTime &time)
 {
-  int sumAsMinutes = time->hour * 60 + time->minute + hour * 60 + time->minute;
+  int sumAsMinutes = time.hour * 60 + time.minute + hour * 60 + time.minute;
   sumAsMinutes = (sumAsMinutes % (24 * 60));
 
-  PlanTime *sumPlanTime = new PlanTime(sumAsMinutes / 60, sumAsMinutes % 60);
+  PlanTime sumPlanTime = PlanTime(sumAsMinutes / 60, sumAsMinutes % 60);
   return sumPlanTime;
 }
 
-PlanTime *PlanTime::operator-(PlanTime *time)
+PlanTime PlanTime::operator-(const PlanTime &time)
 {
-  int subAsMinutes = (hour * 60 + minute) - (time->hour * 60 + time->minute);
+  int subAsMinutes = (hour * 60 + minute) - (time.hour * 60 + time.minute);
   subAsMinutes = (24 * 60 + subAsMinutes) % (24 * 60);
 
-  PlanTime *subPlanTime = new PlanTime(subAsMinutes / 60, subAsMinutes % 60);
+  PlanTime subPlanTime = PlanTime(subAsMinutes / 60, subAsMinutes % 60);
   return subPlanTime;
 }
 

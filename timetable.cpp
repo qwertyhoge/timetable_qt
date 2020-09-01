@@ -51,10 +51,10 @@ void Timetable::setPlan(Plan *newPlan)
       reservedPlans[endTime.hour][startTime.minute].planRef = newPlan;
     }
 
-    PlanTime *prelimTime = startTime - new PlanTime(0, 5);
-    if(reservedPlans[prelimTime->hour][prelimTime->minute].bellType == NONE_BELL){
-      reservedPlans[prelimTime->hour][prelimTime->minute].bellType = PRELIM_BELL;
-      reservedPlans[prelimTime->hour][prelimTime->minute].planRef = newPlan;
+    PlanTime prelimTime = startTime - PlanTime(0, 5);
+    if(reservedPlans[prelimTime.hour][prelimTime.minute].bellType == NONE_BELL){
+      reservedPlans[prelimTime.hour][prelimTime.minute].bellType = PRELIM_BELL;
+      reservedPlans[prelimTime.hour][prelimTime.minute].planRef = newPlan;
     }
   }
 

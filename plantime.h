@@ -13,8 +13,8 @@ public:
   int hour;
   int minute;
 
-  PlanTime *operator+(PlanTime *time);
-  PlanTime *operator-(PlanTime *time);
+  PlanTime operator+(const PlanTime &time);
+  PlanTime operator-(const PlanTime &time);
 
   int asMinutes();
   QString toString();

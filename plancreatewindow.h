@@ -28,7 +28,7 @@ private:
   QVector<QDir> workingDirectories;
 
 private slots:
-  void sendPlan();
+  void sendFormPlan();
   void openWorkingDirDialog();
 
 signals:

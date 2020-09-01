@@ -75,9 +75,6 @@ public slots:
   void switchHighlightedDay(int day);
   void deletePlanFrame(PlanFrame *plan);
   void addPlan(Plan *newPlan);
-
-private slots:
-  void raisePlanClicked(PlanFrame* clickedPlan);
 };
 
 

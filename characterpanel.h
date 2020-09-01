@@ -48,7 +48,6 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
-  void sendMenuOpen();
   void collapseBox();
   void watchBoxAppeared(const QVariant&);
   void watchBoxDisappeared(const QVariant&);

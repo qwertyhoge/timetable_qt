@@ -35,7 +35,7 @@ CharacterPanel::CharacterPanel(QWidget *parent)
 
   characterArea = new CharacterView();
   layout->addWidget(characterArea);
-  connect(characterArea, SIGNAL(characterClicked()), this, SLOT(sendMenuOpen()));
+  connect(characterArea, SIGNAL(characterClicked()), this, SIGNAL(characterClicked()));
   characterArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
   convoArea = new QWidget();
@@ -167,15 +167,6 @@ bool CharacterPanel::eventFilter(QObject *obj, QEvent *event)
   }
 
   return false;
-}
-
-
-void CharacterPanel::sendMenuOpen()
-{
-  processTimings(CharacterWords::MENU_OPEN);
-
-  // propagate signal
-  emit characterClicked();
 }
 
 void CharacterPanel::yesReply()

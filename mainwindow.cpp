@@ -311,6 +311,8 @@ void MainWindow::applyEdit()
 
 void MainWindow::openMenu()
 {
+  characterPanel->processTimings(CharacterWords::MENU_OPEN);
+
   QPoint modalAreaCenter = ui->timetableArea->geometry().center() + pos();
   QSize modalAreaSize = QSize(ui->timetableArea->width() * 2 / 3, ui->timetableArea->height() * 2 / 3);
   actionMenu->setMinimumWidth(modalAreaSize.width());

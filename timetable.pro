@@ -36,6 +36,7 @@ HEADERS += \
     characterpanel.h \
     characterview.h \
     characterwords.h \
+    dayconsts.h \
     dayframe.h \
     mainwindow.h \
     plan.h \

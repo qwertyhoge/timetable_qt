@@ -1,5 +1,6 @@
 #include "timetable.h"
 #include "dayframe.h"
+#include "dayconsts.h"
 
 #include <QLabel>
 #include <QJsonDocument>
@@ -11,13 +12,6 @@
 Timetable::Timetable(QWidget *parent)
   : QWidget(parent)
 {
-  dayMap["Sunday"] = SUNDAY;
-  dayMap["Monday"] = MONDAY;
-  dayMap["Tuesday"] = TUESDAY;
-  dayMap["Wednesday"] = WEDNESDAY;
-  dayMap["Thursday"] = THURSDAY;
-  dayMap["Friday"] = FRIDAY;
-  dayMap["Saturday"] = SATURDAY;
 
   move(0, 0);
   layout = new QVBoxLayout();
@@ -25,7 +19,7 @@ Timetable::Timetable(QWidget *parent)
   layout->setSpacing(0);
 
   for(int day = 0; day < 7; day++){
-    DayFrame *dayFrame = new DayFrame(nullptr, dayStrings[day]);
+    DayFrame *dayFrame = new DayFrame(nullptr, DayConsts::dayStrings[day]);
     layout->addWidget(dayFrame);
     dayFrames[day] = dayFrame;
 

@@ -20,30 +20,11 @@
 
 #include "characterwords.h"
 
-enum Days{
-  SUNDAY = 0,
-  MONDAY = 1,
-  TUESDAY = 2,
-  WEDNESDAY = 3,
-  THURSDAY = 4,
-  FRIDAY = 5,
-  SATURDAY = 6
-};
 
 class Timetable : public QWidget
 {
   Q_OBJECT
 public:
-  QMap<QString, int> dayMap;
-  QString dayStrings[7] = {
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  };
   bool allShown = false;
   int labelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 

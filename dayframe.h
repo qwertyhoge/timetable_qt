@@ -19,7 +19,6 @@ public:
   void lowlight();
   void addPlan(Plan *plan);
   void deletePlanFrame(PlanFrame *plan);
-  void updateText();
   void clearPlans();
   QJsonArray extractDayJsonArray();
   void fillReservedPlans(ReservedPlan reservedPlans[24][60]);

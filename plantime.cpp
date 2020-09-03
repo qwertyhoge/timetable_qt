@@ -69,8 +69,9 @@ PlanTime *PlanTime::parseTime(const QString timeString, const char delimiter)
   }
 
   int parsedMinute = 0;
+  int strLen = timeString.length();
   i += 1;
-  while(!timeString[i].isNull() && i < 5){
+  while(i < strLen){
     parsedMinute *= 10;
     parsedMinute += timeString[i].unicode() - '0';
 

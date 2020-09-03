@@ -57,7 +57,7 @@ PlanTime *PlanTime::parseTime(const QString timeString, const char delimiter)
 {
   int i = 0;
   int parsedHour = 0;
-  while(timeString[i] != delimiter && i < 2){
+  while(timeString[i] != delimiter){
     parsedHour *= 10;
     parsedHour += timeString[i].unicode() - '0';
 
@@ -69,8 +69,9 @@ PlanTime *PlanTime::parseTime(const QString timeString, const char delimiter)
   }
 
   int parsedMinute = 0;
+  int strLen = timeString.length();
   i += 1;
-  while(!timeString[i].isNull() && i < 5){
+  while(i < strLen){
     parsedMinute *= 10;
     parsedMinute += timeString[i].unicode() - '0';
 

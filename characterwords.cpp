@@ -131,14 +131,14 @@ bool CharacterWords::loadWords()
   return parseWordsJson(fileText.toUtf8());
 }
 
-bool CharacterWords::hasTree(Timings timing)
+bool CharacterWords::hasTree(const Timings timing)
 {
   QString timStr = timingStrings[timing];
   return !wordList[timStr].empty();
 }
 
 
-bool CharacterWords::parseWordsJson(QByteArray json)
+bool CharacterWords::parseWordsJson(const QByteArray json)
 {
   QJsonParseError error;
   QJsonDocument jsonDoc = QJsonDocument::fromJson(json, &error);
@@ -186,7 +186,7 @@ bool CharacterWords::parseWordsJson(QByteArray json)
   return true;
 }
 
-WordTree *CharacterWords::pickRandomOne(Timings timing)
+WordTree *CharacterWords::pickRandomOne(const Timings timing)
 {
   const QString timingKey = timingStrings[timing];
   QVector<WordTree> &wordVec = wordList[timingKey];

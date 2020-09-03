@@ -140,7 +140,7 @@ int DayFrame::labelWidth()
   return dayLabel->width();
 }
 
-void DayFrame::setLabelWidth(int labelWidth)
+void DayFrame::setLabelWidth(const int labelWidth)
 {
   dayLabel->setFixedWidth(labelWidth);
 }

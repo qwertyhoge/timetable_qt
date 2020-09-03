@@ -42,7 +42,7 @@ private:
   WordTree *currentWord;
   QQueue<QChar> wordQue;
 
-  void speakWord(CharacterWords::Timings timing);
+  void speakWord(const CharacterWords::Timings timing);
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
@@ -56,7 +56,7 @@ private slots:
   void setConvo();
 
 public slots:
-  void processTimings(CharacterWords::Timings timing);
+  void processTimings(const CharacterWords::Timings timing);
   void yesReply();
   void noReply();
 

@@ -53,7 +53,7 @@ QString PlanTime::toString()
   return hourStr + ":" + minuteStr;
 }
 
-PlanTime *PlanTime::parseTime(QString timeString, char delimiter)
+PlanTime *PlanTime::parseTime(const QString timeString, const char delimiter)
 {
   int i = 0;
   int parsedHour = 0;

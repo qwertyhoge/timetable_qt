@@ -33,7 +33,7 @@ private slots:
 
 signals:
   void planCreated(Plan*);
-  void planCreatedMessage(CharacterWords::Timings planMakeTim);
+  void planCreatedMessage(CharacterWords::Timings);
 };
 
 #endif // PLANCREATEWINDOW_H

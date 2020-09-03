@@ -12,10 +12,10 @@ public:
   Plan();
   Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dirs);
 
-  QString getPlanName(void);
-  PlanTime getStartTime();
-  PlanTime getEndTime();
-  int getDayNum();
+  QString getPlanName(void) const;
+  PlanTime getStartTime() const;
+  PlanTime getEndTime() const;
+  int getDayNum() const;
   QString dirsAsString() const;
 
   void setPlanName(QString newPlanName);

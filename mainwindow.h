@@ -41,9 +41,9 @@ private:
 
 private slots:
   void importTimetable();
-  void importTimetable(QString fileName);
+  void importTimetable(const QString fileName);
   void exportTimetable();
-  void exportTimetable(QString fileName);
+  void exportTimetable(const QString fileName);
   void setDefaultTimetable();
   void deleteSelectedPlan();
   void inspectPlan(PlanFrame *plan);

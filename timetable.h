@@ -37,8 +37,8 @@ public:
 
   explicit Timetable(QWidget *parent = nullptr);
   void setPlan(Plan *newPlan);
-  void playBell(QUrl bellPath);
-  void loadFromJson(QByteArray json);
+  void playBell(const QUrl bellPath);
+  void loadFromJson(const QByteArray json);
   QJsonArray exportAsJson(void);
 
 signals:
@@ -51,8 +51,8 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
 
 public slots:
-  void processPlanTimings(QDateTime &currentTime, bool dayChanged);
-  void bellProperBell(QTime currentTime);
+  void processPlanTimings(const QDateTime &currentTime, bool dayChanged);
+  void bellProperBell(const QTime currentTime);
   void switchHighlightedDay(int day);
   void deletePlanFrame(PlanFrame *plan);
   void addPlan(Plan *newPlan);

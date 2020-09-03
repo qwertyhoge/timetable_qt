@@ -22,7 +22,7 @@ public:
   bool areSame(const PlanTime &another);
   QTime toQTime();
 
-  static PlanTime *parseTime(QString timeString, char delimiter);
+  static PlanTime *parseTime(const QString timeString, const char delimiter);
 };
 
 #endif // PLANTIME_H

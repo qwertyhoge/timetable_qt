@@ -43,11 +43,11 @@ public:
   };
 
   bool loadWords();
-  bool hasTree(Timings timing);
-  WordTree *pickRandomOne(Timings timing);
+  bool hasTree(const Timings timing);
+  WordTree *pickRandomOne(const Timings timing);
 
 private:
-  bool parseWordsJson(QByteArray json);
+  bool parseWordsJson(const QByteArray json);
   QHash<Timings, QString> timingStrings;
   QHash<QString, QVector<WordTree> > wordList;
 

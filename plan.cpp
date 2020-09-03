@@ -14,22 +14,22 @@ Plan::Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>&
 }
 
 
-QString Plan::getPlanName(void)
+QString Plan::getPlanName(void) const
 {
   return planName;
 }
 
-PlanTime Plan::getStartTime()
+PlanTime Plan::getStartTime() const
 {
   return *startTime;
 }
 
-PlanTime Plan::getEndTime()
+PlanTime Plan::getEndTime() const
 {
   return *endTime;
 }
 
-int Plan::getDayNum()
+int Plan::getDayNum() const
 {
   return dayNum;
 }

@@ -58,7 +58,7 @@ CharacterPanel::CharacterPanel(QWidget *parent)
   setWidget(content);
 }
 
-void CharacterPanel::speakWord(CharacterWords::Timings timing)
+void CharacterPanel::speakWord(const CharacterWords::Timings timing)
 {
   qDebug() << "speakWord";
   qDebug() << currentState;
@@ -183,7 +183,7 @@ void CharacterPanel::noReply()
   startSpeak();
 }
 
-void CharacterPanel::processTimings(CharacterWords::Timings timing)
+void CharacterPanel::processTimings(const CharacterWords::Timings timing)
 {
   speakWord(timing);
 }

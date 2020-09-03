@@ -25,7 +25,7 @@ public:
   void fillReservedPlans(ReservedPlan reservedPlans[24][60]);
 
   int labelWidth();
-  void setLabelWidth(int labelWidth);
+  void setLabelWidth(const int labelWidth);
 
 private:
   QHBoxLayout *layout;

@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
-  connect(ui->timeNotifier, SIGNAL(minuteChanged(QDateTime&, bool)), timetable, SLOT(processPlanTimings(QDateTime&, bool)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(const QDateTime&, bool)), timetable, SLOT(processPlanTimings(const QDateTime&, bool)));
   connect(timetable, SIGNAL(planStartedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planEndedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planPrelimMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
@@ -131,7 +131,7 @@ void MainWindow::importTimetable()
 
 }
 
-void MainWindow::importTimetable(QString fileName)
+void MainWindow::importTimetable(const QString fileName)
 {
 
   QFile file(fileName);
@@ -160,7 +160,7 @@ void MainWindow::exportTimetable()
     }
 }
 
-void MainWindow::exportTimetable(QString fileName)
+void MainWindow::exportTimetable(const QString fileName)
 {
   QFile file(fileName);
   if(!file.open(QIODevice::WriteOnly)){

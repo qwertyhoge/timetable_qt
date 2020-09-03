@@ -104,7 +104,7 @@ bool Timetable::eventFilter(QObject *obj, QEvent *event)
   return false;
 }
 
-void Timetable::playBell(QUrl bellPath)
+void Timetable::playBell(const QUrl bellPath)
 {
   bellPlayer->setMedia(bellPath);
   bellPlayer->setVolume(40);
@@ -116,7 +116,7 @@ void Timetable::deletePlanFrame(PlanFrame *plan)
   dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
 }
 
-void Timetable::loadFromJson(QByteArray json)
+void Timetable::loadFromJson(const QByteArray json)
 {
   QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
 
@@ -170,7 +170,7 @@ QJsonArray Timetable::exportAsJson()
   return jsonTimetable;
 }
 
-void Timetable::processPlanTimings(QDateTime &currentDateTime, bool dayChanged)
+void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayChanged)
 {
   const QTime &currentTime = currentDateTime.time();
 
@@ -198,7 +198,7 @@ void Timetable::processPlanTimings(QDateTime &currentDateTime, bool dayChanged)
   bellProperBell(currentTime);
 }
 
-void Timetable::bellProperBell(QTime currentTime)
+void Timetable::bellProperBell(const QTime currentTime)
 {
   switch(reservedPlans[currentTime.hour()][currentTime.minute()].bellType){
     case NONE_BELL:

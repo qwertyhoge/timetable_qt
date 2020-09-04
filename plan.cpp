@@ -62,15 +62,16 @@ void Plan::setDayNum(int newDayNum)
   dayNum = newDayNum;
 }
 
-void Plan::addWorkingDir(QDir newDir)
+void Plan::addWorkingDir(QString newPath)
 {
+  QDir newDir(newPath);
   workingDirs.push_back(newDir);
 }
 
-bool Plan::removeWorkingDir(QDir dirToRemove)
+bool Plan::removeWorkingDir(QString pathToRemove)
 {
   for(int i = 0; i < workingDirs.length(); i++){
-    if(dirToRemove.path() == workingDirs[i].path()){
+    if(pathToRemove == workingDirs[i].path()){
       workingDirs.removeAt(i);
       return true;
     }

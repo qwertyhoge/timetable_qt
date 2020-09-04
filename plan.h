@@ -22,8 +22,8 @@ public:
   void setTimes(PlanTime newStartTime, PlanTime newEndTime);
   void setDayNum(int newDayNum);
 
-  void addWorkingDir(QDir newDir);
-  bool removeWorkingDir(QDir dirToRemove);
+  void addWorkingDir(QString newPath);
+  bool removeWorkingDir(QString pathToRemove);
   QJsonObject getJsonObj();
 
   bool areSame(const Plan &another);

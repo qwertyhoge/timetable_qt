@@ -13,7 +13,7 @@ class DayFrame : public QFrame
   Q_OBJECT
 
 public:
-  DayFrame(QWidget *parent = nullptr, QString dayString = "DAY");
+  DayFrame(QWidget *parent, int day, QString dayString);
 
   void highlight();
   void lowlight();
@@ -35,11 +35,15 @@ private:
   QVector<PlanFrame*> planFrames;
   QString dayString;
 
-signals:
-  void planClicked(PlanFrame*);
+  int dayNum;
 
+signals:
+  void labelWidthDefined(const int labelWidth, int dayNum);
+
+  void planClicked(PlanFrame*);
 protected:
   void resizeEvent(QResizeEvent *event) override;
+  void showEvent(QShowEvent *event) override;
 };
 
 #endif // DAYFRAME_H

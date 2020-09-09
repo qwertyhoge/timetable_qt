@@ -4,12 +4,13 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-DayFrame::DayFrame(QWidget *parent, QString dayString)
+DayFrame::DayFrame(QWidget *parent, int day, QString dayString)
   : QFrame(parent)
 {
   setFrameStyle(QFrame::Box);
   setLineWidth(1);
 
+  dayNum = day;
   this->dayString = dayString;
 
   layout = new QHBoxLayout();
@@ -35,6 +36,11 @@ void DayFrame::resizeEvent(QResizeEvent *event)
   for(auto plan : planFrames){
     plan->updatePlanGeometry();
   }
+}
+
+void DayFrame::showEvent(QShowEvent *event)
+{
+  emit labelWidthDefined(labelWidth(), dayNum);
 }
 
 void DayFrame::highlight()

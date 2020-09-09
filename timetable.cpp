@@ -19,12 +19,11 @@ Timetable::Timetable(QWidget *parent)
   layout->setSpacing(0);
 
   for(int day = 0; day < 7; day++){
-    DayFrame *dayFrame = new DayFrame(nullptr, DayConsts::dayStrings[day]);
+    DayFrame *dayFrame = new DayFrame(nullptr, day, DayConsts::dayStrings[day]);
     layout->addWidget(dayFrame);
     dayFrames[day] = dayFrame;
 
-    dayFrames[day]->installEventFilter(this);
-
+    connect(dayFrames[day], SIGNAL(labelWidthDefined(const int, int)), this, SLOT(justifyDayFrameLabel(const int, int)));
     connect(dayFrames[day], SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
   }
 
@@ -54,6 +53,32 @@ void Timetable::setPlan(Plan *newPlan)
 
 }
 
+void Timetable::justifyDayFrameLabel(const int labelWidth, int dayNum)
+{
+  qDebug() << labelWidth;
+  auto searchMaxWidth = [](int labelWidth[7]){
+    int max = -1;
+    for(int i = 0; i < 7; i++){
+      if(labelWidth[i] == -1){
+        return -1;
+      }
+      if(max < labelWidth[i]){
+        max = labelWidth[i];
+      }
+    }
+    return max;
+  };
+
+  dayFrameLabelWidths[dayNum] = labelWidth;
+  int maxWidth = searchMaxWidth(dayFrameLabelWidths);
+  if(maxWidth != -1){
+    for(int i = 0; i < 7; i++){
+      dayFrames[i]->setLabelWidth(maxWidth);
+    }
+  }
+
+}
+
 void Timetable::switchHighlightedDay(int dayNum)
 {
   for(int i = 0; i < 7; i++){
@@ -65,43 +90,6 @@ void Timetable::switchHighlightedDay(int dayNum)
   }
 
   dayFrames[dayNum]->fillReservedPlans(reservedPlans);
-}
-
-bool Timetable::eventFilter(QObject *obj, QEvent *event)
-{
-  if(!allShown){
-    for(int i = 0; i < 7; i++){
-      if(obj == dayFrames[i] && event->type() == QEvent::Show){
-        labelWidths[i] = dayFrames[i]->labelWidth();
-
-        auto searchMaxWidth = [&]{
-          int maxWidth = 0;
-          for(int i = 0; i < 7; i++){
-            if(labelWidths[i] == -1){
-              return -1;
-            }else if(labelWidths[i] > maxWidth){
-              maxWidth = labelWidths[i];
-            }
-          }
-
-          return maxWidth;
-        };
-
-        int maxWidth = searchMaxWidth();
-        if(maxWidth != -1){
-          for(int i = 0; i < 7; i++){
-            dayFrames[i]->setLabelWidth(maxWidth);
-          }
-          allShown = true;
-        }
-
-        return true;
-      }
-    }
-
-  }
-
-  return false;
 }
 
 void Timetable::playBell(const QUrl bellPath)

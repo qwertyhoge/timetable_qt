@@ -26,7 +26,8 @@ class Timetable : public QWidget
   Q_OBJECT
 public:
   bool allShown = false;
-  int labelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
+  int maxDayFrameLabelWidth = 0;
+  int dayFrameLabelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
   ReservedPlan reservedPlans[24][60];
 
@@ -47,10 +48,9 @@ signals:
   void planEndedMessage(CharacterWords::Timings);
   void planPrelimMessage(CharacterWords::Timings);
 
-protected:
-  bool eventFilter(QObject *obj, QEvent *event) override;
-
 public slots:
+  void justifyDayFrameLabel(const int labelWidth, int dayNum);
+
   void processPlanTimings(const QDateTime &currentTime, bool dayChanged);
   void bellProperBell(const QTime currentTime);
   void switchHighlightedDay(int day);

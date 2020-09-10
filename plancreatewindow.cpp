@@ -74,7 +74,7 @@ void PlanCreateWindow::sendFormPlan()
   PlanTime *startTime = PlanTime::parseTime(startTimeText, ':');
   PlanTime *endTime  = PlanTime::parseTime(endTimeText, ':');
 
-  Plan *newPlan = new Plan(name, startTime, endTime, daySelect->currentIndex() - 1, workingDirectories);
+  Plan *newPlan = new Plan(name, startTime, endTime, DayConsts::intToDayNums(daySelect->currentIndex() - 1), workingDirectories);
 
   emit planCreated(newPlan);
   emit planCreatedMessage(CharacterWords::PLAN_CREATE);

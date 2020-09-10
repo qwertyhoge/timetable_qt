@@ -7,7 +7,7 @@ Plan::Plan()
 {
 }
 
-Plan::Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dirs)
+Plan::Plan(QString name, PlanTime *start, PlanTime *end, DayConsts::DayNums day, QVector<QDir>& dirs)
   : planName(name), startTime(start), endTime(end), dayNum(day), workingDirs(dirs)
 {
 
@@ -29,7 +29,7 @@ PlanTime Plan::getEndTime() const
   return *endTime;
 }
 
-int Plan::getDayNum() const
+DayConsts::DayNums Plan::getDayNum() const
 {
   return dayNum;
 }
@@ -57,7 +57,7 @@ void Plan::setTimes(PlanTime newStartTime, PlanTime newEndTime)
   endTime = &newEndTime;
 }
 
-void Plan::setDayNum(int newDayNum)
+void Plan::setDayNum(DayConsts::DayNums newDayNum)
 {
   dayNum = newDayNum;
 }

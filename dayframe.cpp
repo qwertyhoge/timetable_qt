@@ -4,7 +4,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-DayFrame::DayFrame(QWidget *parent, int day, QString dayString)
+DayFrame::DayFrame(QWidget *parent, DayConsts::DayNums day, QString dayString)
   : QFrame(parent)
 {
   setFrameStyle(QFrame::Box);

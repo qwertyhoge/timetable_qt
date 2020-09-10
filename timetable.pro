@@ -20,6 +20,7 @@ SOURCES += \
     characterpanel.cpp \
     characterview.cpp \
     characterwords.cpp \
+    dayconsts.cpp \
     dayframe.cpp \
     main.cpp \
     mainwindow.cpp \

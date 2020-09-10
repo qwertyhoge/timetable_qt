@@ -293,7 +293,8 @@ void MainWindow::applyEdit()
 
   // sanitizing may be in need
   QString name = ui->inspectNameLine->text();
-  int dayNum = ui->inspectDayCombo->currentIndex();
+  // dayCombo must let the user choose completely the same numbers as DayNums
+  DayConsts::DayNums dayNum = DayConsts::intToDayNums(ui->inspectDayCombo->currentIndex());
   PlanTime *start = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
   PlanTime *end = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
   QVector<QDir> dirs;

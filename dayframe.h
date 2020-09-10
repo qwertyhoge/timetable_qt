@@ -7,13 +7,14 @@
 
 #include "planframe.h"
 #include "reservedplan.h"
+#include "dayconsts.h"
 
 class DayFrame : public QFrame
 {
   Q_OBJECT
 
 public:
-  DayFrame(QWidget *parent, int day, QString dayString);
+  DayFrame(QWidget *parent, DayConsts::DayNums day, QString dayString);
 
   void highlight();
   void lowlight();
@@ -35,10 +36,10 @@ private:
   QVector<PlanFrame*> planFrames;
   QString dayString;
 
-  int dayNum;
+  DayConsts::DayNums dayNum;
 
 signals:
-  void labelWidthDefined(const int labelWidth, int dayNum);
+  void labelWidthDefined(const int labelWidth, DayConsts::DayNums dayNum);
 
   void planClicked(PlanFrame*);
 protected:

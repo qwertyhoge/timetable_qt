@@ -16,6 +16,7 @@ namespace DayConsts {
     "Saturday"
   };
   enum DayNums{
+    DAY_NONE = -1,
     SUNDAY = 0,
     MONDAY = 1,
     TUESDAY = 2,
@@ -25,6 +26,7 @@ namespace DayConsts {
     SATURDAY = 6
   };
 
+  DayNums intToDayNums(int day);
 };
 
 #endif // DAYCONSTS_H

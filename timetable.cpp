@@ -19,15 +19,15 @@ Timetable::Timetable(QWidget *parent)
   layout->setSpacing(0);
 
   for(int day = 0; day < 7; day++){
-    DayFrame *dayFrame = new DayFrame(nullptr, day, DayConsts::dayStrings[day]);
+    DayFrame *dayFrame = new DayFrame(nullptr, DayConsts::intToDayNums(day), DayConsts::dayStrings[day]);
     layout->addWidget(dayFrame);
     dayFrames[day] = dayFrame;
 
-    connect(dayFrames[day], SIGNAL(labelWidthDefined(const int, int)), this, SLOT(justifyDayFrameLabel(const int, int)));
+    connect(dayFrames[day], SIGNAL(labelWidthDefined(const int, DayConsts::DayNums)), this, SLOT(justifyDayFrameLabel(const int, DayConsts::DayNums)));
     connect(dayFrames[day], SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
   }
 
-  switchHighlightedDay(QDate::currentDate().dayOfWeek() % 7);
+  switchHighlightedDay(DayConsts::intToDayNums(QDate::currentDate().dayOfWeek() % 7));
 }
 
 void Timetable::setPlan(Plan *newPlan)
@@ -53,7 +53,7 @@ void Timetable::setPlan(Plan *newPlan)
 
 }
 
-void Timetable::justifyDayFrameLabel(const int labelWidth, int dayNum)
+void Timetable::justifyDayFrameLabel(const int labelWidth, DayConsts::DayNums dayNum)
 {
   qDebug() << labelWidth;
   auto searchMaxWidth = [](int labelWidth[7]){
@@ -79,7 +79,7 @@ void Timetable::justifyDayFrameLabel(const int labelWidth, int dayNum)
 
 }
 
-void Timetable::switchHighlightedDay(int dayNum)
+void Timetable::switchHighlightedDay(DayConsts::DayNums dayNum)
 {
   for(int i = 0; i < 7; i++){
     if(i == dayNum){
@@ -134,7 +134,7 @@ void Timetable::loadFromJson(const QByteArray json)
           workingDirs.push_back(QDir(dir.toString()));
         }
 
-        Plan *loadedPlan = new Plan(planName, startTime, endTime, day, workingDirs);
+        Plan *loadedPlan = new Plan(planName, startTime, endTime, DayConsts::intToDayNums(day), workingDirs);
         setPlan(loadedPlan);
       }
     }
@@ -163,7 +163,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
   const QTime &currentTime = currentDateTime.time();
 
   if(dayChanged){
-    switchHighlightedDay(currentDateTime.date().day());
+    switchHighlightedDay(DayConsts::intToDayNums(currentDateTime.date().day()));
   }
 
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];

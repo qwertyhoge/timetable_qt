@@ -5,22 +5,23 @@
 #include <QVector>
 
 #include "plantime.h"
+#include "dayconsts.h"
 
 class Plan
 {
 public:
   Plan();
-  Plan(QString name, PlanTime *start, PlanTime *end, int day, QVector<QDir>& dirs);
+  Plan(QString name, PlanTime *start, PlanTime *end, DayConsts::DayNums day, QVector<QDir>& dirs);
 
   QString getPlanName(void) const;
   PlanTime getStartTime() const;
   PlanTime getEndTime() const;
-  int getDayNum() const;
+  DayConsts::DayNums getDayNum() const;
   QString dirsAsString() const;
 
   void setPlanName(QString newPlanName);
   void setTimes(PlanTime newStartTime, PlanTime newEndTime);
-  void setDayNum(int newDayNum);
+  void setDayNum(DayConsts::DayNums newDayNum);
 
   void addWorkingDir(QString newPath);
   bool removeWorkingDir(QString pathToRemove);
@@ -31,7 +32,7 @@ private:
   QString planName;
   PlanTime *startTime;
   PlanTime *endTime;
-  int dayNum;
+  DayConsts::DayNums dayNum;
   QVector<QDir> workingDirs;
 
 signals:

@@ -25,22 +25,23 @@ class Timetable : public QWidget
 {
   Q_OBJECT
 public:
+  explicit Timetable(QWidget *parent = nullptr);
+  void setPlan(Plan *newPlan);
+  void playBell(const QUrl bellPath);
+  void loadFromJson(const QByteArray json);
+  QJsonArray exportAsJson(void);
+
+private:
   bool allShown = false;
   int maxDayFrameLabelWidth = 0;
   int dayFrameLabelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
   ReservedPlan reservedPlans[24][60];
 
-  QMediaPlayer *bellPlayer = new QMediaPlayer();
-
   QVBoxLayout *layout;
   DayFrame *dayFrames[7];
 
-  explicit Timetable(QWidget *parent = nullptr);
-  void setPlan(Plan *newPlan);
-  void playBell(const QUrl bellPath);
-  void loadFromJson(const QByteArray json);
-  QJsonArray exportAsJson(void);
+  QMediaPlayer *bellPlayer = new QMediaPlayer();
 
 signals:
   void planClicked(PlanFrame*);

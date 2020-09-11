@@ -19,7 +19,7 @@ Timetable::Timetable(QWidget *parent)
   layout->setSpacing(0);
 
   for(int day = 0; day < 7; day++){
-    DayFrame *dayFrame = new DayFrame(nullptr, DayConsts::intToDayNums(day), DayConsts::dayStrings[day]);
+    DayFrame *dayFrame = new DayFrame(DayConsts::intToDayNums(day));
     layout->addWidget(dayFrame);
     dayFrames[day] = dayFrame;
 

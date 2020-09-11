@@ -14,7 +14,7 @@ class DayFrame : public QFrame
   Q_OBJECT
 
 public:
-  DayFrame(QWidget *parent, DayConsts::DayNums day, QString dayString);
+  DayFrame(DayConsts::DayNums day);
 
   void highlight();
   void lowlight();

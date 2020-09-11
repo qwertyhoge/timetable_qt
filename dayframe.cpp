@@ -4,14 +4,14 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-DayFrame::DayFrame(QWidget *parent, DayConsts::DayNums day, QString dayString)
-  : QFrame(parent)
+DayFrame::DayFrame(DayConsts::DayNums day)
+  : QFrame(nullptr)
 {
   setFrameStyle(QFrame::Box);
   setLineWidth(1);
 
   dayNum = day;
-  this->dayString = dayString;
+  this->dayString = DayConsts::dayStrings[day];
 
   layout = new QHBoxLayout();
   layout->setMargin(0);

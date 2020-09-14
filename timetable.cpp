@@ -39,10 +39,10 @@ void Timetable::setPlan(Plan *newPlan)
     PlanTime endTime = newPlan->getEndTime();
     PlanTime prelimTime = startTime - PlanTime(0, 5);
 
-    resisteredPlans[startTime.hour][startTime.minute].registerPlan(START_BELL, newPlan);
-    resisteredPlans[endTime.hour][endTime.minute].registerPlan(END_BELL, newPlan);
+    registeredPlans[startTime.hour][startTime.minute].registerPlan(START_BELL, newPlan);
+    registeredPlans[endTime.hour][endTime.minute].registerPlan(END_BELL, newPlan);
 
-    resisteredPlans[prelimTime.hour][prelimTime.minute].registerPlan(PRELIM_BELL, newPlan);
+    registeredPlans[prelimTime.hour][prelimTime.minute].registerPlan(PRELIM_BELL, newPlan);
   }
 }
 
@@ -82,7 +82,7 @@ void Timetable::switchHighlightedDay(DayConsts::DayNums dayNum)
     }
   }
 
-  dayFrames[dayNum]->fillReservedPlans(resisteredPlans);
+  dayFrames[dayNum]->fillReservedPlans(registeredPlans);
 }
 
 void Timetable::playBell(const QUrl bellPath)
@@ -108,7 +108,7 @@ void Timetable::loadFromJson(const QByteArray json)
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
-        resisteredPlans[h][m].clear();
+        registeredPlans[h][m].clear();
       }
     }
 
@@ -158,7 +158,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
     switchHighlightedDay(DayConsts::intToDayNums(currentDateTime.date().day()));
   }
 
-  RegisteredPlan &reserved = resisteredPlans[currentTime.hour()][currentTime.minute()];
+  RegisteredPlan &reserved = registeredPlans[currentTime.hour()][currentTime.minute()];
   qDebug() << "highestpri: " << reserved.highestBellPri();
 
   if(reserved.highestBellPri() == START_BELL){
@@ -183,7 +183,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
 
 void Timetable::bellProperBell(const QTime currentTime)
 {
-  switch(resisteredPlans[currentTime.hour()][currentTime.minute()].highestBellPri()){
+  switch(registeredPlans[currentTime.hour()][currentTime.minute()].highestBellPri()){
     case NONE_BELL:
       break;
     case START_BELL:

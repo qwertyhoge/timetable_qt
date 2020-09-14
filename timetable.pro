@@ -45,7 +45,7 @@ HEADERS += \
     planframe.h \
     plantime.h \
     replybox.h \
-    reservedplan.h \
+    resisteredplan.h \
     timenotifier.h \
     timetable.h
 

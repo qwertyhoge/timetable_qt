@@ -6,7 +6,7 @@
 #include <QLabel>
 
 #include "planframe.h"
-#include "reservedplan.h"
+#include "resisteredplan.h"
 #include "dayconsts.h"
 
 class DayFrame : public QFrame
@@ -22,7 +22,7 @@ public:
   void deletePlanFrame(PlanFrame *plan);
   void clearPlans();
   QJsonArray extractDayJsonArray();
-  void fillReservedPlans(ReservedPlan reservedPlans[24][60]);
+  void fillReservedPlans(RegisteredPlan registeredPlans[24][60]);
 
   int labelWidth();
   void setLabelWidth(const int labelWidth);

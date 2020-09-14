@@ -16,7 +16,7 @@
 
 #include "planframe.h"
 #include "dayframe.h"
-#include "reservedplan.h"
+#include "resisteredplan.h"
 
 #include "characterwords.h"
 
@@ -36,7 +36,7 @@ private:
   int maxDayFrameLabelWidth = 0;
   int dayFrameLabelWidths[7] = {-1, -1, -1, -1, -1, -1, -1};
 
-  ReservedPlan reservedPlans[24][60];
+  RegisteredPlan registeredPlans[24][60];
 
   QVBoxLayout *layout;
   DayFrame *dayFrames[7];

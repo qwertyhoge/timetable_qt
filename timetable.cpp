@@ -39,10 +39,10 @@ void Timetable::setPlan(Plan *newPlan)
     PlanTime endTime = newPlan->getEndTime();
     PlanTime prelimTime = startTime - PlanTime(0, 5);
 
-    reservedPlans[startTime.hour][startTime.minute].addReserve(START_BELL, newPlan);
-    reservedPlans[endTime.hour][endTime.minute].addReserve(END_BELL, newPlan);
+    resisteredPlans[startTime.hour][startTime.minute].registerPlan(START_BELL, newPlan);
+    resisteredPlans[endTime.hour][endTime.minute].registerPlan(END_BELL, newPlan);
 
-    reservedPlans[prelimTime.hour][prelimTime.minute].addReserve(PRELIM_BELL, newPlan);
+    resisteredPlans[prelimTime.hour][prelimTime.minute].registerPlan(PRELIM_BELL, newPlan);
   }
 }
 
@@ -82,7 +82,7 @@ void Timetable::switchHighlightedDay(DayConsts::DayNums dayNum)
     }
   }
 
-  dayFrames[dayNum]->fillReservedPlans(reservedPlans);
+  dayFrames[dayNum]->fillReservedPlans(resisteredPlans);
 }
 
 void Timetable::playBell(const QUrl bellPath)
@@ -108,7 +108,7 @@ void Timetable::loadFromJson(const QByteArray json)
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
-        reservedPlans[h][m].clear();
+        resisteredPlans[h][m].clear();
       }
     }
 
@@ -158,7 +158,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
     switchHighlightedDay(DayConsts::intToDayNums(currentDateTime.date().day()));
   }
 
-  ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
+  RegisteredPlan &reserved = resisteredPlans[currentTime.hour()][currentTime.minute()];
   qDebug() << "highestpri: " << reserved.highestBellPri();
 
   if(reserved.highestBellPri() == START_BELL){
@@ -183,7 +183,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
 
 void Timetable::bellProperBell(const QTime currentTime)
 {
-  switch(reservedPlans[currentTime.hour()][currentTime.minute()].highestBellPri()){
+  switch(resisteredPlans[currentTime.hour()][currentTime.minute()].highestBellPri()){
     case NONE_BELL:
       break;
     case START_BELL:

@@ -1,5 +1,5 @@
-#ifndef BELLTYPE_H
-#define BELLTYPE_H
+#ifndef REGISTEREDPLAN_H
+#define REGISTEREDPLAN_H
 
 #include <QVector>
 
@@ -12,19 +12,19 @@ enum BellTypes{
 
 class Plan;
 
-class ReservedPlan
+class RegisteredPlan
 {
 public:
   QVector<QPair<BellTypes, const Plan*> > refs;
 
-  ReservedPlan(){
+  RegisteredPlan(){
   }
 
-  void addReserve(BellTypes bellType, const Plan* planRef){
+  void registerPlan(BellTypes bellType, const Plan* planRef){
     refs.push_back(QPair<BellTypes, const Plan*>(bellType, planRef));
   }
 
-  bool removeReserve(BellTypes bellType, const Plan *planRef){
+  bool removePlan(BellTypes bellType, const Plan *planRef){
     for(int i = 0;i < refs.length(); i++){
       if(refs[i].first == bellType && refs[i].second == planRef){
         refs.removeAt(i);
@@ -69,4 +69,4 @@ public:
 };
 
 
-#endif // BELLTYPE_H
+#endif // REGISTEREDPLAN_H

@@ -61,11 +61,11 @@ void DayFrame::lowlight()
   dayLabel->setPalette(plt);
 }
 
-void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
+void DayFrame::fillReservedPlans(RegisteredPlan registeredPlans[24][60])
 {
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
-      reservedPlans[i][j].clear();
+      registeredPlans[i][j].clear();
     }
   }
 
@@ -75,9 +75,9 @@ void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
     PlanTime end = plan->getEndTime();
     PlanTime *prelim = &start - 5;
 
-    reservedPlans[prelim->hour][prelim->minute].addReserve(PRELIM_BELL, plan);
-    reservedPlans[end.hour][end.minute].addReserve(END_BELL, plan);
-    reservedPlans[start.hour][start.minute].addReserve(START_BELL, plan);
+    registeredPlans[prelim->hour][prelim->minute].registerPlan(PRELIM_BELL, plan);
+    registeredPlans[end.hour][end.minute].registerPlan(END_BELL, plan);
+    registeredPlans[start.hour][start.minute].registerPlan(START_BELL, plan);
   }
 }
 

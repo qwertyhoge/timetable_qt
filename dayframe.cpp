@@ -65,8 +65,7 @@ void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
 {
   for(int i = 0; i < 24; i++){
     for(int j = 0; j < 60; j++){
-      reservedPlans[i][j].bellType = NONE_BELL;
-      reservedPlans[i][j].planRef = nullptr;
+      reservedPlans[i][j].clear();
     }
   }
 
@@ -76,16 +75,9 @@ void DayFrame::fillReservedPlans(ReservedPlan reservedPlans[24][60])
     PlanTime end = plan->getEndTime();
     PlanTime *prelim = &start - 5;
 
-    if(reservedPlans[prelim->hour][prelim->minute].bellType == NONE_BELL){
-      reservedPlans[prelim->hour][prelim->minute].bellType = PRELIM_BELL;
-      reservedPlans[prelim->hour][prelim->minute].planRef = plan;
-    }
-    if(reservedPlans[end.hour][end.minute].bellType != START_BELL){
-      reservedPlans[end.hour][end.minute].bellType = END_BELL;
-      reservedPlans[end.hour][end.minute].planRef = plan;
-    }
-    reservedPlans[start.hour][start.minute].bellType = START_BELL;
-    reservedPlans[start.hour][start.minute].planRef = plan;
+    reservedPlans[prelim->hour][prelim->minute].addReserve(PRELIM_BELL, plan);
+    reservedPlans[end.hour][end.minute].addReserve(END_BELL, plan);
+    reservedPlans[start.hour][start.minute].addReserve(START_BELL, plan);
   }
 }
 

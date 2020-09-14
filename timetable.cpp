@@ -37,20 +37,13 @@ void Timetable::setPlan(Plan *newPlan)
   if(newPlan->getDayNum() == QDate::currentDate().dayOfWeek() % 7){
     PlanTime startTime = newPlan->getStartTime();
     PlanTime endTime = newPlan->getEndTime();
-    reservedPlans[startTime.hour][startTime.minute].bellType = START_BELL;
-    reservedPlans[startTime.hour][startTime.minute].planRef = newPlan;
-    if(reservedPlans[endTime.hour][startTime.minute].bellType != START_BELL){
-      reservedPlans[endTime.hour][startTime.minute].bellType = END_BELL;
-      reservedPlans[endTime.hour][startTime.minute].planRef = newPlan;
-    }
-
     PlanTime prelimTime = startTime - PlanTime(0, 5);
-    if(reservedPlans[prelimTime.hour][prelimTime.minute].bellType == NONE_BELL){
-      reservedPlans[prelimTime.hour][prelimTime.minute].bellType = PRELIM_BELL;
-      reservedPlans[prelimTime.hour][prelimTime.minute].planRef = newPlan;
-    }
-  }
 
+    reservedPlans[startTime.hour][startTime.minute].addReserve(START_BELL, newPlan);
+    reservedPlans[endTime.hour][endTime.minute].addReserve(END_BELL, newPlan);
+
+    reservedPlans[prelimTime.hour][prelimTime.minute].addReserve(PRELIM_BELL, newPlan);
+  }
 }
 
 void Timetable::justifyDayFrameLabel(const int labelWidth, DayConsts::DayNums dayNum)
@@ -115,8 +108,7 @@ void Timetable::loadFromJson(const QByteArray json)
     }
     for(int h = 0; h < 24; h++){
       for(int m = 0; m < 60; m++){
-        reservedPlans[h][m].bellType = NONE_BELL;
-        reservedPlans[h][m].planRef = nullptr;
+        reservedPlans[h][m].clear();
       }
     }
 
@@ -167,19 +159,22 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
   }
 
   ReservedPlan &reserved = reservedPlans[currentTime.hour()][currentTime.minute()];
+  qDebug() << "highestpri: " << reserved.highestBellPri();
 
-  if(reserved.bellType == START_BELL){
+  if(reserved.highestBellPri() == START_BELL){
     emit planStartedMessage(CharacterWords::PLAN_START);
-    for(QString path : reserved.planRef->dirsAsString().split(';')){
-      QDir workingDir = QDir(path);
-      if(workingDir.exists()){
-        QUrl dirUrl = "file:///" + workingDir.path();
-        QDesktopServices::openUrl(dirUrl);
+    for(auto planRef : reserved.willStartPlans()){
+      for(QString path : planRef->dirsAsString().split(';')){
+        QDir workingDir = QDir(path);
+        if(workingDir.exists()){
+          QUrl dirUrl = "file:///" + workingDir.path();
+          QDesktopServices::openUrl(dirUrl);
+        }
       }
     }
-  }else if(reserved.bellType == END_BELL){
+  }else if(reserved.highestBellPri() == END_BELL){
     emit planEndedMessage(CharacterWords::PLAN_END);
-  }else if(reserved.bellType == PRELIM_BELL){
+  }else if(reserved.highestBellPri() == PRELIM_BELL){
     emit planPrelimMessage(CharacterWords::PLAN_PRELIM);
   }
 
@@ -188,7 +183,7 @@ void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayCha
 
 void Timetable::bellProperBell(const QTime currentTime)
 {
-  switch(reservedPlans[currentTime.hour()][currentTime.minute()].bellType){
+  switch(reservedPlans[currentTime.hour()][currentTime.minute()].highestBellPri()){
     case NONE_BELL:
       break;
     case START_BELL:

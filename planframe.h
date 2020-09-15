@@ -28,7 +28,7 @@ signals:
 
 private:
   int xPos;
-  int yPos = 0;
+  int yPos;
 
   QLabel *nameLabel;
   QLabel *startTimeLabel;

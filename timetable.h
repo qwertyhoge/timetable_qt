@@ -31,6 +31,8 @@ public:
   void loadFromJson(const QByteArray json);
   QJsonArray exportAsJson(void);
 
+  bool switchPlanRegistration(const Plan *older, const Plan *newer);
+
 private:
   bool allShown = false;
   int maxDayFrameLabelWidth = 0;

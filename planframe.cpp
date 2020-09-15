@@ -8,7 +8,7 @@
 #include <QDebug>
 
 PlanFrame::PlanFrame()
-  : QFrame(nullptr)
+  : QFrame(nullptr), yPos(0), planData(nullptr)
 {
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   setFrameStyle(QFrame::Plain | QFrame::Box);
@@ -58,6 +58,10 @@ PlanFrame::PlanFrame()
 
 void PlanFrame::attachPlan(Plan *plan)
 {
+  if(planData != nullptr){
+    delete planData;
+  }
+
   planData = plan;
   nameLabel->setText(plan->getPlanName());
   startTimeLabel->setText(plan->getStartTime().toString());

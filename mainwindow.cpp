@@ -305,6 +305,16 @@ void MainWindow::applyEdit()
 
   Plan *edittedPlan = new Plan(name, start, end, dayNum, dirs);
 
+  qDebug() << "day editted: " << edittedPlan->getDayNum();
+  qDebug() << "current day:" << ui->timeNotifier->getCurrentDay();
+  if(edittedPlan->getDayNum() == ui->timeNotifier->getCurrentDay()){
+    if(!timetable->switchPlanRegistration(selectedPlanFrame->getPlanData(), edittedPlan)){
+      qCritical() << "failed to remove plan registration";
+    }else{
+      qDebug() << "succeeded to remove plan registration";
+    }
+  }
+
   selectedPlanFrame->attachPlan(edittedPlan);
 
   enterInspectMode();

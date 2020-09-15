@@ -97,6 +97,26 @@ void Timetable::deletePlanFrame(PlanFrame *plan)
   dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
 }
 
+bool Timetable::switchPlanRegistration(const Plan *older, const Plan *newer)
+{
+  PlanTime olderStart = older->getStartTime();
+  PlanTime olderPrelim = olderStart - PlanTime(0, 5);
+  PlanTime olderEnd = older->getEndTime();
+  bool removeSucceed = true;
+  removeSucceed &= registeredPlans[olderPrelim.hour][olderPrelim.minute].removeRegistration(PRELIM_BELL, older);
+  removeSucceed &= registeredPlans[olderStart.hour][olderStart.minute].removeRegistration(START_BELL, older);
+  removeSucceed &= registeredPlans[olderEnd.hour][olderEnd.minute].removeRegistration(END_BELL, older);
+
+  PlanTime newerStart = newer->getStartTime();
+  PlanTime newerPrelim = newerStart - PlanTime(0, 5);
+  PlanTime newerEnd = newer->getEndTime();
+  registeredPlans[newerPrelim.hour][newerPrelim.minute].registerPlan(PRELIM_BELL, newer);
+  registeredPlans[newerStart.hour][newerStart.minute].registerPlan(START_BELL, newer);
+  registeredPlans[newerEnd.hour][newerEnd.minute].registerPlan(END_BELL, newer);
+
+  return removeSucceed;
+}
+
 void Timetable::loadFromJson(const QByteArray json)
 {
   QJsonDocument jsonDoc = QJsonDocument::fromJson(json);

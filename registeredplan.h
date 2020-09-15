@@ -24,7 +24,7 @@ public:
     refs.push_back(QPair<BellTypes, const Plan*>(bellType, planRef));
   }
 
-  bool removePlan(BellTypes bellType, const Plan *planRef){
+  bool removeRegistration(BellTypes bellType, const Plan *planRef){
     for(int i = 0;i < refs.length(); i++){
       if(refs[i].first == bellType && refs[i].second == planRef){
         refs.removeAt(i);

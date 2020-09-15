@@ -15,6 +15,7 @@ private:
 
 public:
   explicit TimeNotifier(QWidget *parent = nullptr);
+  int getCurrentDay();
 
 signals:
   void minuteChanged(const QDateTime &dateTime, bool dayChanged);

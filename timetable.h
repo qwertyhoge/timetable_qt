@@ -16,7 +16,7 @@
 
 #include "planframe.h"
 #include "dayframe.h"
-#include "resisteredplan.h"
+#include "registeredplan.h"
 
 #include "characterwords.h"
 

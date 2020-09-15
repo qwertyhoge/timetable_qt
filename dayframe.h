@@ -6,7 +6,7 @@
 #include <QLabel>
 
 #include "planframe.h"
-#include "resisteredplan.h"
+#include "registeredplan.h"
 #include "dayconsts.h"
 
 class DayFrame : public QFrame

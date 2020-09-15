@@ -44,8 +44,8 @@ HEADERS += \
     plancreatewindow.h \
     planframe.h \
     plantime.h \
+    registeredplan.h \
     replybox.h \
-    resisteredplan.h \
     timenotifier.h \
     timetable.h
 

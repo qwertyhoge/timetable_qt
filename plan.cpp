@@ -38,6 +38,7 @@ QString Plan::dirsAsString() const
 {
   QString dirsStr = "";
   for(auto dir : workingDirs){
+    qDebug("appending " + dir.path().toUtf8());
     dirsStr += ";";
     dirsStr += dir.path();
   }

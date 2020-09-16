@@ -143,6 +143,7 @@ void Timetable::loadFromJson(const QByteArray json)
         QJsonArray dirArr = planObj["workingDirs"].toArray();
         QVector<QDir> workingDirs;
         for(auto dir : dirArr){
+          qDebug() << "collecting " << dir.toString();
           workingDirs.push_back(QDir(dir.toString()));
         }
 
@@ -182,11 +183,15 @@ void Timetable::processPlanTimings(const QTime &currentTime, DayConsts::DayNums 
   if(reserved.highestBellPri() == START_BELL){
     emit planStartedMessage(CharacterWords::PLAN_START);
     for(auto planRef : reserved.willStartPlans()){
+      qDebug() << planRef->dirsAsString();
       for(QString path : planRef->dirsAsString().split(';')){
-        QDir workingDir = QDir(path);
-        if(workingDir.exists()){
-          QUrl dirUrl = "file:///" + workingDir.path();
-          QDesktopServices::openUrl(dirUrl);
+        qDebug() << path;
+        if(path != ""){
+          QDir workingDir = QDir(path);
+          if(workingDir.exists()){
+            QUrl dirUrl = "file:///" + workingDir.path();
+            QDesktopServices::openUrl(dirUrl);
+          }
         }
       }
     }

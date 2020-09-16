@@ -298,20 +298,18 @@ void MainWindow::applyEdit()
   PlanTime *start = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
   PlanTime *end = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
   QVector<QDir> dirs;
-  for(auto path : selectedPlanFrame->getPlanData()->dirsAsString().split(';')){
-    QDir dir(path);
-    dirs.push_back(dir);
+  if(!selectedPlanFrame->getPlanData()->dirsAsString().isEmpty()){
+    for(auto path : selectedPlanFrame->getPlanData()->dirsAsString().split(';')){
+      QDir dir(path);
+      dirs.push_back(dir);
+    }
   }
 
   Plan *edittedPlan = new Plan(name, start, end, dayNum, dirs);
 
-  qDebug() << "day editted: " << edittedPlan->getDayNum();
-  qDebug() << "current day:" << ui->timeNotifier->getCurrentDay();
   if(edittedPlan->getDayNum() == ui->timeNotifier->getCurrentDay()){
     if(!timetable->switchPlanRegistration(selectedPlanFrame->getPlanData(), edittedPlan)){
       qCritical() << "failed to remove plan registration";
-    }else{
-      qDebug() << "succeeded to remove plan registration";
     }
   }
 

@@ -10,20 +10,20 @@ TimeNotifier::TimeNotifier(QWidget *parent) : QLabel(parent), currentDateTime(QD
   connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
   timer->start();
 
-  formerDay = currentDateTime.date().dayOfWeek() % 7;
+  formerDay = DayConsts::intToDayNums(currentDateTime.date().dayOfWeek() % 7);
   formerMinute = currentDateTime.time().minute();
 
   setText(currentDateTime.time().toString());
 }
 
-int TimeNotifier::getCurrentDay(){
-  return currentDateTime.date().dayOfWeek() % 7;
+DayConsts::DayNums TimeNotifier::getCurrentDay(){
+  return formerDay;
 }
 
 void TimeNotifier::updateTime()
 {
   currentDateTime = QDateTime::currentDateTime();
-  int currentDay = currentDateTime.date().dayOfWeek() % 7;
+  DayConsts::DayNums currentDay = DayConsts::intToDayNums(currentDateTime.date().dayOfWeek() % 7);
   int currentMinute = currentDateTime.time().minute();
 
   setText(currentDateTime.time().toString());
@@ -33,7 +33,7 @@ void TimeNotifier::updateTime()
     dayChanged = true;
   }
   if(formerMinute != currentMinute){
-    emit minuteChanged(currentDateTime, dayChanged);
+    emit minuteChanged(currentDateTime.time(), currentDay, dayChanged);
   }
 
   formerDay = currentDay;

@@ -170,12 +170,10 @@ QJsonArray Timetable::exportAsJson()
   return jsonTimetable;
 }
 
-void Timetable::processPlanTimings(const QDateTime &currentDateTime, bool dayChanged)
+void Timetable::processPlanTimings(const QTime &currentTime, DayConsts::DayNums dayNum, bool dayChanged)
 {
-  const QTime &currentTime = currentDateTime.time();
-
   if(dayChanged){
-    switchHighlightedDay(DayConsts::intToDayNums(currentDateTime.date().day()));
+    switchHighlightedDay(dayNum);
   }
 
   RegisteredPlan &reserved = registeredPlans[currentTime.hour()][currentTime.minute()];

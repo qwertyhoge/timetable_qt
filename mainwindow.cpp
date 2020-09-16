@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
   connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
-  connect(ui->timeNotifier, SIGNAL(minuteChanged(const QDateTime&, bool)), timetable, SLOT(processPlanTimings(const QDateTime&, bool)));
+  connect(ui->timeNotifier, SIGNAL(minuteChanged(const QTime&, DayConsts::DayNums, bool)), timetable, SLOT(processPlanTimings(const QTime&, DayConsts::DayNums, bool)));
   connect(timetable, SIGNAL(planStartedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planEndedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
   connect(timetable, SIGNAL(planPrelimMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));

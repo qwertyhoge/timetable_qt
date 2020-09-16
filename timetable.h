@@ -54,7 +54,7 @@ signals:
 public slots:
   void justifyDayFrameLabel(const int labelWidth, DayConsts::DayNums dayNum);
 
-  void processPlanTimings(const QDateTime &currentTime, bool dayChanged);
+  void processPlanTimings(const QTime &currentTime, DayConsts::DayNums dayNum, bool dayChanged);
   void bellProperBell(const QTime currentTime);
   void switchHighlightedDay(DayConsts::DayNums day);
   void deletePlanFrame(PlanFrame *plan);

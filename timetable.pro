@@ -27,6 +27,7 @@ SOURCES += \
     plan.cpp \
     plancreatewindow.cpp \
     planframe.cpp \
+    planinspectform.cpp \
     plantime.cpp \
     replybox.cpp \
     timenotifier.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
     plan.h \
     plancreatewindow.h \
     planframe.h \
+    planinspectform.h \
     plantime.h \
     registeredplan.h \
     replybox.h \

@@ -6,6 +6,7 @@
 #include "characterpanel.h"
 #include "timetable.h"
 #include "plancreatewindow.h"
+#include "planinspectform.h"
 
 #include <QtWidgets>
 #include <QFrame>
@@ -30,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   initData();
   setMenu();
+
+  PlanInspectForm *inspect = new PlanInspectForm();
+  ui->apparea->layout()->addWidget(inspect);
 
   characterPanel = new CharacterPanel();
   ui->apparea->layout()->addWidget(characterPanel);

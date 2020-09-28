@@ -14,6 +14,8 @@ class Timetable;
 class CharacterPanel;
 class PlanCreateWindow;
 class PlanFrame;
+class Plan;
+class PlanInspectForm;
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +33,7 @@ private:
   PlanCreateWindow *planCreateWindow;
   Timetable *timetable;
   CharacterPanel *characterPanel;
+  PlanInspectForm *planInspectForm;
 
   bool timetableAreaDisabled = false;
   PlanFrame *selectedPlanFrame = nullptr;
@@ -45,12 +48,9 @@ private slots:
   void exportTimetable();
   void exportTimetable(const QString fileName);
   void setDefaultTimetable();
+  void selectPlanFrame(PlanFrame *clicked);
   void deleteSelectedPlan();
-  void inspectPlan(PlanFrame *plan);
-  void enterInspectMode();
-  void enterEditMode();
-  void cancelEdit();
-  void applyEdit();
+  void applyEdit(Plan *edittedPlan);
   void openMenu();
   void setPlanCreateWindow();
   void disableTimetableArea();

@@ -115,188 +115,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <layout class="QFormLayout" name="inspectForm">
-           <property name="verticalSpacing">
-            <number>8</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <item row="2" column="0">
-            <widget class="QLabel" name="inspectNameLabel">
-             <property name="text">
-              <string>Plan Name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="inspectNameLine">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="inspectDayLabel">
-             <property name="text">
-              <string>Day</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QComboBox" name="inspectDayCombo">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="currentIndex">
-              <number>-1</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>Sunday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Monday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Tuesday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Wednesday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Thirsday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Friday</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Saturday</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="inspectStartLabel">
-             <property name="text">
-              <string>Start Time</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QTimeEdit" name="inspectStartTime">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="inspectEndLabel">
-             <property name="text">
-              <string>End Time</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QTimeEdit" name="inspectEndTime">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0">
-            <widget class="QPushButton" name="deleteButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Delete plan</string>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>15</width>
-               <height>16</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QPushButton" name="editButton">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Edit plan</string>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="editCancelButton">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Cancel</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="inspectDirLabel">
-             <property name="text">
-              <string>Working Directory</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="inspectDirLine">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
        </item>
        <item>
@@ -315,8 +133,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>999</width>
-            <height>600</height>
+            <width>1016</width>
+            <height>640</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -358,15 +176,6 @@
    <header>timenotifier.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>inspectNameLine</tabstop>
-  <tabstop>inspectDayCombo</tabstop>
-  <tabstop>inspectStartTime</tabstop>
-  <tabstop>inspectEndTime</tabstop>
-  <tabstop>editButton</tabstop>
-  <tabstop>editCancelButton</tabstop>
-  <tabstop>deleteButton</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

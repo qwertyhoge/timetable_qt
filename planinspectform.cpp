@@ -1,5 +1,6 @@
 #include "planinspectform.h"
 #include "dayconsts.h"
+#include <QDebug>
 
 #include "plan.h"
 
@@ -48,10 +49,18 @@ PlanInspectForm::PlanInspectForm(QWidget *parent)
 
   layout->addRow(deleteButton, buttonContainer);
 
-  connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(currentPlanDeleteQuery()));
+  connect(deleteButton, SIGNAL(clicked()), this, SLOT(deletePlan()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
   switchState(IDLE);
+}
+
+void PlanInspectForm::deletePlan()
+{
+  inspectingPlan = nullptr;
+  switchState(IDLE);
+
+  emit currentPlanDeleteQuery();
 }
 
 void PlanInspectForm::inspectPlan(const Plan *plan)
@@ -79,8 +88,8 @@ void PlanInspectForm::switchState(EditStates newState)
   switch(newState){
     case IDLE:
       nameEdit->setText("");
-      startTimeEdit->setTime(QTime());
-      endTimeEdit->setTime(QTime());
+      startTimeEdit->setTime(QTime(0, 0));
+      endTimeEdit->setTime(QTime(0, 0));
       workingDirEdit->setText("");
       dayCombo->setCurrentIndex(-1);
       break;
@@ -124,11 +133,14 @@ void PlanInspectForm::applyEdit()
   PlanTime *endTime = new PlanTime(endTimeEdit->time().hour(), endTimeEdit->time().minute());
   DayConsts::DayNums dayNum = DayConsts::intToDayNums(dayCombo->currentIndex());
   QVector<QDir> dirVec;
-  for(auto path : workingDirEdit->text().split(';')){
-    dirVec.push_back(QDir(path));
+  if(!workingDirEdit->text().isEmpty()){
+    for(auto path : workingDirEdit->text().split(';')){
+      dirVec.push_back(QDir(path));
+    }
   }
 
   Plan *newPlan = new Plan(planName, startTime, endTime, dayNum, dirVec);
+  qDebug() << "editted dayNum: " << dayNum;
   inspectPlan(newPlan);
 
   emit currentPlanChangeQuery(newPlan);

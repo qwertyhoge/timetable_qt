@@ -25,15 +25,17 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   timetable = new Timetable();
-  connect(timetable, SIGNAL(planClicked(PlanFrame*)), this, SLOT(inspectPlan(PlanFrame*)));
+  connect(timetable, SIGNAL(planClicked(PlanFrame*)), this, SLOT(selectPlanFrame(PlanFrame*)));
   ui->scrollAreaWidgetContents->layout()->addWidget(timetable);
   // ui->scrollArea->setWidget(timetable);
 
   initData();
   setMenu();
 
-  PlanInspectForm *inspect = new PlanInspectForm();
-  ui->apparea->layout()->addWidget(inspect);
+  planInspectForm = new PlanInspectForm();
+  ui->headerLayout->addWidget(planInspectForm);
+  connect(planInspectForm, SIGNAL(currentPlanDeleteQuery()), this, SLOT(deleteSelectedPlan()));
+  connect(planInspectForm, SIGNAL(currentPlanChangeQuery(Plan*)), this, SLOT(applyEdit(Plan*)));
 
   characterPanel = new CharacterPanel();
   ui->apparea->layout()->addWidget(characterPanel);
@@ -50,9 +52,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   // mon1~sun7
   qDebug() << "currentDay: " << QDate::currentDate().dayOfWeek();
-
-  connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedPlan()));
-  connect(ui->editCancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
   connect(ui->timeNotifier, SIGNAL(minuteChanged(const QTime&, DayConsts::DayNums, bool)), timetable, SLOT(processPlanTimings(const QTime&, DayConsts::DayNums, bool)));
   connect(timetable, SIGNAL(planStartedMessage(CharacterWords::Timings)), characterPanel, SLOT(processTimings(CharacterWords::Timings)));
@@ -202,114 +201,27 @@ void MainWindow::setDefaultTimetable()
   file.close();
 }
 
+void MainWindow::selectPlanFrame(PlanFrame *clicked)
+{
+  selectedPlanFrame = clicked;
+
+  planInspectForm->inspectPlan(selectedPlanFrame->getPlanData());
+}
+
+// should be called by query from the inspect form
 void MainWindow::deleteSelectedPlan()
 {
   timetable->deletePlanFrame(selectedPlanFrame);
   selectedPlanFrame = nullptr;
 
-  ui->inspectNameLine->setText("");
-  ui->inspectDayCombo->setCurrentIndex(-1);
-  ui->inspectStartTime->setTime(QTime(0, 0));
-  ui->inspectEndTime->setTime(QTime(0, 0));
-
-  ui->editButton->setEnabled(false);
-  ui->deleteButton->setEnabled(false);
-
   // this must be moved to connected slot after moving delete button from ui to source
   characterPanel->processTimings(CharacterWords::PLAN_DELETE);
 }
 
-void MainWindow::inspectPlan(PlanFrame *plan)
-{
-  selectedPlanFrame = plan;
-  Plan *planData = selectedPlanFrame->getPlanData();
-
-  enterInspectMode();
-
-  ui->inspectNameLine->setText(planData->getPlanName());
-  ui->inspectDayCombo->setCurrentIndex(planData->getDayNum());
-  ui->inspectStartTime->setTime(planData->getStartTime().toQTime());
-  ui->inspectEndTime->setTime(planData->getEndTime().toQTime());
-
-  ui->inspectDirLine->setText(planData->dirsAsString());
-}
-
-void MainWindow::enterInspectMode()
-{
-  ui->inspectNameLine->setEnabled(false);
-  ui->inspectDayCombo->setEnabled(false);
-  ui->inspectStartTime->setEnabled(false);
-  ui->inspectEndTime->setEnabled(false);
-
-  ui->editButton->setEnabled(true);
-  ui->editButton->setText("Edit plan");
-  disconnect(ui->editButton, SIGNAL(clicked()), nullptr, nullptr);
-  connect(ui->editButton, SIGNAL(clicked()), this, SLOT(enterEditMode()));
-  // connect(ui->editButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditStartMessage()));
-
-  ui->editCancelButton->setEnabled(false);
-
-  ui->deleteButton->setEnabled(true);
-}
-
-void MainWindow::enterEditMode()
-{
-  // connect after move from ui to source
-  characterPanel->processTimings(CharacterWords::PLAN_EDIT_START);
-
-  ui->inspectNameLine->setEnabled(true);
-  ui->inspectDayCombo->setEnabled(true);
-  ui->inspectStartTime->setEnabled(true);
-  ui->inspectEndTime->setEnabled(true);
-
-  ui->editButton->setEnabled(true);
-  ui->editButton->setText("Apply edit");
-  disconnect(ui->editButton, SIGNAL(clicked()), nullptr, nullptr);
-  connect(ui->editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
-  // connect(ui->editButton, SIGNAL(clicked()), characterPanel, SLOT(showPlanEditDoneMessage()));
-  qDebug() << characterPanel;
-
-  ui->editCancelButton->setEnabled(true);
-
-  ui->deleteButton->setEnabled(false);
-}
-
-void MainWindow::cancelEdit()
-{
-  enterInspectMode();
-
-  Plan *planData = selectedPlanFrame->getPlanData();
-
-  ui->inspectNameLine->setText(planData->getPlanName());
-  ui->inspectDayCombo->setCurrentIndex(planData->getDayNum());
-  ui->inspectStartTime->setTime(planData->getStartTime().toQTime());
-  ui->inspectEndTime->setTime(planData->getEndTime().toQTime());
-
-  // this must be moved to connected slot after moving cancel button from ui to source
-
-  characterPanel->processTimings(CharacterWords::PLAN_EDIT_CANCEL);
-}
-
-void MainWindow::applyEdit()
+void MainWindow::applyEdit(Plan *edittedPlan)
 {
   // connect after move from ui to source
   characterPanel->processTimings(CharacterWords::PLAN_EDIT_DONE);
-
-  // sanitizing may be in need
-  QString name = ui->inspectNameLine->text();
-  // dayCombo must let the user choose completely the same numbers as DayNums
-  DayConsts::DayNums dayNum = DayConsts::intToDayNums(ui->inspectDayCombo->currentIndex());
-  PlanTime *start = PlanTime::parseTime(ui->inspectStartTime->text(), ':');
-  PlanTime *end = PlanTime::parseTime(ui->inspectEndTime->text(), ':');
-  QVector<QDir> dirs;
-  if(!selectedPlanFrame->getPlanData()->dirsAsString().isEmpty()){
-    for(auto path : selectedPlanFrame->getPlanData()->dirsAsString().split(';')){
-      QDir dir(path);
-      dirs.push_back(dir);
-    }
-  }
-
-  Plan *edittedPlan = new Plan(name, start, end, dayNum, dirs);
 
   if(edittedPlan->getDayNum() == ui->timeNotifier->getCurrentDay()){
     if(!timetable->switchPlanRegistration(selectedPlanFrame->getPlanData(), edittedPlan)){
@@ -318,8 +230,6 @@ void MainWindow::applyEdit()
   }
 
   selectedPlanFrame->attachPlan(edittedPlan);
-
-  enterInspectMode();
 }
 
 void MainWindow::openMenu()

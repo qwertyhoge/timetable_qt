@@ -54,6 +54,7 @@ signals:
 public slots:
 
 private slots:
+  void deletePlan();
   void startEdit();
   void applyEdit();
   void cancelEdit();

@@ -48,7 +48,7 @@ PlanInspectForm::PlanInspectForm(QWidget *parent)
 
   layout->addRow(deleteButton, buttonContainer);
 
-  connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(deletePlanQuery()));
+  connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(currentPlanDeleteQuery()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
 
   switchState(IDLE);
@@ -114,15 +114,27 @@ void PlanInspectForm::switchState(EditStates newState)
 
 void PlanInspectForm::startEdit()
 {
-
+  switchState(EDIT);
 }
 
 void PlanInspectForm::applyEdit()
 {
+  QString planName = nameEdit->text();
+  PlanTime *startTime = new PlanTime(startTimeEdit->time().hour(), startTimeEdit->time().minute());
+  PlanTime *endTime = new PlanTime(endTimeEdit->time().hour(), endTimeEdit->time().minute());
+  DayConsts::DayNums dayNum = DayConsts::intToDayNums(dayCombo->currentIndex());
+  QVector<QDir> dirVec;
+  for(auto path : workingDirEdit->text().split(';')){
+    dirVec.push_back(QDir(path));
+  }
 
+  Plan *newPlan = new Plan(planName, startTime, endTime, dayNum, dirVec);
+  inspectPlan(newPlan);
+
+  emit currentPlanChangeQuery(newPlan);
 }
 
 void PlanInspectForm::cancelEdit()
 {
-
+  switchState(INSPECT);
 }

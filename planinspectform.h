@@ -48,7 +48,8 @@ private:
 
   void switchState(EditStates newState);
 signals:
-  void planDeleteQuery();
+  void currentPlanDeleteQuery();
+  void currentPlanChangeQuery(Plan *newPlan);
 
 public slots:
 

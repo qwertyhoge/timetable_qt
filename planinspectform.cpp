@@ -1,10 +1,14 @@
 #include "planinspectform.h"
 #include "dayconsts.h"
 
+#include "plan.h"
+
 PlanInspectForm::PlanInspectForm(QWidget *parent)
   : QWidget(parent), currentState(IDLE), inspectingPlan(nullptr)
 {
   layout = new QFormLayout();
+  layout->setVerticalSpacing(8);
+  layout->setContentsMargins(2, 0, 2, 0);
 
   setLayout(layout);
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -16,14 +20,14 @@ PlanInspectForm::PlanInspectForm(QWidget *parent)
   endTimeEdit = new QTimeEdit();
   endTimeLabel = new QLabel(tr("End Time"));
   workingDirEdit = new QLineEdit();
-  workingDirLabel = new QLabel(tr("Workiing Directory"));
+  workingDirLabel = new QLabel(tr("Working Directory"));
+  workingDirEdit->setReadOnly(true);
   dayCombo = new QComboBox();
   dayLabel = new QLabel(tr("Day"));
 
   for(int i = 0; i < 7; i++){
     dayCombo->addItem(DayConsts::dayStrings[i]);
   }
-  dayCombo->setCurrentIndex(-1);
 
   layout->addRow(nameLabel, nameEdit);
   layout->addRow(dayLabel, dayCombo);
@@ -36,9 +40,89 @@ PlanInspectForm::PlanInspectForm(QWidget *parent)
   deleteButton = new QPushButton(tr("Delete Plan"));
   QWidget *buttonContainer = new QWidget();
   QHBoxLayout *containerLayout = new QHBoxLayout();
+  containerLayout->setContentsMargins(0, 0, 0, 0);
+  containerLayout->setSpacing(6);
   buttonContainer->setLayout(containerLayout);
   containerLayout->addWidget(editButton);
   containerLayout->addWidget(cancelButton);
 
   layout->addRow(deleteButton, buttonContainer);
+
+  connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(deletePlanQuery()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelEdit()));
+
+  switchState(IDLE);
+}
+
+void PlanInspectForm::inspectPlan(const Plan *plan)
+{
+  inspectingPlan = plan;
+  switchState(INSPECT);
+
+}
+
+void PlanInspectForm::switchState(EditStates newState)
+{
+  nameEdit->setEnabled(false);
+  startTimeEdit->setEnabled(false);
+  endTimeEdit->setEnabled(false);
+  workingDirEdit->setEnabled(false);
+  dayCombo->setEnabled(false);
+  deleteButton->setEnabled(false);
+  editButton->setEnabled(false);
+  cancelButton->setEnabled(false);
+
+  editButton->setText("Edit Plan");
+
+  disconnect(editButton, SIGNAL(clicked()), this, nullptr);
+
+  switch(newState){
+    case IDLE:
+      nameEdit->setText("");
+      startTimeEdit->setTime(QTime());
+      endTimeEdit->setTime(QTime());
+      workingDirEdit->setText("");
+      dayCombo->setCurrentIndex(-1);
+      break;
+    case INSPECT:
+      nameEdit->setText(inspectingPlan->getPlanName());
+      startTimeEdit->setTime(inspectingPlan->getStartTime().toQTime());
+      endTimeEdit->setTime(inspectingPlan->getEndTime().toQTime());
+      workingDirEdit->setText(inspectingPlan->dirsAsString());
+      dayCombo->setCurrentIndex(inspectingPlan->getDayNum());
+
+      editButton->setEnabled(true);
+      deleteButton->setEnabled(true);
+
+      connect(editButton, SIGNAL(clicked()), this, SLOT(startEdit()));
+      break;
+    case EDIT:
+      nameEdit->setEnabled(true);
+      startTimeEdit->setEnabled(true);
+      endTimeEdit->setEnabled(true);
+      workingDirEdit->setEnabled(false); // editting this is not implemented yet
+      dayCombo->setEnabled(true);
+      deleteButton->setEnabled(true);
+      editButton->setEnabled(true);
+      cancelButton->setEnabled(true);
+
+      editButton->setText("Apply Edit");
+      connect(editButton, SIGNAL(clicked()), this, SLOT(applyEdit()));
+      break;
+  }
+}
+
+void PlanInspectForm::startEdit()
+{
+
+}
+
+void PlanInspectForm::applyEdit()
+{
+
+}
+
+void PlanInspectForm::cancelEdit()
+{
+
 }

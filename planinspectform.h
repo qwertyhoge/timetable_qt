@@ -23,6 +23,7 @@ class PlanInspectForm : public QWidget
 
 public:
   explicit PlanInspectForm(QWidget *parent = nullptr);
+  void inspectPlan(const Plan *plan);
 
 private:
   QFormLayout *layout;
@@ -43,11 +44,18 @@ private:
   QPushButton *deleteButton;
 
   EditStates currentState;
+  const Plan *inspectingPlan;
 
-  Plan *inspectingPlan;
+  void switchState(EditStates newState);
 signals:
+  void planDeleteQuery();
 
 public slots:
+
+private slots:
+  void startEdit();
+  void applyEdit();
+  void cancelEdit();
 };
 
 #endif // PLANINSPECTFORM_H

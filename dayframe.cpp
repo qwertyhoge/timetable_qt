@@ -33,9 +33,7 @@ DayFrame::DayFrame(DayConsts::DayNums day)
 
 void DayFrame::resizeEvent(QResizeEvent *event)
 {
-  for(auto plan : planFrames){
-    plan->updatePlanGeometry();
-  }
+  updateAllPlanFramesGeometry();
 }
 
 void DayFrame::showEvent(QShowEvent *event)
@@ -141,4 +139,17 @@ int DayFrame::labelWidth()
 void DayFrame::setLabelWidth(const int labelWidth)
 {
   dayLabel->setFixedWidth(labelWidth);
+}
+
+void DayFrame::updateAllPlanFramesGeometry(void)
+{
+  for(auto pf : planFrames){
+    pf->updatePlanGeometry();
+  }
+}
+
+
+int DayFrame::planAreaWidth()
+{
+  return planArea->width();
 }

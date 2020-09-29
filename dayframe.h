@@ -26,6 +26,9 @@ public:
 
   int labelWidth();
   void setLabelWidth(const int labelWidth);
+  void updateAllPlanFramesGeometry(void);
+
+  int planAreaWidth();
 
 private:
   QHBoxLayout *layout;

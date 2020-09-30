@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QEvent>
 
 DayFrame::DayFrame(DayConsts::DayNums day)
   : QFrame(nullptr)
@@ -19,7 +20,7 @@ DayFrame::DayFrame(DayConsts::DayNums day)
   setLayout(layout);
 
   dayLabel = new QLabel(dayString);
-  dayLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+  dayLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
   dayLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   dayLabel->setAlignment(Qt::AlignCenter);
   dayLabel->setLineWidth(2);
@@ -29,6 +30,8 @@ DayFrame::DayFrame(DayConsts::DayNums day)
 
   planArea = new QWidget();
   layout->addWidget(planArea);
+
+  planArea->installEventFilter(this);
 }
 
 void DayFrame::resizeEvent(QResizeEvent *event)
@@ -39,6 +42,14 @@ void DayFrame::resizeEvent(QResizeEvent *event)
 void DayFrame::showEvent(QShowEvent *event)
 {
   emit labelWidthDefined(labelWidth(), dayNum);
+}
+
+bool DayFrame::eventFilter(QObject *obj, QEvent *event)
+{
+  if(obj == planArea && event->type() == QEvent::Resize){
+    updateAllPlanFramesGeometry();
+  }
+  return false;
 }
 
 void DayFrame::highlight()
@@ -138,7 +149,8 @@ int DayFrame::labelWidth()
 
 void DayFrame::setLabelWidth(const int labelWidth)
 {
-  dayLabel->setFixedWidth(labelWidth);
+  dayLabel->setMinimumWidth(labelWidth);
+  layout->update();
 }
 
 void DayFrame::updateAllPlanFramesGeometry(void)

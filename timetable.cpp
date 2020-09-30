@@ -48,7 +48,6 @@ void Timetable::setPlan(Plan *newPlan)
 
 void Timetable::justifyDayFrameLabel(const int labelWidth, DayConsts::DayNums dayNum)
 {
-  qDebug() << labelWidth;
   auto searchMaxWidth = [](int labelWidth[7]){
     int max = -1;
     for(int i = 0; i < 7; i++){
@@ -67,11 +66,6 @@ void Timetable::justifyDayFrameLabel(const int labelWidth, DayConsts::DayNums da
   if(maxWidth != -1){
     for(int i = 0; i < 7; i++){
       dayFrames[i]->setLabelWidth(maxWidth);
-    }
-    for(int i = 0; i < 7; i++){
-      qDebug() << DayConsts::dayStrings[i] << ": ";
-      qDebug() << "  justified label width: " << maxWidth;
-      qDebug() << "  plan area width: " << dayFrames[i]->planAreaWidth();
     }
   }
 

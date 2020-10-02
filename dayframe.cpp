@@ -104,23 +104,61 @@ void DayFrame::addPlan(Plan *newPlan)
   newPlanFrame->show();
 }
 
-void DayFrame::deletePlanFrame(PlanFrame *plan)
+void DayFrame::assignExistingPlanFrame(PlanFrame *planFrame)
 {
+  planFrames.push_back(planFrame);
+  planFrame->setParent(planArea);
+
+  connect(planFrame, SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
+
+  planFrame->show();
+}
+
+bool DayFrame::deletePlanFrame(PlanFrame *planFrame)
+{
+  int removedIndex = -1;
   PlanFrame *toBeRemoved = nullptr;
   for(int i = 0; i < planFrames.length(); i++){
-    if(planFrames[i] == plan){
+    if(planFrames[i] == planFrame){
       toBeRemoved = planFrames[i];
+      removedIndex = i;
     }
   }
 
   if(toBeRemoved != nullptr){
-    planFrames.removeOne(toBeRemoved);
+    planFrames.removeAt(removedIndex);
+    disconnect(planFrame, SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
 
     toBeRemoved->setParent(nullptr);
     toBeRemoved->deleteLater();
+
+    return true;
   }else{
     qCritical() << "failed to remove from plan frame vector.";
   }
+
+  return false;
+}
+
+bool DayFrame::releasePlanFrame(PlanFrame *planFrame)
+{
+  PlanFrame *toBeRemoved = nullptr;
+  int removedIndex = -1;
+  for(int i = 0; i < planFrames.length(); i++){
+    if(planFrames[i] == planFrame){
+      toBeRemoved = planFrames[i];
+      removedIndex = i;
+    }
+  }
+
+  if(toBeRemoved != nullptr){
+    planFrames.removeAt(removedIndex);
+    disconnect(planFrame, SIGNAL(planClicked(PlanFrame*)), this, SIGNAL(planClicked(PlanFrame*)));
+
+    return true;
+  }
+
+  return false;
 }
 
 void DayFrame::clearPlans(void)

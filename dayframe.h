@@ -18,8 +18,10 @@ public:
 
   void highlight();
   void lowlight();
-  void addPlan(Plan *plan);
-  void deletePlanFrame(PlanFrame *plan);
+  void addPlan(Plan *planFrame);
+  void assignExistingPlanFrame(PlanFrame *planFrame);
+  bool deletePlanFrame(PlanFrame *planFrame);
+  bool releasePlanFrame(PlanFrame *planFrame);
   void clearPlans();
   QJsonArray extractDayJsonArray();
   void fillReservedPlans(RegisteredPlan registeredPlans[24][60]);

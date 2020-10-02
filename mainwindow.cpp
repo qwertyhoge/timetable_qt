@@ -208,7 +208,6 @@ void MainWindow::selectPlanFrame(PlanFrame *clicked)
   planInspectForm->inspectPlan(selectedPlanFrame->getPlanData());
 }
 
-// should be called by query from the inspect form
 void MainWindow::deleteSelectedPlan()
 {
   timetable->deletePlanFrame(selectedPlanFrame);
@@ -223,10 +222,22 @@ void MainWindow::applyEdit(Plan *edittedPlan)
   // connect after move from ui to source
   characterPanel->processTimings(CharacterWords::PLAN_EDIT_DONE);
 
-  if(edittedPlan->getDayNum() == ui->timeNotifier->getCurrentDay()){
-    if(!timetable->switchPlanRegistration(selectedPlanFrame->getPlanData(), edittedPlan)){
+  int olderDay = selectedPlanFrame->getPlanData()->getDayNum();
+  int newerDay = edittedPlan->getDayNum();
+  int currentDay = ui->timeNotifier->getCurrentDay();
+
+  if(olderDay == currentDay){
+    if(!timetable->removePlanRegistration(selectedPlanFrame->getPlanData())){
       qCritical() << "failed to remove plan registration";
     }
+  }
+  if(newerDay == currentDay){
+    timetable->addPlanRegistration(edittedPlan);
+  }
+
+  if(newerDay != olderDay){
+    // the DayFrame that has selected PlanFrame must be switched
+    timetable->switchParentDayFrame(selectedPlanFrame, edittedPlan->getDayNum());
   }
 
   selectedPlanFrame->attachPlan(edittedPlan);

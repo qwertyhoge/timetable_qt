@@ -96,24 +96,40 @@ void Timetable::deletePlanFrame(PlanFrame *plan)
   dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
 }
 
-bool Timetable::switchPlanRegistration(const Plan *older, const Plan *newer)
+bool Timetable::removePlanRegistration(const Plan *plan)
 {
-  PlanTime olderStart = older->getStartTime();
-  PlanTime olderPrelim = olderStart - PlanTime(0, 5);
-  PlanTime olderEnd = older->getEndTime();
+  PlanTime start = plan->getStartTime();
+  PlanTime prelim = start - PlanTime(0, 5);
+  PlanTime end = plan->getEndTime();
   bool removeSucceed = true;
-  removeSucceed &= registeredPlans[olderPrelim.hour][olderPrelim.minute].removeRegistration(PRELIM_BELL, older);
-  removeSucceed &= registeredPlans[olderStart.hour][olderStart.minute].removeRegistration(START_BELL, older);
-  removeSucceed &= registeredPlans[olderEnd.hour][olderEnd.minute].removeRegistration(END_BELL, older);
-
-  PlanTime newerStart = newer->getStartTime();
-  PlanTime newerPrelim = newerStart - PlanTime(0, 5);
-  PlanTime newerEnd = newer->getEndTime();
-  registeredPlans[newerPrelim.hour][newerPrelim.minute].registerPlan(PRELIM_BELL, newer);
-  registeredPlans[newerStart.hour][newerStart.minute].registerPlan(START_BELL, newer);
-  registeredPlans[newerEnd.hour][newerEnd.minute].registerPlan(END_BELL, newer);
+  removeSucceed &= registeredPlans[prelim.hour][prelim.minute].removeRegistration(PRELIM_BELL, plan);
+  removeSucceed &= registeredPlans[start.hour][start.minute].removeRegistration(START_BELL, plan);
+  removeSucceed &= registeredPlans[end.hour][end.minute].removeRegistration(END_BELL, plan);
 
   return removeSucceed;
+}
+
+void Timetable::addPlanRegistration(const Plan *plan)
+{
+  PlanTime start = plan->getStartTime();
+  PlanTime prelim = start - PlanTime(0, 5);
+  PlanTime end = plan->getEndTime();
+  registeredPlans[prelim.hour][prelim.minute].registerPlan(PRELIM_BELL, plan);
+  registeredPlans[start.hour][start.minute].registerPlan(START_BELL, plan);
+  registeredPlans[end.hour][end.minute].registerPlan(END_BELL, plan);
+}
+
+bool Timetable::switchParentDayFrame(PlanFrame *selectedPlanFrame, DayConsts::DayNums newDayNum)
+{
+  int oldDayNum = selectedPlanFrame->getPlanData()->getDayNum();
+
+  if(!dayFrames[oldDayNum]->releasePlanFrame(selectedPlanFrame)){
+    qCritical() << "failed to release plan frame";
+    return false;
+  }
+  dayFrames[newDayNum]->assignExistingPlanFrame(selectedPlanFrame);
+
+  return true;
 }
 
 void Timetable::loadFromJson(const QByteArray json)

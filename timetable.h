@@ -31,7 +31,9 @@ public:
   void loadFromJson(const QByteArray json);
   QJsonArray exportAsJson(void);
 
-  bool switchPlanRegistration(const Plan *older, const Plan *newer);
+  bool removePlanRegistration(const Plan *plan);
+  void addPlanRegistration(const Plan *plan);
+  bool switchParentDayFrame(PlanFrame *selectedPlanFrame, DayConsts::DayNums newDayNum);
 
 private:
   bool allShown = false;

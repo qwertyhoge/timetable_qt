@@ -129,8 +129,8 @@ void PlanInspectForm::startEdit()
 void PlanInspectForm::applyEdit()
 {
   QString planName = nameEdit->text();
-  PlanTime *startTime = new PlanTime(startTimeEdit->time().hour(), startTimeEdit->time().minute());
-  PlanTime *endTime = new PlanTime(endTimeEdit->time().hour(), endTimeEdit->time().minute());
+  PlanTime *startTime = new PlanTime(startTimeEdit->time());
+  PlanTime *endTime = new PlanTime(endTimeEdit->time());
   DayConsts::DayNums dayNum = DayConsts::intToDayNums(dayCombo->currentIndex());
   QVector<QDir> dirVec;
   if(!workingDirEdit->text().isEmpty()){

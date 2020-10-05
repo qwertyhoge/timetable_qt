@@ -9,6 +9,7 @@ class PlanTime
 public:
   PlanTime ();
   PlanTime (int h, int m = 0);
+  PlanTime (const QTime &qTime);
 
   int hour;
   int minute;

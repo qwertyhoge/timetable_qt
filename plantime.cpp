@@ -12,6 +12,11 @@ PlanTime::PlanTime(int h, int m)
 {
 }
 
+PlanTime::PlanTime(const QTime &qTime)
+  : hour(qTime.hour()), minute(qTime.minute())
+{
+}
+
 PlanTime PlanTime::operator+(const PlanTime &time)
 {
   int sumAsMinutes = time.hour * 60 + time.minute + hour * 60 + time.minute;

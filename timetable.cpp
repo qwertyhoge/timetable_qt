@@ -91,9 +91,9 @@ void Timetable::playBell(const QUrl bellPath)
   bellPlayer->play();
 }
 
-void Timetable::deletePlanFrame(PlanFrame *plan)
+bool Timetable::deletePlanFrame(PlanFrame *plan)
 {
-  dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
+  return dayFrames[plan->getPlanData()->getDayNum()]->deletePlanFrame(plan);
 }
 
 bool Timetable::removePlanRegistration(const Plan *plan)

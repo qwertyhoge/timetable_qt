@@ -210,11 +210,14 @@ void MainWindow::selectPlanFrame(PlanFrame *clicked)
 
 void MainWindow::deleteSelectedPlan()
 {
-  timetable->deletePlanFrame(selectedPlanFrame);
-  selectedPlanFrame = nullptr;
+  if(timetable->deletePlanFrame(selectedPlanFrame)){
+    selectedPlanFrame = nullptr;
 
-  // this must be moved to connected slot after moving delete button from ui to source
-  characterPanel->processTimings(CharacterWords::PLAN_DELETE);
+    characterPanel->processTimings(CharacterWords::PLAN_DELETE);
+  }else{
+    qCritical() << "failed to delete selected PlanFrame instance";
+    planInspectForm->inspectPlan(selectedPlanFrame->getPlanData());
+  }
 }
 
 void MainWindow::applyEdit(Plan *edittedPlan)

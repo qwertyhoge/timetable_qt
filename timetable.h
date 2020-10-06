@@ -31,6 +31,8 @@ public:
   void loadFromJson(const QByteArray json);
   QJsonArray exportAsJson(void);
 
+  bool deletePlanFrame(PlanFrame *plan);
+
   bool removePlanRegistration(const Plan *plan);
   void addPlanRegistration(const Plan *plan);
   bool switchParentDayFrame(PlanFrame *selectedPlanFrame, DayConsts::DayNums newDayNum);
@@ -59,7 +61,6 @@ public slots:
   void processPlanTimings(const QTime &currentTime, DayConsts::DayNums dayNum, bool dayChanged);
   void bellProperBell(const QTime currentTime);
   void switchHighlightedDay(DayConsts::DayNums day);
-  void deletePlanFrame(PlanFrame *plan);
   void addPlan(Plan *newPlan);
 };
 

@@ -26,6 +26,11 @@ WordTree::WordTree(QString sentence, WordTree *yes, WordTree *no)
 
 }
 
+WordTree::~WordTree()
+{
+  deleteFromChildren();
+}
+
 bool WordTree::parseConvo(QString ynStr, QString sentence)
 {
   if(ynStr.length() == 1){
@@ -49,12 +54,12 @@ bool WordTree::parseConvo(QString ynStr, QString sentence)
   }
 }
 
-bool WordTree::hasConvo()
+bool WordTree::hasConvo() const
 {
   return convoYes != nullptr && convoNo != nullptr;
 }
 
-bool WordTree::allHaveBothConvo()
+bool WordTree::allHaveBothConvo() const
 {
   if(convoYes == nullptr){
     if(convoNo == nullptr){
@@ -131,12 +136,21 @@ bool CharacterWords::loadWords()
   return parseWordsJson(fileText.toUtf8());
 }
 
-bool CharacterWords::hasTree(const Timings timing)
+bool CharacterWords::hasTree(const Timings timing) const
 {
   QString timStr = timingStrings[timing];
   return !wordList[timStr].empty();
 }
 
+void CharacterWords::destroyTree()
+{
+  timingStrings.clear();
+  for(auto treeVec : wordList){
+    for(auto tree : treeVec){
+      delete tree;
+    }
+  }
+}
 
 bool CharacterWords::parseWordsJson(const QByteArray json)
 {
@@ -166,15 +180,15 @@ bool CharacterWords::parseWordsJson(const QByteArray json)
       for(auto word : words){
         QJsonObject treeObj = word.toObject();
         QString sentence = treeObj["message"].toString();
-        WordTree treeRoot = WordTree(sentence);
+        WordTree *treeRoot = new WordTree(sentence);
 
         QStringList keys = treeObj.keys();
         keys.sort();
 
         for(auto key : treeObj.keys()){
-            treeRoot.parseConvo(key, treeObj[key].toString());
+            treeRoot->parseConvo(key, treeObj[key].toString());
         }
-        if(treeRoot.allHaveBothConvo()){
+        if(treeRoot->allHaveBothConvo()){
             wordList[timing].push_back(treeRoot);
         }else{
           qDebug() << sentence << " is rejected for children constraint";
@@ -189,7 +203,7 @@ bool CharacterWords::parseWordsJson(const QByteArray json)
 WordTree *CharacterWords::pickRandomOne(const Timings timing)
 {
   const QString timingKey = timingStrings[timing];
-  QVector<WordTree> &wordVec = wordList[timingKey];
+  QVector<WordTree*> &wordVec = wordList[timingKey];
 
   if(wordVec.empty()){
     return nullptr;
@@ -197,5 +211,5 @@ WordTree *CharacterWords::pickRandomOne(const Timings timing)
 
   int randomIndex = int(QRandomGenerator::global()->generate() % uint(wordVec.size()));
 
-  return &wordVec[randomIndex];
+  return wordVec[randomIndex];
 }

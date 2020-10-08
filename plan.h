@@ -12,6 +12,7 @@ class Plan
 public:
   Plan();
   Plan(QString name, PlanTime *start, PlanTime *end, DayConsts::DayNums day, QVector<QDir>& dirs);
+  ~Plan();
 
   QString getPlanName(void) const;
   PlanTime getStartTime() const;

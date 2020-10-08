@@ -10,9 +10,13 @@ Plan::Plan()
 Plan::Plan(QString name, PlanTime *start, PlanTime *end, DayConsts::DayNums day, QVector<QDir>& dirs)
   : planName(name), startTime(start), endTime(end), dayNum(day), workingDirs(dirs)
 {
-
 }
 
+Plan::~Plan()
+{
+  delete startTime;
+  delete endTime;
+}
 
 QString Plan::getPlanName(void) const
 {

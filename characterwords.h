@@ -10,14 +10,15 @@ public:
   WordTree();
   WordTree(QString sentence);
   WordTree(QString sentence, WordTree *yes, WordTree *no);
+  ~WordTree();
 
   QString sentence;
   WordTree* convoYes = nullptr;
   WordTree* convoNo = nullptr;
 
   void setConvo(WordTree *yes, WordTree *no);
-  bool hasConvo();
-  bool allHaveBothConvo();
+  bool hasConvo() const;
+  bool allHaveBothConvo() const;
   bool parseConvo(QString ynStr, QString sentence);
 private:
   void deleteFromChildren();
@@ -43,13 +44,14 @@ public:
   };
 
   bool loadWords();
-  bool hasTree(const Timings timing);
+  bool hasTree(const Timings timing) const;
   WordTree *pickRandomOne(const Timings timing);
 
 private:
+  void destroyTree();
   bool parseWordsJson(const QByteArray json);
   QHash<Timings, QString> timingStrings;
-  QHash<QString, QVector<WordTree> > wordList;
+  QHash<QString, QVector<WordTree*> > wordList;
 
   QString wordsPath = "./characters/proto/words.json";
 };
